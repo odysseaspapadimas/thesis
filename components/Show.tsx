@@ -33,10 +33,10 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
   }
 
   return (
-    <div className="relative w-[175px] ">
+    <div className="relative w-[140px] sm:w-[175px]">
       <NextLink href={link} className="">
         <div
-          className="w-[175px] relative cursor-pointer rounded-sm border border-transparent hover:border-blue-400"
+          className="w-[140px] sm:w-[175px] relative cursor-pointer rounded-sm border border-transparent hover:border-blue-400"
           style={{ aspectRatio: "1 / 1.5" }}
         >
           <Image layout="fill" src={IMG_URL(data.poster_path)} />
@@ -59,7 +59,9 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
         <Menu.Item>Already Watched</Menu.Item>
         <Menu.Item>Plan to Watch</Menu.Item>
       </Menu>
-      <p className=" text-base font-semibold mt-1">{name} ({release_date})</p>
+      <p className=" text-base font-semibold mt-1">
+        {name} ({release_date})
+      </p>
     </div>
   );
 };

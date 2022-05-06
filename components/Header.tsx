@@ -48,7 +48,7 @@ const Header = () => {
             padding="xl"
             size="xl"
             classNames={{
-              drawer: 'w-[75%]'
+              drawer: "w-[75%]",
             }}
             className=" translate-y-[70px] "
           >
@@ -83,6 +83,7 @@ const Header = () => {
             ) : !session ? (
               <Group>
                 <Button
+                  size="sm"
                   onClick={() => {
                     setOpened(true);
                     setActiveTab(0);

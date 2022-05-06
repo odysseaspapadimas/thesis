@@ -19,10 +19,15 @@ const TrendingShows = () => {
     <div>
       <Group position="apart" className="border-b border-gray-600 mb-3">
         <h2 className="font-semibold text-lg">Trending TV Shows</h2>
-        <NextLink href="shows" className="text-gray-300 text-sm hover:text-primary">See more</NextLink>
+        <NextLink
+          href="shows"
+          className="text-gray-300 text-sm hover:text-primary"
+        >
+          See more
+        </NextLink>
       </Group>
 
-      <div className="grid grid-cols-2 place-items-stretch md:grid-cols-6 gap-4 md:gap-2">
+      <div className="grid justify-items-center space-y-3 md:space-y-0 w-full grid-cols-2 md:grid-cols-6 md:gap-2">
         {shows?.results
           ?.map((data: TVShowType) => <Show key={data.id} data={data} />)
           .slice(0, 6)}

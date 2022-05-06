@@ -27,7 +27,7 @@ const TrendingMovies = () => {
         </NextLink>
       </Group>
 
-      <div className="grid grid-cols-2 md:grid-cols-6 grid-flow-row md:gap-2">
+      <div className="grid justify-items-center space-y-3 md:space-y-0 w-full grid-cols-2 md:grid-cols-6 md:gap-2">
         {shows?.results
           ?.map((data: MovieType) => <Show key={data.id} data={data} />)
           .slice(0, 6)}
