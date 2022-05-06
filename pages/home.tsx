@@ -33,7 +33,7 @@ const Home: NextPageWithAuth = () => {
 
   return (
     <div>
-      <Container className="grid place-items-center py-10">
+      <Container size="xl" className="grid place-items-center py-10">
         <h1>Welcome, {user?.username}</h1>
         <br />
         <h2 className="font-semibold text-xl mb-6">

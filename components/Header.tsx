@@ -11,6 +11,7 @@ import {
   Avatar,
   Menu,
   Divider,
+  Group,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { NextLink } from "@mantine/next";
@@ -36,7 +37,7 @@ const Header = () => {
   return (
     <>
       <MantineHeader height={70}>
-        <Container className="flex justify-between items-center h-full">
+        <Container size="xl" className="flex justify-between items-center h-full">
           <NextLink href="/" className="text-2xl font-bold">
             ZeTell
           </NextLink>
@@ -55,7 +56,7 @@ const Header = () => {
           {status === "loading" ? (
             <></>
           ) : !session ? (
-            <>
+            <Group>
               <Button
                 onClick={() => {
                   setOpened(true);
@@ -74,7 +75,7 @@ const Header = () => {
               >
                 Sign-up
               </Button>
-            </>
+            </Group>
           ) : (
             <>
               <Menu
