@@ -26,9 +26,6 @@ const List = ({ data }: { data: ListData }) => {
       <Tabs.Tab label={<TabLabel text="TV Shows" length={showsLength} />}>
         <TVShows shows={data.shows} />
       </Tabs.Tab>
-      <Tabs.Tab label={<TabLabel text="TV Shows" length={showsLength} />}>
-        <TVShows shows={data.shows} />
-      </Tabs.Tab>
     </Tabs>
   );
 };
