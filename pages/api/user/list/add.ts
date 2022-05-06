@@ -17,23 +17,23 @@ export default async function handler(
     await dbConnect();
     const email = session.user?.email;
 
-    let { type, id } = req.query;
+    let { list, type, id } = req.query;
 
     let response;
-    if (type === "plan") {
+    if (list === "plan") {
       response = await User.updateOne(
         { email },
-        { $push: { plan_to: { id } } }
+        { $push: { plan_to: { id, type } } }
       );
-    } else if (type === "watched") {
+    } else if (list === "watched") {
       response = await User.updateOne(
         { email },
-        { $push: { watched: { id } } }
+        { $push: { watched: { id, type } } }
       );
     } else {
       response = await User.updateOne(
         { email },
-        { $push: { favorite: { id } } }
+        { $push: { favorites: { id, type } } }
       );
     }
 

@@ -1,6 +1,12 @@
-const TVShows = () => {
+import { TVShowType } from "../../../constants/types";
+
+const TVShows = ({ shows }: { shows: [TVShowType] }) => {
   return (
-    <div>TVShows</div>
-  )
-}
-export default TVShows
+    <div>
+      {shows.map((show) => (
+        <div>{show.name}</div>
+      ))}
+    </div>
+  );
+};
+export default TVShows;

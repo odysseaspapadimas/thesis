@@ -4,19 +4,9 @@ import { getSession } from "next-auth/react";
 import dbConnect from "../../../../lib/dbConnect";
 import User from "../../../../models/User";
 
-type Data = {
-  error: string;
-};
-
-export type User = {
-  email: string;
-  username: string;
-  createdAt: string;
-};
-
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<User | Data>
+  res: NextApiResponse
 ) {
   const session = await getSession({ req });
 
@@ -26,30 +16,35 @@ export default async function handler(
     const email = session.user?.email;
     await dbConnect();
 
-    let { type } = req.query;
-    if (type === "plan") type = "plan_to";
+    let { list } = req.query;
+    if (list === "plan") list = "plan_to";
 
-    console.log(type, "listype");
+    console.log(list, "lislist");
 
     const user = await User.findOne({ email });
 
-    const idList = user[String(type)];
+    const idList = user[String(list)];
 
     let movieList = [] as any;
+    let tvList = [] as any;
 
     //Inlcude movie/tvshow type in list e.g. plan_to = [ { id: 5553, type: movie } ]
     //So i can make seperate calls in the for loop
 
     for (let i = 0; i < idList.length; i++) {
-      const id = idList[i].id;
-      const movieData = await tmdb.movieInfo(id);
-      movieList = [...movieList, movieData];
+      const item = idList[i];
+      const { id, type } = item;
+      if (type === "movie") {
+        const movieData = await tmdb.movieInfo(id);
+        movieList = [...movieList, movieData];
+      } else if (type === "tv") {
+        const tvData = await tmdb.tvInfo(id);
+        tvList = [...tvList, tvData];
+      }
     }
 
-    console.log(movieList, "movieList");
-
     if (user) {
-      res.status(200).send(movieList);
+      res.status(200).json({ movies: movieList, shows: tvList });
     } else res.status(400).send({ error: "Something went wrong" });
   }
 }

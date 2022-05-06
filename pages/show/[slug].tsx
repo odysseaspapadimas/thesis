@@ -26,20 +26,20 @@ import removeFromList from "../../utils/removeFromList";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { tmdb } from "../../utils/tmdb";
 import { List, ListTypes } from "../api/user/list/onList";
-import { Genre } from "../../constants/types";
+import { Genre, TVShowType } from "../../constants/types";
 
-const Movie = ({ movie }: { movie: any }) => {
+const Show = ({ show }: { show: TVShowType }) => {
   const router = useRouter();
 
   const slug = router.query.slug as string;
 
-  const movieId = slug.split("-")[0];
+  const showId = slug.split("-")[0];
 
   const { data: session, status } = useSession();
 
   const { user, error: userError } = useUser({ session });
 
-  const type = "movie"; //What kind of media is this to make seperate calls when adding/removing from lists
+  const type = "tv"; //What kind of media is this to make seperate calls when adding/removing from lists
 
   const {
     data: onList,
@@ -47,7 +47,7 @@ const Movie = ({ movie }: { movie: any }) => {
     mutate: mutateOnList,
   } = useSWR(
     user
-      ? `/api/user/list/onList?username=${user.username}&id=${movieId}`
+      ? `/api/user/list/onList?username=${user.username}&id=${showId}`
       : null,
     fetcher
   );
@@ -57,7 +57,7 @@ const Movie = ({ movie }: { movie: any }) => {
     console.log(onList, "onList");
   }, [onList]);
 
-  if (!movie) {
+  if (!show) {
     return (
       <div>
         <Loader size="xl" className="w-full p-auto mt-10" variant="dots" />
@@ -67,13 +67,13 @@ const Movie = ({ movie }: { movie: any }) => {
 
   const handleWatched = async () => {
     if (!onList.on.includes("watched")) {
-      await addToList("watched", movieId, type);
+      await addToList("watched", showId, type);
 
       if (onList.on.includes("plan")) {
-        await removeFromList("plan", movieId, type);
+        await removeFromList("plan", showId, type);
       }
     } else if (onList.on.includes("watched")) {
-      await removeFromList("watched", movieId, type);
+      await removeFromList("watched", showId, type);
     }
 
     mutateOnList();
@@ -81,13 +81,13 @@ const Movie = ({ movie }: { movie: any }) => {
 
   const handlePlan = async () => {
     if (!onList.on.includes("plan")) {
-      await addToList("plan", movieId, type);
+      await addToList("plan", showId, type);
 
       if (onList.on.includes("watched")) {
-        await removeFromList("watched", movieId, type);
+        await removeFromList("watched", showId, type);
       }
     } else if (onList.on.includes("plan")) {
-      await removeFromList("plan", movieId, type);
+      await removeFromList("plan", showId, type);
     }
     mutateOnList();
   };
@@ -95,9 +95,9 @@ const Movie = ({ movie }: { movie: any }) => {
   const handleFavorite = async () => {
     console.log("hi");
     if (!onList.on.includes("favorites")) {
-      await addToList("favorites", movieId, type);
+      await addToList("favorites", showId, type);
     } else if (onList.on.includes("favorites")) {
-      await removeFromList("favorites", movieId, type);
+      await removeFromList("favorites", showId, type);
     }
     mutateOnList();
   };
@@ -107,53 +107,48 @@ const Movie = ({ movie }: { movie: any }) => {
       <div className="relative">
         <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
           <img
-            src={IMG_URL(movie.backdrop_path)}
+            src={IMG_URL(show.backdrop_path)}
             className="w-full h-full object-cover"
           />
         </div>
         <Container
           size="xl"
-          className="relative h-full flex flex-col md:flex-row items-center py-20"
+          className="relative h-full md:flex items-center py-20"
         >
-          <div
-            className="relative w-[225px] md:w-[300px]"
-            style={{ aspectRatio: "1 /1.5" }}
-          >
-            <Image
-              layout="fill"
-              src={IMG_URL(movie.poster_path)}
-              className="rounded-md flex-1"
-            />
-          </div>
+          <Image
+            height={450}
+            width={300}
+            src={IMG_URL(show.poster_path)}
+            className="rounded-md flex-1"
+          />
 
           <div className="flex-1 max-w-2xl flex flex-col px-8">
-            <div className="flex">
+            <div className="flex items-end">
               <p className="text-3xl font-semibold">
-                {movie.title}
+                {show.name}
                 <span className="text-2xl">
-                  {" "}
-                  ({movie.release_date.split("-")[0]})
+                  &nbsp;({show.first_air_date.split("-")[0]})
                 </span>
               </p>
             </div>
 
             <div className="flex space-x-2">
-              {movie.release_date} &bull;{" "}
-              {movie.genres.map((genre: Genre, i: number) => (
-                <>
+              {show.genres.map((genre: Genre, i: number) => (
+                <p key={genre.id}>
                   {genre.name}
-                  {i < movie.genres.length - 1 && ", "}
-                </>
-              ))}{" "}
-              &bull; {movie.runtime}m
+                  {i < show.genres.length - 1 && ","}
+                </p>
+              ))}
+              &nbsp; &bull;
+              <p>{show.episode_run_time}m</p>
             </div>
 
             <div className="flex items-center">
               <RingProgress
                 sections={[
                   {
-                    value: movie.vote_average * 10,
-                    color: `hsl(${(115 * movie.vote_average) / 10}, 100%, 28%)`,
+                    value: show.vote_average * 10,
+                    color: `hsl(${(115 * show.vote_average) / 10}, 100%, 28%)`,
                   },
                 ]}
                 size={100}
@@ -161,7 +156,7 @@ const Movie = ({ movie }: { movie: any }) => {
                 className="rounded-full bg-black bg-opacity-50"
                 label={
                   <Text color="blue" weight={700} align="center" size="lg">
-                    {movie.vote_average * 10}%
+                    {show.vote_average * 10}%
                   </Text>
                 }
               />
@@ -180,8 +175,8 @@ const Movie = ({ movie }: { movie: any }) => {
                 Overview
               </Text>
               <Text>
-                {movie.overview
-                  ? movie.overview
+                {show.overview
+                  ? show.overview
                   : "There's no available overview."}
               </Text>
             </div>
@@ -192,20 +187,22 @@ const Movie = ({ movie }: { movie: any }) => {
   );
 };
 
-export default Movie;
+export default Show;
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const slug = ctx.params?.slug as string;
 
-  const movieId = slug.split("-")[0];
+  const showId = slug.split("-")[0];
 
-  const movieData = await tmdb.movieInfo(movieId);
+  const showData = await tmdb.tvInfo(showId);
 
-  console.log("static movieid", movieId);
+  console.log(showData, "showdata");
+
+  console.log("static showid", showId);
 
   return {
     props: {
-      movie: movieData,
+      show: showData,
     },
     revalidate: 60 * 60 * 24, //Once a day
   };

@@ -3,6 +3,8 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import AlreadyWatched from "../../components/Profile/AlreadyWatched";
+import Favorites from "../../components/Profile/Favorites";
 import PlanToWatch from "../../components/Profile/PlanToWatch";
 import useUser from "../../hooks/use-user";
 
@@ -38,7 +40,7 @@ const profile = () => {
 
   return (
     <div>
-      <Container py={12}>
+      <Container size="xl" py={12}>
         <Group>
           <Image
             src={user.image_url}
@@ -53,17 +55,20 @@ const profile = () => {
           position="center"
           grow
           tabPadding="lg"
-          styles={(theme) => ({
-            tabControl: {
-              fontSize: "1.25rem",
-            },
-          })}
+          mt={24}
+          classNames={{
+            tabLabel: "mb-1 sm:text-lg leading-[18px]",
+          }}
         >
-          <Tabs.Tab label="Already Watched">Already Watched</Tabs.Tab>
+          <Tabs.Tab label="Already Watched">
+            <AlreadyWatched />
+          </Tabs.Tab>
           <Tabs.Tab label="Plan to Watch">
             <PlanToWatch />
           </Tabs.Tab>
-          <Tabs.Tab label="Favorites">Favorites</Tabs.Tab>
+          <Tabs.Tab label="Favorites">
+            <Favorites />
+          </Tabs.Tab>
         </Tabs>
       </Container>
     </div>

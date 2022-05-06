@@ -12,6 +12,7 @@ import {
   Menu,
   Divider,
   Group,
+  Drawer,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { NextLink } from "@mantine/next";
@@ -20,6 +21,7 @@ import { FormEvent, FormEventHandler, SetStateAction, useState } from "react";
 import { signIn, useSession, signOut } from "next-auth/react";
 import SignInSignUp from "./SignInSignUp";
 import useUser from "../hooks/use-user";
+import { Search } from "tabler-icons-react";
 
 type HeaderP = {
   opened: boolean;
@@ -28,6 +30,7 @@ type HeaderP = {
 
 const Header = () => {
   const [opened, setOpened] = useState(false);
+  const [navOpened, setNavOpened] = useState(false);
   const [activeTab, setActiveTab] = useState(1); //Tab for sign-in/up modal
 
   const { data: session, status } = useSession();
@@ -37,67 +40,91 @@ const Header = () => {
   return (
     <>
       <MantineHeader height={70}>
-        <Container size="xl" className="flex justify-between items-center h-full">
-          <NextLink href="/" className="text-2xl font-bold">
-            ZeTell
-          </NextLink>
+        <Container size="xl" className="h-full flex items-center">
+          <Drawer
+            opened={navOpened}
+            onClose={() => setNavOpened(false)}
+            withCloseButton={false}
+            padding="xl"
+            size="xl"
+            classNames={{
+              drawer: 'w-[75%]'
+            }}
+            className=" translate-y-[70px] "
+          >
+            <NavLinks />
+          </Drawer>
 
-          <ul className="flex items-center space-x-4 text-lg ml-8">
-            <li>
-              <NextLink
-                href="/about"
-                className="hover:-translate-y-2 transition-all hover:text-white"
-              >
-                <Button>About</Button>
-              </NextLink>
-            </li>
-          </ul>
-
-          {status === "loading" ? (
-            <></>
-          ) : !session ? (
-            <Group>
-              <Button
-                onClick={() => {
-                  setOpened(true);
-                  setActiveTab(0);
-                }}
-                className="bg-primary"
-              >
-                Sign-in
-              </Button>
-              <Button
-                onClick={() => {
-                  setOpened(true);
-                  setActiveTab(1);
-                }}
-                className="bg-primary"
-              >
-                Sign-up
-              </Button>
-            </Group>
-          ) : (
-            <>
-              <Menu
-                control={<Avatar src={session.user?.image} />}
+          <Group position="apart" className="w-full">
+            <MediaQuery
+              largerThan="sm"
+              styles={{ display: "none" }}
+              className=""
+            >
+              <Burger
+                opened={navOpened}
+                onClick={() => setNavOpened((o) => !o)}
                 size="sm"
-                placement="center"
-                withArrow
-              >
-                <NextLink href={"/u/" + user?.username}>
-                  <Menu.Item>
-                    <p className="font-semibold text-lg">{user?.username}</p>
-                  </Menu.Item>
-                </NextLink>
-                <Divider className="border-t-gray-500" />
+                mr="xl"
+              />
+            </MediaQuery>
+            <NextLink href="/" className="text-2xl font-bold">
+              ZeTell
+            </NextLink>
 
-                <Menu.Item>Settings</Menu.Item>
+            <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+              <div className="flex-[2] ml-6">
+                <NavLinks />
+              </div>
+            </MediaQuery>
 
-                <Divider my="xs" labelPosition="center" />
-                <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
-              </Menu>
-            </>
-          )}
+            {status === "loading" ? (
+              <></>
+            ) : !session ? (
+              <Group>
+                <Button
+                  onClick={() => {
+                    setOpened(true);
+                    setActiveTab(0);
+                  }}
+                  className="bg-primary"
+                >
+                  Sign-in
+                </Button>
+                <Button
+                  onClick={() => {
+                    setOpened(true);
+                    setActiveTab(1);
+                  }}
+                  className="bg-primary"
+                >
+                  Sign-up
+                </Button>
+              </Group>
+            ) : (
+              <Group>
+                <Search spacing="lg" />
+                <Menu
+                  control={<Avatar src={session.user?.image} />}
+                  size="sm"
+                  placement="center"
+                  withArrow
+                >
+                  <NextLink href={"/u/" + user?.username}>
+                    <Menu.Item>
+                      <p className="font-semibold text-lg">{user?.username}</p>
+                    </Menu.Item>
+                  </NextLink>
+                  <Divider className="border-t-gray-500" />
+
+                  <Menu.Item>Settings</Menu.Item>
+
+                  <Divider my="xs" labelPosition="center" />
+                  <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
+                </Menu>
+              </Group>
+            )}
+          </Group>
         </Container>
       </MantineHeader>
 
@@ -109,3 +136,18 @@ const Header = () => {
 };
 
 export default Header;
+
+const NavLinks = () => (
+  <div className="flex md:space-x-4 items-center flex-col md:flex-row space-y-4 md:space-y-0 text-xl sm:text-base">
+    <NextLink href="/movies">
+      <span className="text-gray-300 hover:text-white font-semibold">
+        Movies
+      </span>
+    </NextLink>
+    <NextLink href="/shows">
+      <span className="text-gray-300 hover:text-white font-semibold">
+        TV Shows
+      </span>
+    </NextLink>
+  </div>
+);

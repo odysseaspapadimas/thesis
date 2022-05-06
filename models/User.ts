@@ -1,29 +1,22 @@
 import mongoose from "mongoose";
 
+const ListItemSchema = new mongoose.Schema(
+  {
+    id: String,
+    type: String,
+  },
+  { _id: false }
+);
+
 const UserSchema = new mongoose.Schema(
   {
     email: String,
     username: String,
     createdAt: String,
     image_url: String,
-    plan_to: [
-      {
-        _id: false,
-        id: String,
-      },
-    ],
-    watched: [
-      {
-        _id: false,
-        id: String,
-      },
-    ],
-    favorite: [
-      {
-        _id: false,
-        id: String,
-      },
-    ],
+    plan_to: [ListItemSchema],
+    watched: [ListItemSchema],
+    favorites: [ListItemSchema],
   },
   { versionKey: false }
 );

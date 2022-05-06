@@ -1,27 +1,13 @@
 import useSWR from "swr";
 import fetcher from "../../helpers/fetcher";
-import Show from "../Show";
+import Movie from "../Movie";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from "react-responsive-carousel";
+import { MovieType } from "../../constants/types";
+import Show from "../Show";
+import { Group } from "@mantine/core";
+import { NextLink } from "@mantine/next";
 
-export type Movie = {
-  title: string;
-  overview: string;
-  release_date: string;
-  vote_average: number;
-  id: number;
-  poster_path: string;
-  backdrop_path: string;
-  genres: Genre[];
-  runtime: number;
-};
-
-export type Genre = {
-  id: number;
-  name: string;
-};
-
-const TrendingShows = () => {
+const TrendingMovies = () => {
   const { data: shows, error } = useSWR(
     `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
     fetcher
@@ -30,11 +16,23 @@ const TrendingShows = () => {
   console.log(shows);
 
   return (
-    <div className="grid grid-cols-2 place-items-stretch md:grid-cols-5 gap-4 md:gap-2">
-      {shows?.results?.map((data: Movie) => (
-        <Show key={data.id} data={data} />
-      ))}
+    <div>
+      <Group position="apart" className="border-b border-gray-600 mb-3">
+        <h2 className="font-semibold text-lg">Trending Movies</h2>
+        <NextLink
+          href="movies"
+          className="text-gray-300 text-sm hover:text-primary"
+        >
+          See more
+        </NextLink>
+      </Group>
+
+      <div className="grid grid-cols-2 md:grid-cols-6 grid-flow-row md:gap-2">
+        {shows?.results
+          ?.map((data: MovieType) => <Show key={data.id} data={data} />)
+          .slice(0, 6)}
+      </div>
     </div>
   );
 };
-export default TrendingShows;
+export default TrendingMovies;

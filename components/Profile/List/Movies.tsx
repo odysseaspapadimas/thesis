@@ -1,6 +1,12 @@
-const Movies = () => {
+import { MovieType } from "../../../constants/types";
+
+const Movies = ({ movies }: { movies: [MovieType] }) => {
   return (
-    <div>Movies</div>
-  )
-}
-export default Movies
+    <div>
+      {movies.map((movie) => (
+        <div>{movie.title}</div>
+      ))}
+    </div>
+  );
+};
+export default Movies;

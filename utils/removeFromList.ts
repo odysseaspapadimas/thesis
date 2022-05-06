@@ -1,9 +1,10 @@
 //Used to add to watched, plan to and favorite lists
 
-type Category = "watched" | "plan" | "favorite";
-const removeFromList = async (category: Category, id: string) => {
+type List = "watched" | "plan" | "favorites";
+type Type = "movie" | "tv";
+const removeFromList = async (list: List, id: string, type: Type) => {
   const res = await fetch(
-    `/api/user/list/remove?type=${category}&id=${id}`,
+    `/api/user/list/remove?list=${list}&id=${id}&type=${type}`,
     {
       method: "POST",
     }

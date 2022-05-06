@@ -32,6 +32,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         withNormalizeCSS
         theme={{
           /** Put your mantine theme override here */
+
           colorScheme: "dark",
           colors: {
             dark: [
@@ -47,6 +48,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
               "#101113",
             ],
           },
+          fontFamily: "Manrope, sans-serif",
         }}
       >
         <NotificationsProvider>

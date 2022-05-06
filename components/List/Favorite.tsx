@@ -20,7 +20,7 @@ const Favorite = ({ onList, handler }: ToggleOnListButtonProps) => {
       >
         <Heart
           className={
-            onList?.on.includes("favorite") ? "text-red-500 fill-red-500" : ""
+            onList?.on.includes("favorites") ? "text-red-500 fill-red-500" : ""
           }
         />
       </ActionIcon>

@@ -8,7 +8,7 @@ export type List = {
   on: [ListTypes];
 };
 
-export type ListTypes = "watched" | "plan" | "favorite";
+export type ListTypes = "watched" | "plan" | "favorites";
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,9 +37,9 @@ export default async function handler(
         break;
       }
     }
-    for (let i = 0; i < user.favorite.length; i++) {
-      if (user.favorite[i].id === id) {
-        on.push("favorite");
+    for (let i = 0; i < user.favorites.length; i++) {
+      if (user.favorites[i].id === id) {
+        on.push("favorites");
         break;
       }
     }

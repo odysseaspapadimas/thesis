@@ -5,6 +5,7 @@ import useSWR from "swr";
 import Header from "../components/Header";
 import SignupModal from "../components/Home/SignupModal";
 import TrendingMovies from "../components/Home/TrendingMovies";
+import TrendingShows from "../components/Home/TrendingShows";
 import fetcher from "../helpers/fetcher";
 import useUser from "../hooks/use-user";
 import { NextPageWithAuth } from "./_app";
@@ -32,17 +33,11 @@ const Home: NextPageWithAuth = () => {
   }
 
   return (
-    <div>
-      <Container size="xl" className="grid place-items-center py-10">
-        <h1>Welcome, {user?.username}</h1>
-        <br />
-        <h2 className="font-semibold text-xl mb-6">
-          Check out the movies trending right now
-        </h2>
-
-        <TrendingMovies />
-      </Container>
-    </div>
+    <Container size="xl" className="py-10">
+      <TrendingMovies />
+      <br />
+      <TrendingShows />
+    </Container>
   );
 };
 
