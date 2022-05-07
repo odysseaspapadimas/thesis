@@ -18,22 +18,11 @@ const Home: NextPageWithAuth = () => {
     fetcher
   );
 
-  const { user, error: userError } = useUser({ session });
-
-  if (!data && !error) {
-    return <Loader size="xl" className="w-full p-auto mt-10" variant="dots" />;
-  }
-
-  if (!data.userExists) {
-    console.log("user doesn't exist open modal");
-  }
-
-  if (!data.userExists) {
-    return <div>{session && <SignupModal session={session} />}</div>;
-  }
-
   return (
     <Container size="xl" className="py-10">
+      {data && !data.userExists && (
+        <div>{session && <SignupModal session={session} />}</div>
+      )}
       <TrendingMovies />
       <br />
       <TrendingShows />

@@ -4,7 +4,7 @@ import Movie from "../Movie";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { MovieType, TVShowType } from "../../constants/types";
 import Show from "../Show";
-import { Group } from "@mantine/core";
+import { Group, Skeleton } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 
 const TrendingShows = () => {
@@ -27,7 +27,16 @@ const TrendingShows = () => {
         </NextLink>
       </Group>
 
-      <div className="grid justify-items-center space-y-3 md:space-y-0 w-full grid-cols-2 md:grid-cols-6 md:gap-2">
+      <div className="grid justify-items-center gap-y-3 md:space-y-0 w-full grid-cols-2 md:grid-cols-6 md:gap-2">
+      {!error &&
+          !shows &&
+          Array.from(new Array(6)).map((_, i) => (
+            <div key={i}>
+              <Skeleton width={138} height={208} mb="sm" />
+              <Skeleton height={8} width="95%" mb="sm" />
+              <Skeleton height={8} width="85%" />
+            </div>
+          ))}
         {shows?.results
           ?.map((data: TVShowType) => <Show key={data.id} data={data} />)
           .slice(0, 6)}
