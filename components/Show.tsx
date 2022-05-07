@@ -7,6 +7,7 @@ import { Tooltip } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 import { Dots, Plus } from "tabler-icons-react";
 import { MovieType, TVShowType } from "../constants/types";
+import { useSession } from "next-auth/react";
 
 const Show = ({ data }: { data: MovieType | TVShowType }) => {
   const [opened, handlers] = useDisclosure(false);
@@ -32,6 +33,8 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       data.name.toLowerCase().replaceAll(/[\W_]+/g, "-");
   }
 
+  const { data: session } = useSession();
+
   return (
     <div className="relative w-[140px] sm:w-[175px]">
       <NextLink href={link} className="">
@@ -42,23 +45,25 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
           <Image layout="fill" src={IMG_URL(data.poster_path)} />
         </div>
       </NextLink>
-      <Menu
-        control={
-          <ActionIcon
-            className="hover:bg-slate-800 transition-colors duration-75"
-            variant="filled"
-          >
-            <Dots />
-          </ActionIcon>
-        }
-        size="sm"
-        gutter={0}
-        placement="end"
-        className="absolute top-2 right-2 z-10"
-      >
-        <Menu.Item>Already Watched</Menu.Item>
-        <Menu.Item>Plan to Watch</Menu.Item>
-      </Menu>
+      {session && (
+        <Menu
+          control={
+            <ActionIcon
+              className="hover:bg-slate-800 transition-colors duration-75"
+              variant="filled"
+            >
+              <Dots />
+            </ActionIcon>
+          }
+          size="sm"
+          gutter={0}
+          placement="end"
+          className="absolute top-2 right-2 z-10"
+        >
+          <Menu.Item>Already Watched</Menu.Item>
+          <Menu.Item>Plan to Watch</Menu.Item>
+        </Menu>
+      )}
       <p className=" text-base font-semibold mt-1">
         {name} ({release_date})
       </p>

@@ -44,6 +44,7 @@ const Header = () => {
           <Drawer
             opened={navOpened}
             onClose={() => setNavOpened(false)}
+            onClick={() => setNavOpened(false)}
             withCloseButton={false}
             padding="xl"
             size="xl"
