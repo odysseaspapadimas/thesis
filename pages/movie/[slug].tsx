@@ -103,91 +103,83 @@ const Movie = ({ movie }: { movie: any }) => {
   };
 
   return (
-    <div>
-      <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
-          <img
-            src={IMG_URL(movie.backdrop_path)}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <Container
-          size="xl"
-          className="relative h-full flex flex-col md:flex-row items-center py-20"
-        >
-          <div
-            className="relative w-[225px] md:w-[300px]"
-            style={{ aspectRatio: "1 /1.5" }}
-          >
-            <Image
-              layout="fill"
-              src={IMG_URL(movie.poster_path)}
-              className="rounded-md flex-1"
-            />
-          </div>
-
-          <div className="flex-1 max-w-2xl flex flex-col px-8">
-            <div className="flex">
-              <p className="text-3xl font-semibold">
-                {movie.title}
-                <span className="text-2xl">
-                  {" "}
-                  ({movie.release_date.split("-")[0]})
-                </span>
-              </p>
-            </div>
-
-            <div className="flex space-x-2">
-              {movie.release_date} &bull;{" "}
-              {movie.genres.map((genre: Genre, i: number) => (
-                <>
-                  {genre.name}
-                  {i < movie.genres.length - 1 && ", "}
-                </>
-              ))}{" "}
-              &bull; {movie.runtime}m
-            </div>
-
-            <div className="flex items-center">
-              <RingProgress
-                sections={[
-                  {
-                    value: movie.vote_average * 10,
-                    color: `hsl(${(115 * movie.vote_average) / 10}, 100%, 28%)`,
-                  },
-                ]}
-                size={100}
-                roundCaps
-                className="rounded-full bg-black bg-opacity-50"
-                label={
-                  <Text color="blue" weight={700} align="center" size="lg">
-                    {movie.vote_average * 10}%
-                  </Text>
-                }
-              />
-
-              {user && (
-                <div className="flex justify-around items-center ml-8 space-x-8">
-                  <AlreadyWatched onList={onList} handler={handleWatched} />
-                  <PlanToWatch onList={onList} handler={handlePlan} />
-                  <Favorite onList={onList} handler={handleFavorite} />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <Text size="xl" weight={500} my={8}>
-                Overview
-              </Text>
-              <Text>
-                {movie.overview
-                  ? movie.overview
-                  : "There's no available overview."}
-              </Text>
-            </div>
-          </div>
-        </Container>
+    <div className="relative">
+      <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
+        <img
+          src={IMG_URL(movie.backdrop_path)}
+          className="w-full h-full object-cover"
+        />
       </div>
+      <Container
+        size="xl"
+        className="relative h-full grid place-items-center sm:flex sm:items-center py-10 sm:py-20"
+      >
+        <Image
+          height={450}
+          width={300}
+          src={IMG_URL(movie.poster_path)}
+          className="rounded-md flex-1"
+        />
+
+        <div className="flex-1 flex flex-col mt-8 sm:max-w-2xl sm:ml-8">
+          <div className="flex">
+            <p className="text-3xl font-semibold">
+              {movie.title}
+              <span className="text-2xl">
+                {" "}
+                ({movie.release_date.split("-")[0]})
+              </span>
+            </p>
+          </div>
+
+          <div className="flex space-x-2">
+            {movie.release_date} &bull;{" "}
+            {movie.genres.map((genre: Genre, i: number) => (
+              <>
+                {genre.name}
+                {i < movie.genres.length - 1 && ", "}
+              </>
+            ))}{" "}
+            &bull; {movie.runtime}m
+          </div>
+
+          <div className="flex items-center flex-col sm:flex-row sm:my-4">
+            <RingProgress
+              sections={[
+                {
+                  value: movie.vote_average * 10,
+                  color: `hsl(${(115 * movie.vote_average) / 10}, 100%, 28%)`,
+                },
+              ]}
+              size={100}
+              roundCaps
+              className="rounded-full bg-black bg-opacity-50 my-4 sm:my-0"
+              label={
+                <Text color="white" weight={700} align="center" size="lg">
+                  {movie.vote_average * 10}%
+                </Text>
+              }
+            />
+
+            {user && (
+              <div className="flex justify-around items-center sm:ml-8 space-x-8">
+                <AlreadyWatched onList={onList} handler={handleWatched} />
+                <PlanToWatch onList={onList} handler={handlePlan} />
+                <Favorite onList={onList} handler={handleFavorite} />
+              </div>
+            )}
+          </div>
+
+          <div>
+            <p className="text-2xl font-medium my-2">Overview</p>
+            <Text>
+              {movie.overview
+                ? movie.overview
+                : "There's no available overview."}
+            </Text>
+          </div>
+        </div>
+      </Container>
     </div>
   );
 };

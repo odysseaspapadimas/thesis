@@ -103,86 +103,79 @@ const Show = ({ show }: { show: TVShowType }) => {
   };
 
   return (
-    <div>
-      <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
-          <img
-            src={IMG_URL(show.backdrop_path)}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <Container
-          size="xl"
-          className="relative h-full md:flex items-center py-20"
-        >
-          <Image
-            height={450}
-            width={300}
-            src={IMG_URL(show.poster_path)}
-            className="rounded-md flex-1"
-          />
-
-          <div className="flex-1 max-w-2xl flex flex-col px-8">
-            <div className="flex items-end">
-              <p className="text-3xl font-semibold">
-                {show.name}
-                <span className="text-2xl">
-                  &nbsp;({show.first_air_date.split("-")[0]})
-                </span>
-              </p>
-            </div>
-
-            <div className="flex space-x-2">
-              {show.genres.map((genre: Genre, i: number) => (
-                <p key={genre.id}>
-                  {genre.name}
-                  {i < show.genres.length - 1 && ","}
-                </p>
-              ))}
-              &nbsp; &bull;
-              <p>{show.episode_run_time}m</p>
-            </div>
-
-            <div className="flex items-center">
-              <RingProgress
-                sections={[
-                  {
-                    value: show.vote_average * 10,
-                    color: `hsl(${(115 * show.vote_average) / 10}, 100%, 28%)`,
-                  },
-                ]}
-                size={100}
-                roundCaps
-                className="rounded-full bg-black bg-opacity-50"
-                label={
-                  <Text color="blue" weight={700} align="center" size="lg">
-                    {show.vote_average * 10}%
-                  </Text>
-                }
-              />
-
-              {user && (
-                <div className="flex justify-around items-center ml-8 space-x-8">
-                  <AlreadyWatched onList={onList} handler={handleWatched} />
-                  <PlanToWatch onList={onList} handler={handlePlan} />
-                  <Favorite onList={onList} handler={handleFavorite} />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <Text size="xl" weight={500} my={8}>
-                Overview
-              </Text>
-              <Text>
-                {show.overview
-                  ? show.overview
-                  : "There's no available overview."}
-              </Text>
-            </div>
-          </div>
-        </Container>
+    <div className="relative">
+      <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
+        <img
+          src={IMG_URL(show.backdrop_path)}
+          className="w-full h-full object-cover"
+        />
       </div>
+      <Container
+        size="xl"
+        className="relative h-full grid place-items-center sm:flex sm:items-center py-10 sm:py-20"
+      >
+        <Image
+          height={450}
+          width={300}
+          src={IMG_URL(show.poster_path)}
+          className="rounded-md flex-1"
+        />
+
+        <div className="flex-1 flex flex-col mt-8 sm:max-w-2xl sm:ml-8">
+          <div className="flex">
+            <p className="text-3xl font-semibold">
+              {show.name}
+              <span className="text-2xl">
+                &nbsp;({show.first_air_date.split("-")[0]})
+              </span>
+            </p>
+          </div>
+
+          <div className="flex space-x-2">
+            {show.genres.map((genre: Genre, i: number) => (
+              <>
+                {genre.name}
+                {i < show.genres.length - 1 && ", "}
+              </>
+            ))}{" "}
+            &bull; {show.episode_run_time}m
+          </div>
+
+          <div className="flex items-center flex-col sm:flex-row sm:py-4">
+            <RingProgress
+              sections={[
+                {
+                  value: show.vote_average * 10,
+                  color: `hsl(${(115 * show.vote_average) / 10}, 100%, 28%)`,
+                },
+              ]}
+              size={100}
+              roundCaps
+              className="rounded-full bg-black bg-opacity-50 my-4 sm:my-0"
+              label={
+                <Text color="white" weight={700} align="center" size="lg">
+                  {show.vote_average * 10}%
+                </Text>
+              }
+            />
+
+            {user && (
+              <div className="flex justify-around items-center sm:ml-8 space-x-8">
+                <AlreadyWatched onList={onList} handler={handleWatched} />
+                <PlanToWatch onList={onList} handler={handlePlan} />
+                <Favorite onList={onList} handler={handleFavorite} />
+              </div>
+            )}
+          </div>
+
+          <div>
+            <p className="text-2xl font-medium my-2">Overview</p>
+            <Text>
+              {show.overview ? show.overview : "There's no available overview."}
+            </Text>
+          </div>
+        </div>
+      </Container>
     </div>
   );
 };
