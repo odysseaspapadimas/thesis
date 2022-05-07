@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FC } from "react";
 import { IMG_URL } from "../constants/tmdbUrls";
-import { ActionIcon, Button, Menu } from "@mantine/core";
+import { ActionIcon, Button, Divider, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Tooltip } from "@mantine/core";
 import { NextLink } from "@mantine/next";
@@ -60,8 +60,10 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
           placement="end"
           className="absolute top-2 right-2 z-10"
         >
+          <Menu.Label>Add to list</Menu.Label>
           <Menu.Item>Already Watched</Menu.Item>
           <Menu.Item>Plan to Watch</Menu.Item>
+          <Menu.Item>Favorite</Menu.Item>
         </Menu>
       )}
       <p className=" text-base font-semibold mt-1">

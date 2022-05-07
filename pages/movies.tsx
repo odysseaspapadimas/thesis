@@ -14,7 +14,7 @@ const movies = () => {
 
   return (
     <Container size="xl" py={36}>
-      <h1>Popular movies</h1>
+      <h1>Popular Movies</h1>
       <div className="flex flex-col md:flex-row">
         <div className="flex-1">filters</div>
         <div className="flex-[3]">
