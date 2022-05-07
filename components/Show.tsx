@@ -11,10 +11,13 @@ import { useSession } from "next-auth/react";
 import useUser from "../hooks/use-user";
 import useSWR from "swr";
 import fetcher from "../helpers/fetcher";
+import addToList, { Type } from "../utils/addToList";
+import removeFromList from "../utils/removeFromList";
 
 const Show = ({ data }: { data: MovieType | TVShowType }) => {
   const [opened, handlers] = useDisclosure(false);
   let name, release_date, link;
+  let type = "movie" as Type;
 
   if (data.hasOwnProperty("title")) {
     data = data as MovieType;
@@ -27,6 +30,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       data.title.toLowerCase().replaceAll(/[\W_]+/g, "-");
   } else {
     data = data as TVShowType;
+    type = "show";
     name = data.name;
     release_date = data.first_air_date.split("-")[0];
     link =
@@ -50,6 +54,43 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       : null,
     fetcher
   );
+
+  const handleWatched = async () => {
+    if (!onList.on.includes("watched")) {
+      await addToList("watched", String(data.id), type);
+
+      if (onList.on.includes("plan")) {
+        await removeFromList("plan", String(data.id), type);
+      }
+    } else if (onList.on.includes("watched")) {
+      await removeFromList("watched", String(data.id), type);
+    }
+
+    mutateOnList();
+  };
+
+  const handlePlan = async () => {
+    if (!onList.on.includes("plan")) {
+      await addToList("plan", String(data.id), type);
+
+      if (onList.on.includes("watched")) {
+        await removeFromList("watched", String(data.id), type);
+      }
+    } else if (onList.on.includes("plan")) {
+      await removeFromList("plan", String(data.id), type);
+    }
+    mutateOnList();
+  };
+
+  const handleFavorite = async () => {
+    console.log("hi");
+    if (!onList.on.includes("favorites")) {
+      await addToList("favorites", String(data.id), type);
+    } else if (onList.on.includes("favorites")) {
+      await removeFromList("favorites", String(data.id), type);
+    }
+    mutateOnList();
+  };
 
   return (
     <div className="relative w-[140px] sm:w-[175px]">
@@ -88,6 +129,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
         >
           <Menu.Label>Add to list</Menu.Label>
           <Menu.Item
+            onClick={handleWatched}
             icon={
               <Eye
                 size={14}
@@ -98,6 +140,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
             Already Watched
           </Menu.Item>
           <Menu.Item
+            onClick={handlePlan}
             icon={
               <Plus
                 size={14}
@@ -108,6 +151,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
             Plan to Watch
           </Menu.Item>
           <Menu.Item
+            onClick={handleFavorite}
             icon={
               <Heart
                 size={14}

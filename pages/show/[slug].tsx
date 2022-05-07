@@ -39,7 +39,7 @@ const Show = ({ show }: { show: TVShowType }) => {
 
   const { user, error: userError } = useUser({ session });
 
-  const type = "tv"; //What kind of media is this to make seperate calls when adding/removing from lists
+  const type = "show"; //What kind of media is this to make seperate calls when adding/removing from lists
 
   const {
     data: onList,
@@ -66,6 +66,7 @@ const Show = ({ show }: { show: TVShowType }) => {
   }
 
   const handleWatched = async () => {
+    console.log('hi')
     if (!onList.on.includes("watched")) {
       await addToList("watched", showId, type);
 

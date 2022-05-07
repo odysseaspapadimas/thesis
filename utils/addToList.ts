@@ -1,7 +1,7 @@
 //Used to add to watched, plan to and favorite lists
 
 type List = "watched" | "plan" | "favorites";
-type Type = "movie" | "tv";
+export type Type = "movie" | "show";
 const addToList = async (list: List, id: string, type: Type) => {
   const res = await fetch(
     `/api/user/list/add?list=${list}&id=${id}&type=${type}`,

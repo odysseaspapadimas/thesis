@@ -10,8 +10,6 @@ export default async function handler(
 ) {
   const session = await getSession({ req });
 
-  console.log("getlist runs");
-
   if (session) {
     const email = session.user?.email;
     await dbConnect();
@@ -19,11 +17,11 @@ export default async function handler(
     let { list } = req.query;
     if (list === "plan") list = "plan_to";
 
-    console.log(list, "lislist");
-
     const user = await User.findOne({ email });
 
     const idList = user[String(list)];
+
+    console.log(idList, "idList", list, 'listtype');
 
     let movieList = [] as any;
     let tvList = [] as any;
@@ -37,7 +35,7 @@ export default async function handler(
       if (type === "movie") {
         const movieData = await tmdb.movieInfo(id);
         movieList = [...movieList, movieData];
-      } else if (type === "tv") {
+      } else if (type === "show") {
         const tvData = await tmdb.tvInfo(id);
         tvList = [...tvList, tvData];
       }
