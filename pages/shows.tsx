@@ -1,15 +1,12 @@
-import { Container } from "@mantine/core";
+import { Container, Skeleton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { GetStaticProps } from "next";
 import useSWR from "swr";
 import Show from "../components/Show";
 import { TVShowType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
 
-const shows = () => {
-  const { data: shows, error } = useSWR(
-    `https://api.themoviedb.org/3/trending/tv/day?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
-    fetcher
-  );
+const shows = ({ shows }: { shows: TVShowType[] }) => {
   const matches = useMediaQuery("(max-width: 400px)", false);
 
   return (
@@ -26,7 +23,7 @@ const shows = () => {
                 : "repeat(auto-fit, minmax(175px, 1fr))",
             }}
           >
-            {shows?.results?.map((data: TVShowType) => (
+            {shows.map((data: TVShowType) => (
               <Show key={data.id} data={data} />
             ))}
           </div>
@@ -36,3 +33,18 @@ const shows = () => {
   );
 };
 export default shows;
+
+export const getStaticProps: GetStaticProps = async () => {
+  const URL = `https://api.themoviedb.org/3/trending/tv/day?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
+
+  const res = await fetch(URL);
+
+  const { results: shows } = await res.json();
+
+  return {
+    props: {
+      shows,
+    },
+    revalidate: 60 * 60 * 24,
+  };
+};

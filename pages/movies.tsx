@@ -10,8 +10,6 @@ import { tmdb } from "../utils/tmdb";
 const movies = ({ movies }: { movies: MovieType[] }) => {
   const matches = useMediaQuery("(max-width: 400px)", false);
 
-  console.log(movies, "pop movies");
-
   return (
     <Container size="xl" py={36}>
       <h1>Popular Movies</h1>
@@ -37,7 +35,7 @@ const movies = ({ movies }: { movies: MovieType[] }) => {
 };
 export default movies;
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
+export const getStaticProps = async () => {
   const URL = `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
 
   const res = await fetch(URL);
@@ -48,5 +46,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     props: {
       movies,
     },
+    revalidate: 60 * 60 * 24,
   };
 };
