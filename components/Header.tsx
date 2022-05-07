@@ -22,6 +22,7 @@ import { signIn, useSession, signOut } from "next-auth/react";
 import SignInSignUp from "./SignInSignUp";
 import useUser from "../hooks/use-user";
 import { Search } from "tabler-icons-react";
+import { useMediaQuery } from "@mantine/hooks";
 
 type HeaderP = {
   opened: boolean;
@@ -37,10 +38,12 @@ const Header = () => {
 
   const { user, error } = useUser({ session });
 
+  const matches = useMediaQuery("(max-width: 378px)");
+
   return (
     <>
       <MantineHeader height={70}>
-        <Container size="xl" className="h-full flex items-center">
+        <Container size="xl" className="h-full grid ">
           <Drawer
             opened={navOpened}
             onClose={() => setNavOpened(false)}
@@ -56,7 +59,7 @@ const Header = () => {
             <NavLinks />
           </Drawer>
 
-          <Group position="apart" className="w-full">
+          <Group position="apart">
             <MediaQuery
               largerThan="sm"
               styles={{ display: "none" }}
@@ -66,10 +69,9 @@ const Header = () => {
                 opened={navOpened}
                 onClick={() => setNavOpened((o) => !o)}
                 size="sm"
-                mr="xl"
               />
             </MediaQuery>
-            <NextLink href="/" className="text-2xl font-bold">
+            <NextLink href="/" className="text-2xl font-bold mx-auto">
               ZeTell
             </NextLink>
 
