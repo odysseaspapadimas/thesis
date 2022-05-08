@@ -1,9 +1,11 @@
-import { Group, MediaQuery, TextInput } from "@mantine/core";
+import { Group, MediaQuery, TextInput, Transition } from "@mantine/core";
 import { useClickOutside, useDisclosure } from "@mantine/hooks";
+import { useRouter } from "next/router";
 import {
   ChangeEvent,
   ChangeEventHandler,
   FormEvent,
+  FormEventHandler,
   MutableRefObject,
   Ref,
   useRef,
@@ -11,7 +13,15 @@ import {
 } from "react";
 import { Search as SearchIcon, X } from "tabler-icons-react";
 
+const searchFade = {
+  in: { opacity: 1, width: "100%" },
+  out: { opacity: 0, width: 0 },
+  transitionProperty: "opacity, width",
+};
+
 const Search = () => {
+  const router = useRouter();
+
   const inputRef = useRef() as MutableRefObject<HTMLInputElement>;
   const [showInput, showInputHandler] = useDisclosure(false, {
     onOpen: () =>
@@ -32,42 +42,60 @@ const Search = () => {
     inputRef.current?.focus();
   };
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    router.push("/search?query=" + query);
+  };
+
   return (
     <Group ref={ref} className="transition-all">
-      {showInput && (
-        <MediaQuery
-          smallerThan="sm"
-          styles={{
-            width: "100%",
-            top: 70,
-            left: "50%",
-            transform: "translateX(-50%)",
-          }}
-        >
-          <div className="absolute z-20">
-            <TextInput
-              ref={inputRef}
-              className=" animate-fadeIn sm:right-[124px]"
-              value={query}
-              onChange={onChangeQuery}
-              placeholder="Not working yet..."
-              rightSection={
-                <X
-                  onClick={handleClearQuery}
-                  size={16}
-                  className="text-gray-400 hover:text-white cursor-pointer"
+      <MediaQuery
+        smallerThan="xs"
+        styles={{
+          position: 'absolute',
+          width: "95%",
+          top: 70,
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      >
+        <div className=" z-20">
+          <Transition
+            mounted={showInput}
+            transition={searchFade}
+            exitDuration={500}
+            duration={500}
+          >
+            {(styles) => (
+              <form onSubmit={handleSubmit}>
+                <TextInput
+                  ref={inputRef}
+                  style={styles}
+                  className="right-[124px]"
+                  value={query}
+                  onChange={onChangeQuery}
+                  placeholder="e.g. The Office"
+                  rightSection={
+                    <X
+                      onClick={handleClearQuery}
+                      size={16}
+                      className="text-gray-400 hover:text-white cursor-pointer"
+                    />
+                  }
                 />
-              }
-            />
-          </div>
-        </MediaQuery>
-      )}
-      <div className="border border-transparent hover:border-primary transition-all cursor-pointer rounded-sm h-[38px] w-[38px] grid place-items-center">
-        {!showInput ? (
-          <SearchIcon onClick={showInputHandler.open} spacing="lg" />
-        ) : (
-          <X onClick={showInputHandler.close} spacing="lg" />
-        )}
+              </form>
+            )}
+          </Transition>
+        </div>
+      </MediaQuery>
+      <div
+        onClick={() =>
+          showInput ? showInputHandler.close() : showInputHandler.open()
+        }
+        className="border border-transparent hover:border-primary transition-all cursor-pointer rounded-sm h-[38px] w-[38px] grid place-items-center"
+      >
+        {!showInput ? <SearchIcon spacing="lg" /> : <X spacing="lg" />}
       </div>
     </Group>
   );
