@@ -21,8 +21,8 @@ import { FormEvent, FormEventHandler, SetStateAction, useState } from "react";
 import { signIn, useSession, signOut } from "next-auth/react";
 import SignInSignUp from "./SignInSignUp";
 import useUser from "../hooks/use-user";
-import { Search } from "tabler-icons-react";
 import { useMediaQuery } from "@mantine/hooks";
+import Search from "./Search";
 
 type HeaderP = {
   opened: boolean;
@@ -75,12 +75,13 @@ const Header = () => {
               ZeTell
             </NextLink>
 
-            <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+            <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
               <div className="flex-[2] ml-6">
                 <NavLinks />
               </div>
             </MediaQuery>
 
+            <Search />
             {status === "loading" ? (
               <></>
             ) : !session ? (
@@ -107,7 +108,6 @@ const Header = () => {
               </Group>
             ) : (
               <Group>
-                <Search spacing="lg" />
                 <Menu
                   control={<Avatar src={session.user?.image} />}
                   size="sm"
