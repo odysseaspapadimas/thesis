@@ -119,6 +119,10 @@ const Movie = ({ movie }: { movie: any }) => {
           width={300}
           src={IMG_URL(movie.poster_path)}
           className="rounded-md flex-1"
+          placeholder="blur"
+          blurDataURL={`/_next/image?url=${IMG_URL(
+            movie.poster_path
+          )}&w=16&q=1`}
         />
 
         <div className="flex-1 flex flex-col mt-8 sm:max-w-2xl sm:ml-8">

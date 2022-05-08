@@ -66,7 +66,7 @@ const Show = ({ show }: { show: TVShowType }) => {
   }
 
   const handleWatched = async () => {
-    console.log('hi')
+    console.log("hi");
     if (!onList.on.includes("watched")) {
       await addToList("watched", showId, type);
 
@@ -120,6 +120,8 @@ const Show = ({ show }: { show: TVShowType }) => {
           width={300}
           src={IMG_URL(show.poster_path)}
           className="rounded-md flex-1"
+          placeholder="blur"
+          blurDataURL={`/_next/image?url=${IMG_URL(show.poster_path)}&w=16&q=1`}
         />
 
         <div className="flex-1 flex flex-col mt-8 sm:max-w-2xl sm:ml-8">
