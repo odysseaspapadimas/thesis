@@ -27,7 +27,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       "/movie/" +
       data.id +
       "-" +
-      data.title.toLowerCase().replaceAll(/[\W_]+/g, "-");
+      data.title.toLowerCase().replace(/[\W_]+/g, "-");
   } else {
     data = data as TVShowType;
     type = "show";
@@ -37,7 +37,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       "/show/" +
       data.id +
       "-" +
-      data.name.toLowerCase().replaceAll(/[\W_]+/g, "-");
+      data.name.toLowerCase().replace(/[\W_]+/g, "-");
   }
 
   const { data: session } = useSession();

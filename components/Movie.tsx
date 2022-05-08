@@ -21,7 +21,7 @@ const Movie = ({ data }: { data: MovieType }) => {
             "/movie/" +
             data.id +
             "-" +
-            data.title.toLowerCase().replaceAll(/[\W_]+/g, "-")
+            data.title.toLowerCase().replace(/[\W_]+/g, "-")
           }
         >
           <Image height={225} width={150} src={IMG_URL(data.poster_path)} />
