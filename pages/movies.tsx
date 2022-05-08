@@ -1,4 +1,4 @@
-import { Container, Group, Skeleton } from "@mantine/core";
+import { Button, Container, Group, Skeleton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { GetStaticPaths, GetStaticProps } from "next";
 import useSWR from "swr";
@@ -28,6 +28,7 @@ const movies = ({ movies }: { movies: MovieType[] }) => {
               <Show key={data.id} data={data} />
             ))}
           </div>
+          <Button className="bg-primary" variant="filled" >Load More</Button>
         </div>
       </div>
     </Container>
