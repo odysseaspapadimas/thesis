@@ -1,4 +1,11 @@
-import { Button, Center, Container, Group, Skeleton } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Group,
+  Loader,
+  Skeleton,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useState } from "react";
@@ -10,18 +17,10 @@ import { tmdb } from "../utils/tmdb";
 
 const URL = `https://api.themoviedb.org/3/trending/tv/day?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
 
-const ShowSection = ({
-  page,
-  fallback,
-}: {
-  page: number;
-  fallback: TVShowType[];
-}) => {
-  console.log(page, "pagenum");
-  const { data } = useSWR(`${URL}&page=${page}`, fetcher, {
-    fallbackData: fallback,
-  });
-  if (!data) return <></>;
+const ShowSection = ({ page }: { page: number }) => {
+  const { data } = useSWR(`${URL}&page=${page}`, fetcher);
+  if (!data)
+    return <Loader className="absolute left-1/2 -translate-x-1/2 bottom-0" />;
   return (
     <>
       {data.results.map((data: TVShowType) => (
@@ -31,13 +30,13 @@ const ShowSection = ({
   );
 };
 
-const shows = ({ data }: { data: TVShowType[] }) => {
+const shows = ({ shows }: { shows: TVShowType[] }) => {
   const matches = useMediaQuery("(max-width: 400px)", false);
   const [page, setPage] = useState(1);
 
   const pages = [];
-  for (let i = 1; i <= page; i++) {
-    pages.push(<ShowSection key={i} page={i} fallback={data} />);
+  for (let i = 2; i <= page; i++) {
+    pages.push(<ShowSection key={i} page={i} />);
   }
 
   return (
@@ -47,13 +46,18 @@ const shows = ({ data }: { data: TVShowType[] }) => {
         <div className="flex-1">filters</div>
         <div className="flex-[3]">
           <div
-            className="grid justify-items-center gap-y-2 md:gap-2"
+            className="relative grid justify-items-center gap-y-2 md:gap-2"
             style={{
               gridTemplateColumns: matches
                 ? "repeat(auto-fit, minmax(140px, 1fr))"
                 : "repeat(auto-fit, minmax(175px, 1fr))",
             }}
           >
+            <>
+              {shows.map((data: TVShowType) => (
+                <Show key={data.id} data={data} />
+              ))}
+            </>
             {pages}
           </div>
           <Center>
@@ -77,11 +81,11 @@ export default shows;
 export const getStaticProps = async () => {
   const res = await fetch(URL);
 
-  const data = await res.json();
+  const { results: shows } = await res.json();
 
   return {
     props: {
-      data,
+      shows,
     },
     revalidate: 60 * 60 * 24,
   };
