@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Person from "../components/Search/Results/Person";
 import Show from "../components/Search/Results/Show";
-import SearchResult from "../components/Search/SearchResult";
 import { Type } from "../utils/addToList";
 import { tmdb } from "../utils/tmdb";
 
