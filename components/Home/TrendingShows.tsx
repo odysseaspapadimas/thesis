@@ -8,7 +8,6 @@ import { Group, Skeleton } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 
 const TrendingShows = ({ shows }: { shows: TVShowType[] }) => {
-  console.log(shows);
 
   return (
     <div>

@@ -8,7 +8,6 @@ import { Group, Skeleton } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 
 const TrendingMovies = ({ movies }: { movies: MovieType[] }) => {
-  console.log(movies);
 
   return (
     <div>

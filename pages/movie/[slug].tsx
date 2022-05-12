@@ -11,7 +11,7 @@ import {
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import useSWR from "swr";
 import { Eye, Heart, Plus } from "tabler-icons-react";
 import Header from "../../components/Header";
@@ -139,10 +139,10 @@ const Movie = ({ movie }: { movie: any }) => {
           <div className="flex space-x-2">
             {movie.release_date} &bull;{" "}
             {movie.genres.map((genre: Genre, i: number) => (
-              <>
+              <React.Fragment key={i}>
                 {genre.name}
                 {i < movie.genres.length - 1 && ", "}
-              </>
+              </React.Fragment>
             ))}{" "}
             &bull; {movie.runtime}m
           </div>
