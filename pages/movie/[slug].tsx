@@ -1,35 +1,35 @@
 import {
-  ActionIcon,
-  Button,
   Container,
   Loader,
-  Overlay,
   RingProgress,
   Text,
-  Tooltip,
 } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import useSWR from "swr";
-import { Eye, Heart, Plus } from "tabler-icons-react";
-import Header from "../../components/Header";
 import AlreadyWatched from "../../components/List/AlreadyWatched";
 import PlanToWatch from "../../components/List/PlanToWatch";
 import Favorite from "../../components/List/Favorite";
-import { IMG_URL, MOVIE_URL } from "../../constants/tmdbUrls";
+import { IMG_URL } from "../../constants/tmdbUrls";
 import fetcher from "../../helpers/fetcher";
 import useUser from "../../hooks/use-user";
 import addToList from "../../utils/addToList";
 import removeFromList from "../../utils/removeFromList";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { tmdb } from "../../utils/tmdb";
-import { List, ListTypes } from "../api/user/list/onList";
-import { Genre } from "../../constants/types";
+import { Genre, MovieType } from "../../constants/types";
+import { CreditsResponse } from "moviedb-promise/dist/request-types";
 
-const Movie = ({ movie }: { movie: any }) => {
+const Movie = ({
+  movie,
+}: {
+  movie: MovieType & { credits: CreditsResponse };
+}) => {
   const router = useRouter();
+
+  console.log(movie, "moviedata");
 
   const slug = router.query.slug as string;
 
@@ -195,9 +195,10 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const movieId = slug.split("-")[0];
 
-  const movieData = await tmdb.movieInfo(movieId);
-
-  console.log("static movieid", movieId);
+  const movieData = await tmdb.movieInfo({
+    id: movieId,
+    append_to_response: "credits",
+  });
 
   return {
     props: {

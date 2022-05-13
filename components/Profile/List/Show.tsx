@@ -11,8 +11,6 @@ import fetcher from "../../../helpers/fetcher";
 import useUser from "../../../hooks/use-user";
 import addToList, { Type } from "../../../utils/addToList";
 import removeFromList from "../../../utils/removeFromList";
-
-import { useIsOverflow } from "../../../hooks/use-is-overflow";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 const Show = ({ data }: { data: MovieType | TVShowType }) => {
