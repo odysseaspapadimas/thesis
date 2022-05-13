@@ -45,11 +45,11 @@ export default Home;
 export const getStaticProps: GetStaticProps = async () => {
   const { results: movies } = await tmdb.trending({
     media_type: "movie",
-    time_window: "week",
+    time_window: "day",
   });
   const { results: shows } = await tmdb.trending({
     media_type: "tv",
-    time_window: "week",
+    time_window: "day",
   });
 
   return {

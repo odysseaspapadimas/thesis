@@ -17,7 +17,8 @@ const List = ({ data }: { data: ListData }) => {
       <Tabs.Tab
         label={<TabLabel text="Both" length={moviesLength + showsLength} />}
       >
-        <Movies movies={data.movies} />
+        <Movies movies={data.movies} /> 
+        <div className="my-4"></div>
         <TVShows shows={data.shows} />
       </Tabs.Tab>
       <Tabs.Tab label={<TabLabel text="Movies" length={moviesLength} />}>

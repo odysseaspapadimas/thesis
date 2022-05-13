@@ -21,8 +21,6 @@ export default async function handler(
 
     const idList = user[String(list)];
 
-    console.log(idList, "idList", list, 'listtype');
-
     let movieList = [] as any;
     let tvList = [] as any;
 

@@ -1,10 +1,12 @@
 import { MovieType } from "../../../constants/types";
+import Show from "./Show";
 
 const Movies = ({ movies }: { movies: [MovieType] }) => {
+  console.log(movies, 'movies');
   return (
-    <div>
+    <div className="flex flex-col space-y-4">
       {movies.map((movie) => (
-        <div>{movie.title}</div>
+        <Show key={movie.id} data={movie} />
       ))}
     </div>
   );

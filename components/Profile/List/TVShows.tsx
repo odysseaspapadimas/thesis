@@ -1,10 +1,11 @@
 import { TVShowType } from "../../../constants/types";
+import Show from "./Show";
 
 const TVShows = ({ shows }: { shows: [TVShowType] }) => {
   return (
-    <div>
+    <div className="flex flex-col space-y-4">
       {shows.map((show) => (
-        <div>{show.name}</div>
+        <Show key={show.id} data={show} />
       ))}
     </div>
   );
