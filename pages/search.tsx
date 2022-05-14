@@ -85,7 +85,7 @@ const search = ({ serverData }: { serverData: SearchMultiResponse }) => {
             })
           : !data && !error
           ? [...Array(20)].map(() => (
-              <Skeleton width={315} height={152} className="rounded-md" />
+              <Skeleton height={152} className="rounded-md w-full" />
             ))
           : data?.results?.map((result) => {
               if (result.media_type === "person") {
