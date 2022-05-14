@@ -49,8 +49,6 @@ const Show = ({ result }: { result: MovieResult | TvResult }) => {
     setLineClamp(Math.round(4 - titleHeight / 25));
   }, [titleRef]);
 
-  console.log(lineClamp, 'clamp');
-
   return (
     <div className="flex rounded-lg border border-gray-600 h-[152px]">
       <NextLink href={link} className=" w-fit">

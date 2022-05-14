@@ -1,3 +1,4 @@
+import { ScrollArea } from "@mantine/core";
 import { CreditsResponse } from "moviedb-promise/dist/request-types";
 import Image from "next/image";
 import { IMG_URL } from "../constants/tmdbUrls";
@@ -6,6 +7,7 @@ const Credits = ({ credits }: { credits: CreditsResponse }) => {
   return (
     <div className="py-6">
       <h2 className="text-2xl font-semibold mb-4">Cast</h2>
+      <ScrollArea offsetScrollbars type="always">
       <div className="flex space-x-2 overflow-x-scroll">
         {credits.cast?.map((cast) => (
           <div
@@ -30,6 +32,7 @@ const Credits = ({ credits }: { credits: CreditsResponse }) => {
           </div>
         ))}
       </div>
+      </ScrollArea>
     </div>
   );
 };
