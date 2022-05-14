@@ -1,6 +1,7 @@
 import { NextLink } from "@mantine/next";
 import { MovieResult, TvResult } from "moviedb-promise/dist/request-types";
 import Image from "next/image";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { IMG_URL } from "../../../constants/tmdbUrls";
 
 type SearchResultP = {
@@ -39,6 +40,17 @@ const Show = ({ result }: { result: MovieResult | TvResult }) => {
     overview = result.overview;
   }
 
+  const titleRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const [lineClamp, setLineClamp] = useState(3);
+
+  useEffect(() => {
+    if (!titleRef.current || !document.defaultView) return;
+    const titleHeight = titleRef.current.offsetHeight;
+    setLineClamp(Math.round(4 - titleHeight / 25));
+  }, [titleRef]);
+
+  console.log(lineClamp, 'clamp');
+
   return (
     <div className="flex rounded-lg border border-gray-600 h-[152px]">
       <NextLink href={link} className=" w-fit">
@@ -56,12 +68,14 @@ const Show = ({ result }: { result: MovieResult | TvResult }) => {
         )}
       </NextLink>
       <div className="p-3 flex-[2]">
-        <h2 className="text-lg font-semibold">{title}</h2>
+        <h2 ref={titleRef} className="text-lg font-semibold">
+          {title}
+        </h2>
         <p className="text-gray-500">{release_date}</p>
         <div
           className="text-ellipsis overflow-hidden "
           style={{
-            WebkitLineClamp: 3,
+            WebkitLineClamp: lineClamp,
             display: "-webkit-box",
             WebkitBoxOrient: "vertical",
           }}

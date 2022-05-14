@@ -8,14 +8,14 @@ const Credits = ({ credits }: { credits: CreditsResponse }) => {
       <h2 className="text-2xl font-semibold mb-4">Cast</h2>
       <div className="flex space-x-2 overflow-x-scroll">
         {credits.cast?.map((cast) => (
-          <div className="flex flex-col border border-gray-400 rounded-md">
+          <div
+            key={cast.id}
+            className="flex flex-col border border-gray-400 rounded-md"
+          >
             {!cast.profile_path ? (
-              <div
-                key={cast.id}
-                className="bg-gray-400 opacity-80 w-[150px] h-[225px]"
-              ></div>
+              <div className="bg-gray-400 opacity-80 w-[150px] h-[225px]"></div>
             ) : (
-              <div key={cast.id} className="w-[150px] h-[225px] relative">
+              <div className="w-[150px] h-[225px] relative">
                 <Image
                   src={IMG_URL(cast.profile_path)}
                   layout="fill"
