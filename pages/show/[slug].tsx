@@ -44,6 +44,7 @@ const Show = ({
   const { data: session, status } = useSession();
 
   const { user, error: userError } = useUser({ session });
+  console.log(show, "show");
 
   const type = "show"; //What kind of media is this to make seperate calls when adding/removing from lists
 
@@ -207,7 +208,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const showData = await tmdb.tvInfo({
     id: showId,
-    append_to_response: "credits",
+    append_to_response: "credits", //TODO: Switch to aggregate_credits, have to make my own type
   });
 
   console.log(showData, "showdata");

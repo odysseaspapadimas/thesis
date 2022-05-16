@@ -94,6 +94,15 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
 
   return (
     <div className="relative w-[140px] sm:w-[175px]">
+      <div
+        className="absolute top-2 left-2 z-20 rounded-full grid place-items-center border-[3px] h-[34px] w-[34px]"
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          borderColor: `hsl(${(115 * data.vote_average) / 10}, 100%, 28%)`,
+        }}
+      >
+        <span>{data.vote_average}</span>
+      </div>
       <NextLink href={link} className="">
         <div
           className="w-[140px] sm:w-[175px] relative cursor-pointer rounded-sm border border-transparent hover:border-blue-400"

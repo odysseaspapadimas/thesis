@@ -25,7 +25,7 @@ const Credits = ({ credits }: { credits: CreditsResponse }) => {
                   />
                 </div>
               )}
-              <div className="p-2">
+              <div className="p-2 max-w-[150px]">
                 <p className="font-semibold">{cast.name}</p>
                 <p>{cast.character}</p>
               </div>

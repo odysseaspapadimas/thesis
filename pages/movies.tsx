@@ -5,44 +5,63 @@ import {
   Group,
   Loader,
   Skeleton,
+  TextInput,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useState } from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
 import Show from "../components/Show";
+import Filters from "../components/Trending/Filters";
 import { MovieType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
-import { tmdb } from "../utils/tmdb";
 
-const URL = `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
+const URL = `https://api.themoviedb.org/3/discover/movie/?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
 
-const MovieSection = ({ page }: { page: number }) => {
-  const { data } = useSWR(`${URL}&page=${page}`, fetcher);
-  if (!data)
-    return <></>;
+const MovieSection = ({ page, filters }: { page: number; filters: string }) => {
+  const { data } = useSWR(`${URL}${filters}&page=${page}`, fetcher);
   return (
     <>
-      {data.results.map((data: MovieType) => (
-        <Show key={data.id} data={data} />
-      ))}
+      {data &&
+        data.results.map((data: MovieType) => (
+          <Show key={data.id} data={data} />
+        ))}
     </>
   );
 };
 const movies = ({ movies }: { movies: MovieType[] }) => {
   const matches = useMediaQuery("(max-width: 400px)", false);
   const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState("");
+  const { data: filteredMovies } = useSWR(
+    filter ? `${URL}${filter}` : null,
+    fetcher
+  );
 
-  const pages = [];
+  const pages = [] as React.ReactElement[];
   for (let i = 2; i <= page; i++) {
-    pages.push(<MovieSection key={i} page={i} />);
+    pages.push(<MovieSection key={i} page={i} filters={filter} />);
   }
+
+  const handleSearch = (filters: any[]) => {
+    console.log(filters, "filters");
+    let filtersString = "";
+
+    for (const filter in filters) {
+      filtersString += `&${filter}=${filters[filter]}`;
+    }
+
+    setFilter(filtersString);
+    console.log(filtersString);
+  };
+
+  console.log(filteredMovies);
 
   return (
     <Container size="xl" py={36}>
       <h1>Popular Movies</h1>
       <div className="flex flex-col md:flex-row">
-        <div className="flex-1">filters</div>
+        <Filters handleSearch={handleSearch} />
         <div className="flex-[3]">
           <div
             className="relative grid justify-items-center gap-y-2 md:gap-2"
@@ -52,11 +71,20 @@ const movies = ({ movies }: { movies: MovieType[] }) => {
                 : "repeat(auto-fit, minmax(175px, 1fr))",
             }}
           >
-            <>
-              {movies.map((data: MovieType) => (
-                <Show key={data.id} data={data} />
-              ))}
-            </>
+            {!filter
+              ? movies.map((data) => <Show key={data.id} data={data} />)
+              : !filteredMovies
+              ? [...Array(20)].map((_, i) => (
+                  <Skeleton
+                    key={i}
+                    className="w-[140px] sm:w-[175px]"
+                    style={{ aspectRatio: "1 / 1.5" }}
+                  />
+                ))
+              : filteredMovies.results.map((data: MovieType) => (
+                  <Show key={data.id} data={data} />
+                ))}
+
             {pages}
           </div>
           <Center>
