@@ -16,10 +16,11 @@ import Filters from "../components/Trending/Filters";
 import { MovieType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
 
-const URL = `https://api.themoviedb.org/3/discover/movie/?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
+const URL = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
 
 const MovieSection = ({ page, filters }: { page: number; filters: string }) => {
   const { data } = useSWR(`${URL}${filters}&page=${page}`, fetcher);
+ 
   return (
     <>
       {data &&
@@ -37,6 +38,8 @@ const movies = ({ movies }: { movies: MovieType[] }) => {
     filter ? `${URL}${filter}` : null,
     fetcher
   );
+
+  console.log(URL, `${URL}${filter}`, 'filterulr')
 
   const pages = [] as React.ReactElement[];
   for (let i = 2; i <= page; i++) {

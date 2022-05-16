@@ -16,7 +16,7 @@ import { TVShowType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
 import { tmdb } from "../utils/tmdb";
 
-const URL = `https://api.themoviedb.org/3/discover/tv/?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
+const URL = `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
 
 const ShowSection = ({ page, filters }: { page: number; filters: string }) => {
   const { data } = useSWR(`${URL}${filters}&page=${page}`, fetcher);
