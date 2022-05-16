@@ -82,52 +82,52 @@ const Header = () => {
             </MediaQuery>
 
             <Search />
-            {status === "loading" ? (
-              <></>
-            ) : !session ? (
-              <Group>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setOpened(true);
-                    setActiveTab(0);
-                  }}
-                  className="bg-primary"
-                >
-                  Sign-in
-                </Button>
-                <Button
-                  onClick={() => {
-                    setOpened(true);
-                    setActiveTab(1);
-                  }}
-                  className="bg-primary"
-                >
-                  Sign-up
-                </Button>
-              </Group>
-            ) : (
-              <Group>
-                <Menu
-                  control={<Avatar src={session.user?.image} />}
-                  size="sm"
-                  placement="center"
-                  withArrow
-                >
-                  <NextLink href={"/u/" + user?.username}>
-                    <Menu.Item>
-                      <p className="font-semibold text-lg">{user?.username}</p>
+            <Group>
+              <Menu
+                control={<Avatar src={session?.user?.image} />}
+                size="sm"
+                placement="end"
+                withArrow
+              >
+                {session ? (
+                  <>
+                    <NextLink href={"/u/" + user?.username}>
+                      <Menu.Item>
+                        <p className="font-semibold text-lg">
+                          {user?.username}
+                        </p>
+                      </Menu.Item>
+                    </NextLink>
+                    <Divider className="border-t-gray-500" />
+
+                    <Menu.Item>Settings</Menu.Item>
+
+                    <Divider my="xs" labelPosition="center" />
+                    <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
+                  </>
+                ) : (
+                  <>
+                    <Menu.Item
+                      onClick={() => {
+                        setOpened(true);
+                        setActiveTab(0);
+                      }}
+                    >
+                      Sign-in
                     </Menu.Item>
-                  </NextLink>
-                  <Divider className="border-t-gray-500" />
-
-                  <Menu.Item>Settings</Menu.Item>
-
-                  <Divider my="xs" labelPosition="center" />
-                  <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
-                </Menu>
-              </Group>
-            )}
+                    <Divider />
+                    <Menu.Item
+                      onClick={() => {
+                        setOpened(true);
+                        setActiveTab(1);
+                      }}
+                    >
+                      Sign-up
+                    </Menu.Item>
+                  </>
+                )}
+              </Menu>
+            </Group>
           </Group>
         </Container>
       </MantineHeader>
