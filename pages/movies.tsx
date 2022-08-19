@@ -15,12 +15,14 @@ import Show from "../components/Show";
 import Filters from "../components/Trending/Filters";
 import { MovieType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
+import { DiscoverMovieRequest } from "moviedb-promise/dist/request-types";
+import Sort from "../components/Trending/Sort";
+import { tmdb } from "../utils/tmdb";
+import { Genre } from "moviedb-promise/dist/types";
 
-const URL = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
+const MovieSection = ({ page, url }: { page: number; url: string }) => {
+  const { data } = useSWR(`${url}&page=${page}`, fetcher);
 
-const MovieSection = ({ page, filters }: { page: number; filters: string }) => {
-  const { data } = useSWR(`${URL}${filters}&page=${page}`, fetcher);
- 
   return (
     <>
       {data &&
@@ -30,32 +32,46 @@ const MovieSection = ({ page, filters }: { page: number; filters: string }) => {
     </>
   );
 };
-const movies = ({ movies }: { movies: MovieType[] }) => {
+const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> }) => {
   const matches = useMediaQuery("(max-width: 400px)", false);
   const [page, setPage] = useState(1);
+
+  const [sortBy, setSortBy] =
+    useState<DiscoverMovieRequest["sort_by"]>("popularity.desc");
+
   const [filter, setFilter] = useState("");
-  const { data: filteredMovies } = useSWR(
-    filter ? `${URL}${filter}` : null,
-    fetcher
+
+  const [url, setUrl] = useState(
+    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}${filter}&sort_by=${sortBy}`
   );
 
-  console.log(URL, `${URL}${filter}`, 'filterulr')
+  const { data: filteredMovies } = useSWR(`${url}`, fetcher);
+
+  console.log(url, "filterulr");
 
   const pages = [] as React.ReactElement[];
   for (let i = 2; i <= page; i++) {
-    pages.push(<MovieSection key={i} page={i} filters={filter} />);
+    pages.push(<MovieSection key={i} page={i} url={url} />);
   }
 
-  const handleSearch = (filters: any[]) => {
+  const [filters, setFilters] = useState<DiscoverMovieRequest>({
+    "vote_average.gte": 0.0,
+    "vote_average.lte": 10.0,
+  });
+
+  const handleSearch = () => {
     console.log(filters, "filters");
     let filtersString = "";
+    let filtersKeys = Object.keys(filters) as Array<keyof DiscoverMovieRequest>;
 
-    for (const filter in filters) {
+    for (const filter of filtersKeys) {
       filtersString += `&${filter}=${filters[filter]}`;
     }
 
     setFilter(filtersString);
-    console.log(filtersString);
+    setUrl(
+      `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}${filtersString}&sort_by=${sortBy}`
+    );
   };
 
   console.log(filteredMovies);
@@ -64,7 +80,13 @@ const movies = ({ movies }: { movies: MovieType[] }) => {
     <Container size="xl" py={36}>
       <h1>Popular Movies</h1>
       <div className="flex flex-col md:flex-row">
-        <Filters handleSearch={handleSearch} />
+        <div className="flex flex-col space-y-2">
+          <Sort sortBy={sortBy} setSortBy={setSortBy} />
+          <Filters filters={filters} setFilters={setFilters} genres={genres} type="movies" />
+          <Button onClick={handleSearch} className="bg-primary">
+            Filter
+          </Button>
+        </div>
         <div className="flex-[3]">
           <div
             className="relative grid justify-items-center gap-y-2 md:gap-2"
@@ -77,14 +99,14 @@ const movies = ({ movies }: { movies: MovieType[] }) => {
             {!filter
               ? movies.map((data) => <Show key={data.id} data={data} />)
               : !filteredMovies
-              ? [...Array(20)].map((_, i) => (
+                ? [...Array(20)].map((_, i) => (
                   <Skeleton
                     key={i}
                     className="w-[140px] sm:w-[175px]"
                     style={{ aspectRatio: "1 / 1.5" }}
                   />
                 ))
-              : filteredMovies.results.map((data: MovieType) => (
+                : filteredMovies.results.map((data: MovieType) => (
                   <Show key={data.id} data={data} />
                 ))}
 
@@ -109,13 +131,18 @@ const movies = ({ movies }: { movies: MovieType[] }) => {
 export default movies;
 
 export const getStaticProps = async () => {
+  const URL = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
+
   const res = await fetch(URL);
 
   const { results: movies } = await res.json();
 
+  const { genres } = await tmdb.genreMovieList();
+
   return {
     props: {
       movies,
+      genres
     },
     revalidate: 60 * 60 * 24,
   };

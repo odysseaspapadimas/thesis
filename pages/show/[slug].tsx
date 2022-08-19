@@ -11,9 +11,9 @@ import {
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { Eye, Heart, Plus } from "tabler-icons-react";
+import { ExternalLink } from "tabler-icons-react";
 import Header from "../../components/Header";
 import AlreadyWatched from "../../components/List/AlreadyWatched";
 import PlanToWatch from "../../components/List/PlanToWatch";
@@ -32,8 +32,10 @@ import Credits from "../../components/Credits";
 
 const Show = ({
   show,
+  providers
 }: {
   show: TVShowType & { credits: CreditsResponse };
+  providers: any;
 }) => {
   const router = useRouter();
 
@@ -44,7 +46,17 @@ const Show = ({
   const { data: session, status } = useSession();
 
   const { user, error: userError } = useUser({ session });
+
   console.log(show, "show");
+
+  const [providersList, setProvidersList] = useState<any>();
+
+  useEffect(() => {
+    const locale = window.navigator.language.split("-")[1]
+    console.log(locale)
+    console.log(providers.results[locale]);
+    setProvidersList(providers.results[locale]);
+  }, [])
 
   const type = "show"; //What kind of media is this to make seperate calls when adding/removing from lists
 
@@ -123,17 +135,26 @@ const Show = ({
           size="xl"
           className="relative h-full grid place-items-center sm:flex sm:items-center py-10 sm:py-20"
         >
-          <Image
-            height={450}
-            width={300}
-            src={IMG_URL(show.poster_path)}
-            className="rounded-md flex-1"
-            placeholder="blur"
-            blurDataURL={`/_next/image?url=${IMG_URL(
-              show.poster_path
-            )}&w=16&q=1`}
-          />
+          <div className="flex flex-col">
+            <Image
+              height={450}
+              width={300}
+              src={IMG_URL(show.poster_path)}
+              className={`rounded-t-md ${!providersList?.link && "rounded-b-md"} flex-1`}
+              placeholder="blur"
+              blurDataURL={`/_next/image?url=${IMG_URL(
+                show.poster_path
+              )}&w=16&q=1`}
+            />
+            {providersList?.link &&
+              <div className="flex justify-center items-center py-4 bg-slate-800">
+                <Button className="bg-primary" rightIcon={<ExternalLink />}>
+                  <a href={providersList?.link} target="_blank">Watch providers</a>
+                </Button>
+              </div>
+            }
 
+          </div>
           <div className="flex-1 flex flex-col mt-8 sm:max-w-2xl sm:ml-8">
             <div className="flex">
               <p className="text-3xl font-semibold">
@@ -167,7 +188,7 @@ const Show = ({
                 className="rounded-full bg-black bg-opacity-50 my-4 sm:my-0"
                 label={
                   <Text color="white" weight={700} align="center" size="lg">
-                    {show.vote_average * 10}%
+                    {Math.round(show.vote_average * 10)}%
                   </Text>
                 }
               />
@@ -215,9 +236,14 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   console.log("static showid", showId);
 
+  const providers = await tmdb.tvWatchProviders({ id: showId })
+
+
+
   return {
     props: {
       show: showData,
+      providers
     },
     revalidate: 60 * 60 * 24, //Once a day
   };

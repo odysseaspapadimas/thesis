@@ -1,17 +1,13 @@
-import { Button, Container, Loader, Modal, TextInput } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 import useSWR from "swr";
-import Header from "../components/Header";
 import SignupModal from "../components/Home/SignupModal";
 import TrendingMovies from "../components/Home/TrendingMovies";
 import TrendingShows from "../components/Home/TrendingShows";
 import { MovieType, TVShowType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
-import useUser from "../hooks/use-user";
 import { tmdb } from "../utils/tmdb";
-import { NextPageWithAuth } from "./_app";
 
 interface HomeProps {
   movies: MovieType[];

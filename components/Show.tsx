@@ -101,7 +101,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
           borderColor: `hsl(${(115 * data.vote_average) / 10}, 100%, 28%)`,
         }}
       >
-        <span>{data.vote_average}</span>
+        <span>{Math.round(data.vote_average * 10) / 10}</span>
       </div>
       <NextLink href={link} className="">
         <div

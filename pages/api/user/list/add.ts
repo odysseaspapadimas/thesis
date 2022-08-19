@@ -17,7 +17,10 @@ export default async function handler(
     await dbConnect();
     const email = session.user?.email;
 
-    let { list, type, id } = req.query;
+    let { list } = req.query;
+
+    let type = req.query.type as string;
+    let id = req.query.id as string;
 
     let response;
     if (list === "plan") {

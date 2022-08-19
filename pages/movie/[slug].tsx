@@ -155,7 +155,7 @@ const Movie = ({
                 className="rounded-full bg-black bg-opacity-50 my-4 sm:my-0"
                 label={
                   <Text color="white" weight={700} align="center" size="lg">
-                    {movie.vote_average * 10}%
+                    {Math.round(movie.vote_average * 10)}%
                   </Text>
                 }
               />
