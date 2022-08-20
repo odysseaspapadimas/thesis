@@ -7,7 +7,7 @@ import {
   Skeleton,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { DiscoverTvRequest } from "moviedb-promise/dist/request-types";
+import { DiscoverTvRequest } from "../constants/types";
 import { Genre } from "moviedb-promise/dist/types";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useState } from "react";

@@ -14,7 +14,7 @@ specifiers:
   dayjs: ^1.11.3
   mongodb: ^4.5.0
   mongoose: ^6.5.2
-  moviedb-promise: ^3.1.14
+  moviedb-promise: ^3.1.16
   next: latest
   next-auth: ^4.3.4
   postcss: ^8.4.5
@@ -39,7 +39,7 @@ dependencies:
   dayjs: 1.11.3
   mongodb: 4.7.0
   mongoose: 6.5.2
-  moviedb-promise: 3.1.15
+  moviedb-promise: 3.1.16
   next: 12.2.5_apvyc6hsquzbx56wwdowrbgkzm
   next-auth: 4.7.0_sfoxds7t5ydpegc3knd667wn6m
   react: 17.0.2
@@ -1503,8 +1503,8 @@ packages:
       - supports-color
     dev: false
 
-  /moviedb-promise/3.1.15:
-    resolution: {integrity: sha512-CZXNY+7atU/+m0vc14o+3hosYYIojOjMXVA4D9eKaDDVqtI8LKMw0vAwMcK4/hXSs88P5PIhdfFsu9nK1VgUPQ==}
+  /moviedb-promise/3.1.16:
+    resolution: {integrity: sha512-IxXRPQXvZHkkVjlc8645Cu3wq7+8sY8y/KnESikSqGoSx3H05yGTg6nMErbPD3P4RahaVcLiZkkP6qCnhxeb5Q==}
     dependencies:
       axios: 0.26.1
       lodash: 4.17.21

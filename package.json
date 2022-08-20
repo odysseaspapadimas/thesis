@@ -15,7 +15,7 @@
     "dayjs": "^1.11.3",
     "mongodb": "^4.5.0",
     "mongoose": "^6.5.2",
-    "moviedb-promise": "^3.1.14",
+    "moviedb-promise": "^3.1.16",
     "next": "latest",
     "next-auth": "^4.3.4",
     "react": "^17.0.2",
