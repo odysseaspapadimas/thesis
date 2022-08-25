@@ -1,5 +1,5 @@
 import { NextLink } from "@mantine/next";
-import { MovieResult, TvResult } from "moviedb-promise/dist/request-types";
+import { MovieResult, TvResult } from "moviedb-promise";
 import Image from "next/image";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { IMG_URL } from "../../../constants/tmdbUrls";

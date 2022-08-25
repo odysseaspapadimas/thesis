@@ -15,10 +15,11 @@ import Show from "../components/Show";
 import Filters from "../components/Trending/Filters";
 import { MovieType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
-import { DiscoverMovieRequest } from "moviedb-promise/dist/request-types";
+import { DiscoverMovieRequest } from "moviedb-promise";
 import Sort from "../components/Trending/Sort";
 import { tmdb } from "../utils/tmdb";
 import { Genre } from "moviedb-promise/dist/types";
+import Head from "next/head";
 
 const MovieSection = ({ page, url }: { page: number; url: string }) => {
   const { data } = useSWR(`${url}&page=${page}`, fetcher);
@@ -78,9 +79,12 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
 
   return (
     <Container size="xl" py={36}>
+      <Head>
+        <title>Popular Movies</title>
+      </Head>
       <h1>Popular Movies</h1>
       <div className="flex flex-col md:flex-row">
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 mb-4">
           <Sort sortBy={sortBy} setSortBy={setSortBy} />
           <Filters filters={filters} setFilters={setFilters} genres={genres} type="movies" />
           <Button onClick={handleSearch} className="bg-primary">

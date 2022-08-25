@@ -2,7 +2,7 @@ import { Select } from "@mantine/core";
 import {
   DiscoverMovieRequest,
   DiscoverTvRequest,
-} from "moviedb-promise/dist/request-types";
+} from "moviedb-promise";
 import React, { Dispatch, SetStateAction, useState } from "react";
 
 const selectData = [

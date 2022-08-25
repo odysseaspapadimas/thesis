@@ -1,7 +1,7 @@
 import { Button, Checkbox, Group, RangeSlider } from "@mantine/core";
 import dayjs from "dayjs";
 import { DatePicker } from "@mantine/dates";
-import { DiscoverMovieRequest } from "moviedb-promise/dist/request-types";
+import { DiscoverMovieRequest } from "moviedb-promise";
 import { DiscoverTvRequest } from "../../constants/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Genre } from "moviedb-promise/dist/types";

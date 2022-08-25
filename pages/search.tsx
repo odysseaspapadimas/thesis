@@ -8,7 +8,7 @@ import {
 } from "@mantine/core";
 import { useMediaQuery, useWindowScroll } from "@mantine/hooks";
 import { NextLink } from "@mantine/next";
-import { MovieResult, TvResult } from "moviedb-promise/dist/request-types";
+import { MovieResult, TvResult } from "moviedb-promise";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";

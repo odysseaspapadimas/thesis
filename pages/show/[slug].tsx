@@ -27,8 +27,9 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { tmdb } from "../../utils/tmdb";
 import { List, ListTypes } from "../api/user/list/onList";
 import { Genre, TVShowType } from "../../constants/types";
-import { CreditsResponse } from "moviedb-promise/dist/request-types";
+import { CreditsResponse } from "moviedb-promise";
 import Credits from "../../components/Credits";
+import Head from "next/head";
 
 const Show = ({
   show,
@@ -124,6 +125,9 @@ const Show = ({
 
   return (
     <div>
+      <Head>
+        <title>{show.name}</title>
+      </Head>
       <div className="relative">
         <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
           <img

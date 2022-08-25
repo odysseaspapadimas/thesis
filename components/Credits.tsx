@@ -1,9 +1,12 @@
 import { ScrollArea } from "@mantine/core";
-import { CreditsResponse } from "moviedb-promise/dist/request-types";
+import { NextLink } from "@mantine/next";
+import { CreditsResponse } from "moviedb-promise";
 import Image from "next/image";
+import Link from "next/link";
 import { IMG_URL } from "../constants/tmdbUrls";
 
 const Credits = ({ credits }: { credits: CreditsResponse }) => {
+  console.log(credits, 'credits');
   return (
     <div className="py-6">
       <h2 className="text-2xl font-semibold mb-4">Cast</h2>
@@ -18,11 +21,13 @@ const Credits = ({ credits }: { credits: CreditsResponse }) => {
                 <div className="bg-gray-400 opacity-80 w-[150px] h-[225px]"></div>
               ) : (
                 <div className="w-[150px] h-[225px] relative">
-                  <Image
-                    src={IMG_URL(cast.profile_path)}
-                    layout="fill"
-                    className="rounded-tl-md rounded-tr-md"
-                  />
+                  <NextLink href={`/person/${cast.id}-${cast.name?.toLowerCase().replace(/[\W_]+/g, "-")}`}>
+                    <Image
+                      src={IMG_URL(cast.profile_path)}
+                      layout="fill"
+                      className="rounded-tl-md rounded-tr-md"
+                    />
+                  </NextLink>
                 </div>
               )}
               <div className="p-2 max-w-[150px]">

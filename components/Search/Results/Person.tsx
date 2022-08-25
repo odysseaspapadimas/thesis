@@ -1,5 +1,5 @@
 import { NextLink } from "@mantine/next";
-import { MovieResult, TvResult } from "moviedb-promise/dist/request-types";
+import { MovieResult, TvResult } from "moviedb-promise";
 import Image from "next/image";
 import { IMG_URL } from "../../../constants/tmdbUrls";
 import { PersonResult } from "../../../pages/search";

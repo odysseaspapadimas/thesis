@@ -18,6 +18,7 @@ import Sort from "../components/Trending/Sort";
 import { TVShowType } from "../constants/types";
 import fetcher from "../helpers/fetcher";
 import { tmdb } from "../utils/tmdb";
+import Head from "next/head";
 
 const URL = `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
 
@@ -78,9 +79,12 @@ const shows = ({ shows, genres }: { shows: TVShowType[]; genres: Array<Genre> })
 
   return (
     <Container size="xl" py={36}>
+      <Head>
+        <title>Popular TV Shows</title>
+      </Head>
       <h1>Popular TV Shows</h1>
       <div className="flex flex-col md:flex-row justify-center">
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 mb-4">
           <Sort sortBy={sortBy} setSortBy={setSortBy} />
           <Filters filters={filters} setFilters={setFilters} genres={genres} type="show" />
           <Button onClick={handleSearch} className="bg-primary">

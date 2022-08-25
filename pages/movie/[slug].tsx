@@ -15,8 +15,9 @@ import removeFromList from "../../utils/removeFromList";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { tmdb } from "../../utils/tmdb";
 import { Genre, MovieType } from "../../constants/types";
-import { CreditsResponse } from "moviedb-promise/dist/request-types";
+import { CreditsResponse } from "moviedb-promise";
 import Credits from "../../components/Credits";
+import Head from "next/head";
 
 const Movie = ({
   movie,
@@ -98,6 +99,9 @@ const Movie = ({
 
   return (
     <div>
+      <Head>
+        <title>{movie.title}</title>
+      </Head>
       <div className="relative">
         <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
           <img
