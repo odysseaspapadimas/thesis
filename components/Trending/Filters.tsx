@@ -17,8 +17,8 @@ type FiltersProps = {
 
 const isMovieRequest = (
   filters: DiscoverMovieRequest | DiscoverTvRequest
-): filters is DiscoverMovieRequest => {
-  return (filters as DiscoverMovieRequest)["primary_release_date.gte"] !== undefined; //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
+): filters is DiscoverTvRequest => {
+  return (filters as DiscoverTvRequest)["first_air_date.gte"] !== undefined; //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
 };
 
 const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
@@ -48,7 +48,7 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
     }
 
     if (label === "from") {
-      if (!isMovieRequest(newFilters)) {
+      if (isMovieRequest(newFilters)) {
         if (!date) {
           delete newFilters["air_date.gte"];
         } else {
@@ -62,7 +62,7 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
         }
       }
     } else {
-      if (!isMovieRequest(newFilters)) {
+      if (isMovieRequest(newFilters)) {
         if (!date) {
           delete newFilters["air_date.lte"];
         } else {

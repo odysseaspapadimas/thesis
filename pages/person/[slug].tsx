@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { IMG_URL } from "../../constants/tmdbUrls";
 import { CreditCast } from "../../constants/types";
-import useUser from "../../hooks/use-user";
 import { tmdb } from "../../utils/tmdb";
 
 type Credits = PersonCombinedCreditsResponse["cast"];
@@ -16,12 +15,10 @@ type Credits = PersonCombinedCreditsResponse["cast"];
 const Person = ({
   person,
   knownFor,
-  credits,
   groupedCredits,
 }: {
   person: Person;
   knownFor: Credits;
-  credits: Credits;
   groupedCredits: any;
 }) => {
   const router = useRouter();
@@ -253,7 +250,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     props: {
       person: personData,
       knownFor,
-      credits,
       groupedCredits,
     },
     revalidate: 60 * 60 * 24, //Once a day
@@ -277,9 +273,3 @@ const getAge = (dateString: string) => {
   }
   return age;
 };
-
-const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
-  arr.reduce((groups, item) => {
-    (groups[key(item)] ||= []).push(item);
-    return groups;
-  }, {} as Record<K, T[]>);

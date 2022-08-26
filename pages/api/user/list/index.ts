@@ -24,9 +24,6 @@ export default async function handler(
     let movieList = [] as any;
     let tvList = [] as any;
 
-    //Inlcude movie/tvshow type in list e.g. plan_to = [ { id: 5553, type: movie } ]
-    //So i can make seperate calls in the for loop
-
     for (let i = 0; i < idList.length; i++) {
       const item = idList[i];
       const { id, type } = item;
