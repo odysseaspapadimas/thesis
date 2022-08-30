@@ -13,10 +13,11 @@ import useSWR from "swr";
 import fetcher from "../helpers/fetcher";
 import addToList, { Type } from "../utils/addToList";
 import removeFromList from "../utils/removeFromList";
+import { showNotification } from "@mantine/notifications";
 
 const Show = ({ data }: { data: MovieType | TVShowType }) => {
   const [opened, handlers] = useDisclosure(false);
-  let name, release_date, link;
+  let name: string, release_date, link;
   let type = "movie" as Type;
 
   if (data.hasOwnProperty("title")) {
@@ -32,7 +33,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
     data = data as TVShowType;
     type = "show";
     name = data.name;
-    release_date = data.first_air_date.split("-")[0];
+    release_date = data.first_air_date?.split("-")[0];
     link =
       "/show/" +
       data.id +
@@ -59,11 +60,24 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
     if (!onList.on.includes("watched")) {
       await addToList("watched", String(data.id), type);
 
+      showNotification({
+        title: "Added to Already Watched list",
+        message: `'${name}' was successfully added to your list`,
+      });
+
       if (onList.on.includes("plan")) {
         await removeFromList("plan", String(data.id), type);
+        showNotification({
+          title: "Removed from Plan to Watch list",
+          message: `'${name}' was successfully removed from your list`,
+        });
       }
     } else if (onList.on.includes("watched")) {
       await removeFromList("watched", String(data.id), type);
+      showNotification({
+        title: "Removed from Plan to Watch list",
+        message: `'${name}' was successfully removed from your list`,
+      });
     }
 
     mutateOnList();
@@ -72,12 +86,25 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
   const handlePlan = async () => {
     if (!onList.on.includes("plan")) {
       await addToList("plan", String(data.id), type);
+      
+      showNotification({
+        title: "Added to Plan to Watch list",
+        message: `'${name}' was successfully added to your list`,
+      });
 
       if (onList.on.includes("watched")) {
         await removeFromList("watched", String(data.id), type);
+        showNotification({
+          title: "Removed from Already Watched list",
+          message: `'${name}' was successfully removed from your list`,
+        });
       }
     } else if (onList.on.includes("plan")) {
       await removeFromList("plan", String(data.id), type);
+      showNotification({
+        title: "Removed from Plan to Watch list",
+        message: `'${name}' was successfully removed from your list`,
+      });
     }
     mutateOnList();
   };
@@ -86,8 +113,16 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
     console.log("hi");
     if (!onList.on.includes("favorites")) {
       await addToList("favorites", String(data.id), type);
+      showNotification({
+        title: "Added to Favorites list",
+        message: `'${name}' was successfully added to your list`,
+      });
     } else if (onList.on.includes("favorites")) {
       await removeFromList("favorites", String(data.id), type);
+      showNotification({
+        title: "Removed from Favorites list",
+        message: `'${name}' was successfully removed from your list`,
+      });
     }
     mutateOnList();
   };

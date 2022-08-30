@@ -9,19 +9,19 @@ import { Genre } from "moviedb-promise/dist/types";
 type FiltersProps = {
   filters: DiscoverMovieRequest | DiscoverTvRequest;
   setFilters:
-  | Dispatch<SetStateAction<DiscoverMovieRequest>>
-  | Dispatch<SetStateAction<DiscoverTvRequest>>;
-  genres: Array<Genre>
+    | Dispatch<SetStateAction<DiscoverMovieRequest>>
+    | Dispatch<SetStateAction<DiscoverTvRequest>>;
+  genres: Array<Genre>;
   type: "movies" | "show";
 };
 
-const isMovieRequest = (
-  filters: DiscoverMovieRequest | DiscoverTvRequest
-): filters is DiscoverTvRequest => {
-  return (filters as DiscoverTvRequest)["first_air_date.gte"] !== undefined; //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
-};
-
 const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
+  const isMovieRequest = (
+    filters: DiscoverMovieRequest | DiscoverTvRequest
+  ): filters is DiscoverMovieRequest => {
+    return (filters as DiscoverMovieRequest)["primary_release_date.lte"] !== undefined; //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
+  };
+
   const [includeOnList, setIncludeOnList] = useState(true);
 
   const [fromDate, setFromDate] = useState<Date | null>(null);
@@ -48,7 +48,7 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
     }
 
     if (label === "from") {
-      if (isMovieRequest(newFilters)) {
+      if (!isMovieRequest(newFilters)) {
         if (!date) {
           delete newFilters["air_date.gte"];
         } else {
@@ -58,22 +58,23 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
         if (!date) {
           delete newFilters["primary_release_date.gte"];
         } else {
-          newFilters["primary_release_date.gte"] = dayjs(date).format("YYYY-MM-DD");
+          newFilters["primary_release_date.gte"] =
+            dayjs(date).format("YYYY-MM-DD");
         }
       }
     } else {
-      if (isMovieRequest(newFilters)) {
+      if (!isMovieRequest(newFilters)) {
         if (!date) {
           delete newFilters["air_date.lte"];
         } else {
-          console.log("airdate idk why");
           newFilters["air_date.lte"] = dayjs(date).format("YYYY-MM-DD");
         }
       } else {
         if (!date) {
           delete newFilters["primary_release_date.lte"];
         } else {
-          newFilters["primary_release_date.lte"] = dayjs(date).format("YYYY-MM-DD");
+          newFilters["primary_release_date.lte"] =
+            dayjs(date).format("YYYY-MM-DD");
         }
       }
     }
@@ -87,13 +88,15 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
     let newFilters = filters;
 
     if (!newFilters.with_genres) {
-      newFilters.with_genres = ""
+      newFilters.with_genres = "";
     }
 
-    if (!filters.with_genres?.includes(",") && filters.with_genres?.includes(String(id))) {
-      newFilters.with_genres = ""
-    }
-    else if (filters.with_genres?.includes(String(id))) {
+    if (
+      !filters.with_genres?.includes(",") &&
+      filters.with_genres?.includes(String(id))
+    ) {
+      newFilters.with_genres = "";
+    } else if (filters.with_genres?.includes(String(id))) {
       newFilters["with_genres"] = filters.with_genres.replace(`,${id}`, "");
       newFilters["with_genres"] = filters.with_genres.replace(`${id}`, "");
     } else if (newFilters.with_genres.length === 0) {
@@ -102,14 +105,14 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
       newFilters["with_genres"] += `,${id}`;
     }
 
-    console.log(newFilters, 'new Filters');
+    console.log(newFilters, "new Filters");
     //@ts-ignore
     setFilters({ ...newFilters });
-  }
+  };
 
   useEffect(() => {
-    console.log('filters', filters)
-  }, [filters])
+    console.log("filters", filters);
+  }, [filters]);
 
   return (
     <div className="">
@@ -169,7 +172,17 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
 
       <div className="max-w-fit my-4 space-y-2">
         {genres.map(({ id, name }) => (
-          <Button key={id} onClick={() => handleGenre(id, name)} className={`border border-gray-400 hover:border-transparent px-2 rounded-xl mr-2 ${filters.with_genres?.includes(String(id)) ? "bg-[#1864AB] border-transparent" : ""}`}>{name}</Button>
+          <Button
+            key={id}
+            onClick={() => handleGenre(id, name)}
+            className={`border border-gray-400 hover:border-transparent px-2 rounded-xl mr-2 ${
+              filters.with_genres?.includes(String(id))
+                ? "bg-[#1864AB] border-transparent"
+                : ""
+            }`}
+          >
+            {name}
+          </Button>
         ))}
       </div>
     </div>
