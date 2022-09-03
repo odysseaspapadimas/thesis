@@ -129,13 +129,15 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
         )}
       </NextLink>
       <div className="p-3 flex-[2]">
-        <h2
-          className="sm:text-lg font-semibold"
-          style={{ maxWidth: "calc(100% - 28px)" }}
-          ref={titleRef}
-        >
-          {title}
-        </h2>{" "}
+        <NextLink href={link}>
+          <h2
+            className="sm:text-lg font-semibold"
+            style={{ maxWidth: "calc(100% - 28px)" }}
+            ref={titleRef}
+          >
+            {title}
+          </h2>
+        </NextLink>
         {/* maxWidth is so it doesn't overlap with the menu */}
         <p className="text-gray-500">{release_date}</p>
         <div

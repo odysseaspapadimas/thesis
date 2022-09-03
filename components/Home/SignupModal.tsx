@@ -13,8 +13,17 @@ const SignupModal = ({ session }: { session: Session }) => {
     },
 
     validate: {
-      username: (value) =>
-        value.length >= 3 ? null : "Username should be at least 3 characters",
+      username: (value) => {
+        if (value.length >= 3 && value.toLowerCase() === value && !/\s/.test(value)) {
+          return null
+        } else if (value.length < 3) {
+          return "Username should be at least 3 characters long"
+        } else if (value.toLowerCase() !== value) {
+          return "Username should be in all lowercase"
+        } else if(/\s/.test(value)) {
+          return "Username should not include spaces"
+        }
+      },
     },
   });
 
@@ -65,10 +74,10 @@ const SignupModal = ({ session }: { session: Session }) => {
         className="flex flex-col space-y-2"
       >
         <TextInput
-          placeholder="Username e.g. FortniteLover69"
+          placeholder="Username e.g. luffy02"
           {...form.getInputProps("username")}
         />
-        <Button loading={loading} type="submit" className="self-center">
+        <Button loading={loading} type="submit" className="self-center bg-primary">
           Submit
         </Button>
       </form>

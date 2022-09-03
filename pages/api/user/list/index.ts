@@ -8,10 +8,37 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getSession({ req });
+  if (req.query.username) {
+    await dbConnect();
 
-  if (session) {
-    const email = session.user?.email;
+    let { list } = req.query;
+    if (list === "plan") list = "plan_to";
+
+    const user = await User.findOne({ username: req.query.username });
+
+    const idList = user[String(list)];
+
+    let movieList = [] as any;
+    let tvList = [] as any;
+
+    for (let i = 0; i < idList.length; i++) {
+      const item = idList[i];
+      const { id, type } = item;
+      if (type === "movie") {
+        const movieData = await tmdb.movieInfo(id);
+        movieList = [...movieList, movieData];
+      } else if (type === "show") {
+        const tvData = await tmdb.tvInfo(id);
+        tvList = [...tvList, tvData];
+      }
+    }
+
+    if (user) {
+      res.status(200).json({ movies: movieList, shows: tvList });
+    } else res.status(400).send({ error: "Something went wrong" });
+  } else {
+    const session = await getSession({ req });
+    const email = session?.user?.email;
     await dbConnect();
 
     let { list } = req.query;

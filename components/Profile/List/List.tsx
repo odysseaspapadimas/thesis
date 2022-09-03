@@ -40,7 +40,7 @@ type TabLabelProps = {
 const TabLabel = ({ text, length }: TabLabelProps) => {
   return (
     <div className="flex whitespace-nowrap items-center space-x-2">
-      <p>{text}</p>{" "}
+      <p>{text}</p>
       <div className="bg-primary rounded-full grid place-items-center h-5 w-5 text-xs">
         {length}
       </div>

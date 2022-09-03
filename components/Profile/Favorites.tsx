@@ -4,9 +4,9 @@ import { ListData } from "../../constants/types";
 import fetcher from "../../helpers/fetcher";
 import List from "./List/List";
 
-const Favorites = () => {
-  const { data, error } = useSWR<ListData>("/api/user/list?list=favorites", fetcher);
-  console.log(data, " planlistdata");
+const Favorites = ({ username }: { username: string }) => {
+  const { data, error } = useSWR<ListData>(`/api/user/list?username=${username}&list=favorites`, fetcher);
+  console.log(data, " favorites");
   if (!data) {
     return (
       <Center>

@@ -1,5 +1,6 @@
 import { Container, Group, Loader, Tabs } from "@mantine/core";
 import { useSession } from "next-auth/react";
+import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -8,11 +9,19 @@ import Favorites from "../../components/Profile/Favorites";
 import PlanToWatch from "../../components/Profile/PlanToWatch";
 import useUser from "../../hooks/use-user";
 
+type ListItem = {
+  id: string;
+  type: "movie" | "show"
+}
+
 export type User = {
   username: string;
   email: string;
   image_url: string;
   created_at: string;
+  watched: [ListItem];
+  plan_to: [ListItem];
+  favorites: [ListItem];
 };
 
 const profile = () => {
@@ -20,12 +29,13 @@ const profile = () => {
 
   const { username } = router.query;
 
-  if (!username) return <></>;
 
-  const { user, error } = useUser({ username: String(username) }) as {
+  const { user, error } = useUser({ username: username }) as {
     user: User;
     error: string;
   };
+
+  console.log(user, 'user');
 
   useEffect(() => {
     if (!user) return;
@@ -40,6 +50,9 @@ const profile = () => {
 
   return (
     <div>
+      <Head>
+        <title>{username} - Profile</title>
+      </Head>
       <Container size="xl" py={12}>
         <Group>
           <Image
@@ -61,13 +74,13 @@ const profile = () => {
           }}
         >
           <Tabs.Tab label="Already Watched">
-            <AlreadyWatched />
+            <AlreadyWatched username={String(username)} />
           </Tabs.Tab>
           <Tabs.Tab label="Plan to Watch">
-            <PlanToWatch />
+            <PlanToWatch username={String(username)} />
           </Tabs.Tab>
           <Tabs.Tab label="Favorites">
-            <Favorites />
+            <Favorites username={String(username)} />
           </Tabs.Tab>
         </Tabs>
       </Container>

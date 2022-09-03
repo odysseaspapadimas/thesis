@@ -6,7 +6,7 @@ import { User } from "../pages/u/[username]";
 
 type Props = {
   session?: Session | null;
-  username?: string;
+  username?: string | string[] | undefined;
 };
 
 const useUser = ({
