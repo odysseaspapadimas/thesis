@@ -14,19 +14,19 @@ const useUser = ({
   username,
 }: Props): { user: User; error: string } => {
   if (session) {
-    const { data: user, error } = useSWR(
+    const { data, error } = useSWR(
       session ? "/api/user?email=" + session.user?.email : null,
       fetcher
     );
 
-    return { user, error };
+    return { user: data?.user, error: data?.error };
   } else {
-    const { data: user, error } = useSWR(
+    const { data, error } = useSWR(
       username ? "/api/user?username=" + username : null,
       fetcher
     );
 
-    return { user, error };
+    return { user: data?.user, error: data?.error };
   }
 };
 

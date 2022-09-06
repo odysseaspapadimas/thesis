@@ -4,7 +4,8 @@ import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 
 type Data = {
-  error: string;
+  user?: User;
+  error?: string;
 };
 
 export type User = {
@@ -30,6 +31,6 @@ export default async function handler(
   }
 
   if (user) {
-    res.status(200).send(user);
-  } else res.status(400).send({ error: "Something went wrong" });
+    res.status(200).send({ user });
+  } else res.status(404).send({ error: "User not found" }); //204 no information to send back
 }

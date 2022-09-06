@@ -35,14 +35,14 @@ const profile = () => {
     error: string;
   };
 
-  console.log(user, 'user');
+  console.log(user, 'user', error, 'error ');
 
   useEffect(() => {
-    if (!user) return;
-    if (!user.username && !error) {
+    if (!user && !error) return;
+    if (!user && error) {
       router.push("/404");
     }
-  }, [user]);
+  }, [user, error]);
 
   if (!user) {
     return <Loader size="xl" className="w-full p-auto mt-10" variant="dots" />;
