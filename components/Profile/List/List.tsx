@@ -17,15 +17,23 @@ const List = ({ data }: { data: ListData }) => {
       <Tabs.Tab
         label={<TabLabel text="Both" length={moviesLength + showsLength} />}
       >
-        <Movies movies={data.movies} /> 
-        <div className="my-4"></div>
-        <TVShows shows={data.shows} />
+        {moviesLength + showsLength === 0 ? <p>No items on this list...</p> :
+          <>
+            <Movies movies={data.movies} />
+            <div className="my-4"></div>
+            <TVShows shows={data.shows} />
+          </>
+        }
       </Tabs.Tab>
       <Tabs.Tab label={<TabLabel text="Movies" length={moviesLength} />}>
-        <Movies movies={data.movies} />
+        {moviesLength === 0 ? <p>No items on this list...</p> :
+          <Movies movies={data.movies} />
+        }
       </Tabs.Tab>
       <Tabs.Tab label={<TabLabel text="TV Shows" length={showsLength} />}>
-        <TVShows shows={data.shows} />
+        {showsLength === 0 ? <p>No items on this list...</p> :
+          <TVShows shows={data.shows} />
+        }
       </Tabs.Tab>
     </Tabs>
   );

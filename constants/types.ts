@@ -153,8 +153,8 @@ export interface TVShowType {
 }
 
 export interface ListData {
-  movies: [MovieType];
-  shows: [TVShowType];
+  movies: MovieType[];
+  shows: TVShowType[];
 }
 
 export interface RequestParams {
