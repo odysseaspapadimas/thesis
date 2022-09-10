@@ -1,12 +1,9 @@
 import {
-  ActionIcon,
   Button,
   Container,
   Loader,
-  Overlay,
   RingProgress,
   Text,
-  Tooltip,
 } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -14,28 +11,25 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { ExternalLink } from "tabler-icons-react";
-import Header from "../../components/Header";
 import AlreadyWatched from "../../components/List/AlreadyWatched";
 import PlanToWatch from "../../components/List/PlanToWatch";
 import Favorite from "../../components/List/Favorite";
-import { IMG_URL, MOVIE_URL } from "../../constants/tmdbUrls";
+import { IMG_URL } from "../../constants/tmdbUrls";
 import fetcher from "../../helpers/fetcher";
 import useUser from "../../hooks/use-user";
 import addToList from "../../utils/addToList";
 import removeFromList from "../../utils/removeFromList";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { tmdb } from "../../utils/tmdb";
-import { List, ListTypes } from "../api/user/list/onList";
-import { Genre, TVShowType } from "../../constants/types";
-import { CreditsResponse } from "moviedb-promise";
-import Credits from "../../components/Credits";
+import { Genre, TVShowType, AggregateCredits } from "../../constants/types";
 import Head from "next/head";
+import ShowCredits from "../../components/ShowCredits";
 
 const Show = ({
   show,
   providers
 }: {
-  show: TVShowType & { credits: CreditsResponse };
+  show: TVShowType & { aggregate_credits: AggregateCredits };
   providers: any;
 }) => {
   const router = useRouter();
@@ -218,7 +212,7 @@ const Show = ({
         </Container>
       </div>
       <Container size="xl">
-        <Credits credits={show.credits} />
+        <ShowCredits credits={show.aggregate_credits} />
       </Container>
     </div>
   );
@@ -233,7 +227,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const showData = await tmdb.tvInfo({
     id: showId,
-    append_to_response: "credits", //TODO: Switch to aggregate_credits, have to make my own type
+    append_to_response: "aggregate_credits", //TODO: Switch to aggregate_credits, have to make my own type
   });
 
   console.log(showData, "showdata");

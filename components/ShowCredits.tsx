@@ -8,7 +8,7 @@ import { User } from "tabler-icons-react";
 import { IMG_URL } from "../constants/tmdbUrls";
 import { AggregateCredits } from "../constants/types";
 
-const Credits = ({ credits }: { credits: CreditsResponse }) => {
+const ShowCredits = ({ credits }: { credits: AggregateCredits }) => {
   console.log(credits, "credits");
 
   const scrollRef = useHorizontalScroll();
@@ -50,7 +50,13 @@ const Credits = ({ credits }: { credits: CreditsResponse }) => {
               )}
               <div className="p-2 max-w-[150px]">
                 <p className="font-semibold">{cast.name}</p>
-                <p>{cast.character}</p>
+                <div>
+                  {cast.roles.map((role, i) => (
+                    i <= 3 && <p key={role.credit_id + i}>{role.character}</p>
+                  ))}
+                  {cast.roles.length - 4 > 0 && <p>and {cast.roles.length - 4} more...</p>}
+                </div>
+                <p className="text-gray-400">{cast.total_episode_count} {cast.total_episode_count === 1 ? 'episode' : 'episodes'}</p>
               </div>
             </div>
           ))}
@@ -59,7 +65,7 @@ const Credits = ({ credits }: { credits: CreditsResponse }) => {
     </div>
   );
 };
-export default Credits;
+export default ShowCredits;
 
 const useHorizontalScroll = () => {
   const elRef = useRef() as MutableRefObject<HTMLDivElement>;
