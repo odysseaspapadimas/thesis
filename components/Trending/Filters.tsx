@@ -9,18 +9,19 @@ import { Genre } from "moviedb-promise/dist/types";
 type FiltersProps = {
   filters: DiscoverMovieRequest | DiscoverTvRequest;
   setFilters:
-    | Dispatch<SetStateAction<DiscoverMovieRequest>>
-    | Dispatch<SetStateAction<DiscoverTvRequest>>;
+  | Dispatch<SetStateAction<DiscoverMovieRequest>>
+  | Dispatch<SetStateAction<DiscoverTvRequest>>;
   genres: Array<Genre>;
   type: "movies" | "show";
 };
 
+const isMovieRequest = (
+  filters: DiscoverMovieRequest | DiscoverTvRequest
+): filters is DiscoverMovieRequest => {
+  return (filters as DiscoverMovieRequest)["primary_release_date.lte"] !== undefined; //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
+};
+
 const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
-  const isMovieRequest = (
-    filters: DiscoverMovieRequest | DiscoverTvRequest
-  ): filters is DiscoverMovieRequest => {
-    return (filters as DiscoverMovieRequest)["primary_release_date.lte"] !== undefined; //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
-  };
 
   const [includeOnList, setIncludeOnList] = useState(true);
 
@@ -36,13 +37,11 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
   };
 
   const handleDate = (date: Date | null, label: "from" | "to") => {
-    console.log(filters, "filter");
     let newFilters = filters;
 
     console.log(isMovieRequest(newFilters), "ismovie");
     if (label === "to" && date && fromDate) {
       if (fromDate > date) {
-        console.log(fromDate > date, "compare");
         setFromDate(date);
       }
     }
@@ -104,8 +103,6 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
     } else {
       newFilters["with_genres"] += `,${id}`;
     }
-
-    console.log(newFilters, "new Filters");
     //@ts-ignore
     setFilters({ ...newFilters });
   };
@@ -146,6 +143,7 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
       <h2>{type === "movies" ? "Release Dates" : "Air Dates"}</h2>
       <DatePicker
         value={fromDate}
+        allowFreeInput
         onChange={(e) => {
           handleDate(e, "from");
           setFromDate(e);
@@ -158,6 +156,7 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
       />
       <DatePicker
         value={toDate}
+        allowFreeInput
         onChange={(e) => {
           handleDate(e, "to");
           if (e) {
@@ -175,11 +174,10 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
           <Button
             key={id}
             onClick={() => handleGenre(id, name)}
-            className={`border border-gray-400 hover:border-transparent px-2 rounded-xl mr-2 ${
-              filters.with_genres?.includes(String(id))
+            className={`border border-gray-400 hover:border-transparent px-2 rounded-xl mr-2 ${filters.with_genres?.includes(String(id))
                 ? "bg-[#1864AB] border-transparent"
                 : ""
-            }`}
+              }`}
           >
             {name}
           </Button>

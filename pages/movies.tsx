@@ -20,6 +20,7 @@ import Sort from "../components/Trending/Sort";
 import { tmdb } from "../utils/tmdb";
 import { Genre } from "moviedb-promise/dist/types";
 import Head from "next/head";
+import dayjs from "dayjs";
 
 const MovieSection = ({ page, url }: { page: number; url: string }) => {
   const { data } = useSWR(`${url}&page=${page}`, fetcher);
@@ -48,7 +49,7 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
 
   const { data: filteredMovies } = useSWR(`${url}`, fetcher);
 
-  console.log(url, "filterulr");
+  console.log(movies)
 
   const pages = [] as React.ReactElement[];
   for (let i = 2; i <= page; i++) {
@@ -58,10 +59,11 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
   const [filters, setFilters] = useState<DiscoverMovieRequest>({
     "vote_average.gte": 0.0,
     "vote_average.lte": 10.0,
+    "primary_release_date.lte": dayjs(new Date()).format("MM/DD/YYYY"),
+    "include_adult": false
   });
 
   const handleSearch = () => {
-    console.log(filters, "filters");
     let filtersString = "";
     let filtersKeys = Object.keys(filters) as Array<keyof DiscoverMovieRequest>;
 
@@ -75,8 +77,6 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
     );
   };
 
-  console.log(filteredMovies);
-
   return (
     <Container size="xl" py={36}>
       <Head>
@@ -85,7 +85,7 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
       <h1>Popular Movies</h1>
       <div className="flex flex-col md:flex-row">
         <div className="flex flex-col space-y-2 mb-4">
-          <Sort sortBy={sortBy} setSortBy={setSortBy} type="movies"/>
+          <Sort sortBy={sortBy} setSortBy={setSortBy} type="movies" />
           <Filters filters={filters} setFilters={setFilters} genres={genres} type="movies" />
           <Button onClick={handleSearch} className="bg-primary">
             Filter

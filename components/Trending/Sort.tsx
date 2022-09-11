@@ -20,8 +20,6 @@ const Sort = ({ sortBy, setSortBy, type }: SortProps) => {
     {value: type === "movies" ? "release_date.asc" : "first_air_date.asc", label: "Release Date Ascending"}
   ];
 
-  console.log(sortBy , 'sortby type');
-
   const [value, setValue] = useState(selectData[0].value);
   return (
     <div>
