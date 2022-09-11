@@ -51,10 +51,10 @@ const ShowCredits = ({ credits }: { credits: AggregateCredits }) => {
               <div className="p-2 max-w-[150px]">
                 <p className="font-semibold">{cast.name}</p>
                 <div>
-                  {cast.roles.map((role, i) => (
+                  {cast.roles && cast.roles.map((role, i) => (
                     i <= 3 && <p key={role.credit_id + i}>{role.character}</p>
                   ))}
-                  {cast.roles.length - 4 > 0 && <p>and {cast.roles.length - 4} more...</p>}
+                  {cast.roles !== undefined && cast.roles.length - 4 > 0 && <p>and {cast.roles.length - 4} more...</p>}
                 </div>
                 <p className="text-gray-400">{cast.total_episode_count} {cast.total_episode_count === 1 ? 'episode' : 'episodes'}</p>
               </div>

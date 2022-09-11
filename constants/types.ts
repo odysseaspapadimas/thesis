@@ -246,45 +246,47 @@ export interface Role {
   episode_count: number;
 }
 
-export interface Cast {
-  adult: boolean;
-  gender: number;
-  id: number;
-  known_for_department: string;
-  name: string;
-  original_name: string;
-  popularity: number;
-  profile_path: string;
-  roles: Role[];
-  total_episode_count: number;
-  order: number;
+export interface AggregateCast {
+  adult?: boolean;
+  gender?: number;
+  id?: number;
+  known_for_department?: string;
+  name?: string;
+  original_name?: string;
+  popularity?: number;
+  profile_path?: string;
+  roles?: Role[];
+  total_episode_count?: number;
+  order?: number;
 }
 
-export interface Job {
-  credit_id: string;
-  job: string;
-  episode_count: number;
+export interface AggregateJob {
+  credit_id?: string;
+  job?: string;
+  episode_count?: number;
 }
 
-export interface Crew {
-  adult: boolean;
-  gender: number;
-  id: number;
-  known_for_department: string;
-  name: string;
-  original_name: string;
-  popularity: number;
-  profile_path: string;
-  jobs: Job[];
-  department: string;
-  total_episode_count: number;
+export interface AggregateCrew {
+  adult?: boolean;
+  gender?: number;
+  id?: number;
+  known_for_department?: string;
+  name?: string;
+  original_name?: string;
+  popularity?: number;
+  profile_path?: string;
+  jobs?: AggregateJob[];
+  department?: string;
+  total_episode_count?: number;
 }
+
 
 export interface AggregateCredits {
-  cast: Cast[];
-  crew: Crew[];
-  id: number;
+  cast?: Array<AggregateCast>;
+  crew?: Array<AggregateCrew>;
+  id?: number;
 }
+
 
 export type ListItem = {
   id: string;

@@ -49,8 +49,6 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
 
   const { data: filteredMovies } = useSWR(`${url}`, fetcher);
 
-  console.log(movies)
-
   const pages = [] as React.ReactElement[];
   for (let i = 2; i <= page; i++) {
     pages.push(<MovieSection key={i} page={i} url={url} />);
