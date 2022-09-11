@@ -285,3 +285,18 @@ export interface AggregateCredits {
   crew: Crew[];
   id: number;
 }
+
+export type ListItem = {
+  id: string;
+  type: "movie" | "show";
+};
+
+export type User = {
+  username: string;
+  email: string;
+  image_url: string;
+  created_at: string;
+  watched: ListItem[];
+  plan_to: ListItem[];
+  favorites: ListItem[];
+};

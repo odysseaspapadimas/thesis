@@ -7,22 +7,8 @@ import { useEffect } from "react";
 import AlreadyWatched from "../../components/Profile/AlreadyWatched";
 import Favorites from "../../components/Profile/Favorites";
 import PlanToWatch from "../../components/Profile/PlanToWatch";
+import { User } from "../../constants/types";
 import useUser from "../../hooks/use-user";
-
-type ListItem = {
-  id: string;
-  type: "movie" | "show"
-}
-
-export type User = {
-  username: string;
-  email: string;
-  image_url: string;
-  created_at: string;
-  watched: [ListItem];
-  plan_to: [ListItem];
-  favorites: [ListItem];
-};
 
 const profile = () => {
   const router = useRouter();

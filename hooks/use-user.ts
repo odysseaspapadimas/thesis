@@ -2,7 +2,7 @@ import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import fetcher from "../helpers/fetcher";
-import { User } from "../pages/u/[username]";
+import { User } from "../constants/types";
 
 type Props = {
   session?: Session | null;

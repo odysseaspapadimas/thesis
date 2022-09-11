@@ -10,34 +10,47 @@ import { useMediaQuery, useWindowScroll } from "@mantine/hooks";
 import { NextLink } from "@mantine/next";
 import { MovieResult, TvResult } from "moviedb-promise";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import useSWR from "swr";
 import Person from "../components/Search/Results/Person";
 import Show from "../components/Search/Results/Show";
+import User from "../components/Search/Results/User";
+import { User as IUser } from "../constants/types";
 import fetcher from "../helpers/fetcher";
-
-const URL = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=`;
+import dbConnect from "../lib/dbConnect";
+import UserModel from "../models/User";
+import { tmdb } from "../utils/tmdb";
 
 export interface PersonResult {
-  adult: boolean;
-  gender: number;
-  id: number;
-  known_for: [];
-  known_for_department: string;
+  adult?: boolean;
+  gender?: number;
+  id?: number;
+  known_for?: [];
+  known_for_department?: string;
   media_type: "person";
-  name: string;
-  popularity: number;
-  profile_path: string;
+  name?: string;
+  popularity?: number;
+  profile_path?: string;
 }
 
 interface SearchMultiResponse {
-  results: Array<MovieResult | TvResult | PersonResult>;
+  results: Array<MovieResult | TvResult | PersonResult | IUser>;
   total_results: number;
   total_pages: number;
 }
 
-const search = ({ serverData }: { serverData: SearchMultiResponse }) => {
+const isUser = (
+  result: MovieResult | TvResult | PersonResult | IUser
+): result is IUser => {
+  return (result as IUser)["username"] !== undefined //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
+};
+
+const URL = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=`;
+
+const search = ({ results, response }: { results: SearchMultiResponse; response: any }) => {
+
   const router = useRouter();
   const { query, page } = router.query;
 
@@ -50,69 +63,88 @@ const search = ({ serverData }: { serverData: SearchMultiResponse }) => {
     fetcher
   );
 
+  console.log(results)
+
   const [scroll, scrollTo] = useWindowScroll();
 
   return (
     <Container size="xl" py={36}>
+      <Head>
+        <title>"{query}" - Search</title>
+      </Head>
       <h2 className="text-xl mb-6">
-        Found {serverData.total_results} results for "{query}"
+        Found {results.total_results} {results.total_results > 1 ? 'results' : 'result'} for "{query}"
       </h2>
 
-      <Center className="my-6">
-        <Pagination
-          classNames={{
-            item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
-            active: "bg-primary",
-          }}
-          total={serverData.total_pages}
-          page={activePage}
-          onChange={(page) => {
-            {
-              setPage(page);
-            }
-          }}
-        />
-      </Center>
+      {results.total_pages > 1 &&
+        <Center className="my-6">
+          <Pagination
+            classNames={{
+              item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
+              active: "bg-primary",
+            }}
+            total={results.total_pages}
+            page={activePage}
+            onChange={(page) => {
+              {
+                setPage(page);
+              }
+            }}
+          />
+        </Center>
+      }
       <div className="flex flex-col space-y-4">
         {activePage === 1
-          ? serverData.results?.map((result) => {
+          ? results.results?.map((result) => {
+            if (!isUser(result)) {
               if (result.media_type === "person") {
-                console.log(result);
                 return <Person key={result.id} result={result} />;
-              } else {
+              } else if (result.media_type === "movie" || result.media_type === "tv") {
                 return <Show key={result.id} result={result} />;
               }
-            })
+            }
+            else {
+              result = result as IUser;
+              return <User key={result.username} data={result} />
+            }
+          })
           : !data && !error
-          ? [...Array(20)].map(() => (
+            ? [...Array(20)].map(() => (
               <Skeleton height={152} className="rounded-md w-full" />
             ))
-          : data?.results?.map((result) => {
-              if (result.media_type === "person") {
-                console.log(result);
-                return <Person key={result.id} result={result} />;
-              } else {
-                return <Show key={result.id} result={result} />;
+            : data?.results?.map((result) => {
+              if (!isUser(result)) {
+                if (result.media_type === "person") {
+                  return <Person key={result.id} result={result} />;
+                } else if (result.media_type === "movie" || result.media_type === "tv") {
+                  return <Show key={result.id} result={result} />;
+                }
+              }
+              else {
+                result = result as IUser;
+                return <User key={result.username} data={result} />
               }
             })}
       </div>
 
-      <Center className="mt-6">
-        <Pagination
-          classNames={{
-            item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
-            active: "bg-primary",
-          }}
-          total={serverData.total_pages}
-          page={activePage}
-          onChange={(page) => {
-            {
-              setPage(page);
-              scrollTo({y: 0})
-            }
-          }}
-        />
-      </Center>
+      {results.total_pages > 1 &&
+        <Center className="mt-6">
+          <Pagination
+            classNames={{
+              item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
+              active: "bg-primary",
+            }}
+            total={results.total_pages}
+            page={activePage}
+            onChange={(page) => {
+              {
+                setPage(page);
+                scrollTo({ y: 0 })
+              }
+            }}
+          />
+        </Center>
+      }
     </Container>
   );
 };
@@ -121,13 +153,54 @@ export default search;
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { query } = ctx.query;
 
-  const res = await fetch(URL + query);
+  //const res = await fetch(URL + query);
+  const atlasPlugin = require('mongoose-atlas-search');
 
-  const serverData = await res.json();
+  await dbConnect();
+
+  atlasPlugin.initialize({
+    model: UserModel,
+    overwriteFind: true,
+    searchKey: 'search',
+    searchFunction: (query: any) => {
+      return {
+        "index": "username",
+        "text": {
+          "query": `${query}`,
+          "path": {
+            "wildcard": "*"
+          }
+        }
+      }
+    }
+
+  });
+
+  const usersResults = await UserModel.find({ search: String(query) });
+
+  console.log(usersResults, 'search');
+
+  const results = await tmdb.searchMulti({ query: String(query) });
+
+  if (results.results) {
+    if (results.results.length === 20) {
+
+      results.results.pop();
+    }
+  }
+
+  if (usersResults && results.total_results) {
+    console.log('total results');
+    results.total_results += usersResults.length;
+  } else if (usersResults && !results.total_results) {
+    results.total_results = usersResults.length;
+  }
+
+  results.results = JSON.parse(JSON.stringify(usersResults)).concat(results.results);
 
   return {
     props: {
-      serverData,
+      results,
     },
   };
 };

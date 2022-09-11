@@ -33,7 +33,7 @@ const Person = ({ result }: { result: PersonResult }) => {
           className="text-ellipsis overflow-hidden"
           style={{ WebkitLineClamp: 1, display: "-webkit-box" }}
         >
-          {result.known_for.map((show: MovieResult | TvResult, i) => {
+          {result.known_for && result.known_for.map((show: MovieResult | TvResult, i) => {
             let title;
             if (show.media_type === "movie") {
               title = show.title;
@@ -43,7 +43,7 @@ const Person = ({ result }: { result: PersonResult }) => {
             return (
               <p key={show.id}>
                 {title}
-                {i < result.known_for.length - 1 && <>,&nbsp;</>}
+                {i < (result.known_for !== undefined && result.known_for.length - 1) && <>,&nbsp;</>}
               </p>
             );
           })}
