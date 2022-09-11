@@ -67,6 +67,10 @@ const search = ({ results, response }: { results: SearchMultiResponse; response:
 
   const [scroll, scrollTo] = useWindowScroll();
 
+  if (!query) return <Container size="xl" py={36}>
+    <h2>Try searching for something!</h2>
+  </Container>
+
   return (
     <Container size="xl" py={36}>
       <Head>

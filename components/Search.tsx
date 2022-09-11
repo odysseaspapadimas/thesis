@@ -45,6 +45,7 @@ const Search = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
+    if(!query) return;
     router.push("/search?query=" + query);
   };
 
