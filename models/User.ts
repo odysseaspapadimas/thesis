@@ -17,6 +17,8 @@ const UserSchema = new mongoose.Schema(
     plan_to: [ListItemSchema],
     watched: [ListItemSchema],
     favorites: [ListItemSchema],
+    followers: [String],
+    following: [String],
   },
   { versionKey: false }
 );

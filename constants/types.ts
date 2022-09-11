@@ -298,7 +298,9 @@ export type User = {
   email: string;
   image_url: string;
   created_at: string;
-  watched: ListItem[];
-  plan_to: ListItem[];
-  favorites: ListItem[];
+  watched?: ListItem[];
+  plan_to?: ListItem[];
+  favorites?: ListItem[];
+  following?: string[];
+  followers?: string[];
 };

@@ -1,9 +1,10 @@
-import { Container, Group, Loader, Tabs } from "@mantine/core";
+import { Button, Container, Group, Loader, Tabs } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSWRConfig } from "swr";
 import AlreadyWatched from "../../components/Profile/AlreadyWatched";
 import Favorites from "../../components/Profile/Favorites";
 import PlanToWatch from "../../components/Profile/PlanToWatch";
@@ -15,11 +16,11 @@ const profile = () => {
 
   const { username } = router.query;
 
+  const { data: session } = useSession();
 
-  const { user, error } = useUser({ username: username }) as {
-    user: User;
-    error: string;
-  };
+  const { user, error, mutate: mutateUser } = useUser({ username: username });
+
+  const { user: myUser } = useUser({ session })
 
   console.log(user, 'user', error, 'error ');
 
@@ -30,9 +31,38 @@ const profile = () => {
     }
   }, [user, error]);
 
-  if (!user) {
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    if (!user || !myUser) return;
+
+    setIsFollowing(user.followers ? user.followers.includes(myUser.username) : false)
+  }, [user, myUser])
+
+  if (!user || !myUser) {
     return <Loader size="xl" className="w-full p-auto mt-10" variant="dots" />;
   }
+
+
+  //const isFollowing = user.followers?.includes(myUser.username);
+
+  const handleToggleFollow = async () => {
+    console.log(isFollowing);
+
+    const res = await fetch(
+      `/api/user/toggleFollow?myUsername=${myUser.username}&username=${user.username}&isFollowing=${isFollowing}`,
+      {
+        method: "POST",
+      }
+    );
+
+    const response = await res.json();
+
+    console.log(response)
+
+    mutateUser();
+  }
+
 
   return (
     <div>
@@ -40,15 +70,34 @@ const profile = () => {
         <title>{username} - Profile</title>
       </Head>
       <Container size="xl" py={12}>
-        <Group>
-          <Image
-            src={user.image_url}
-            width={100}
-            height={100}
-            className="rounded-full"
-          />
-          <h1>{user.username}</h1>
-        </Group>
+        <div className="flex flex-col items-center sm:flex-row">
+          <Group className="self-start">
+            <Image
+              src={user.image_url}
+              width={100}
+              height={100}
+              className="rounded-full"
+            />
+            <h1>{user.username}</h1>
+          </Group>
+          <Group className="space-x-4 mx-8">
+            <Group>
+              <div className="flex flex-col items-center">
+                <p>{user.followers ? user.followers.length : 0}</p>
+                <p>Followers</p>
+              </div>
+            </Group>
+            <Group>
+              <div className="flex flex-col items-center">
+                <p>{user.following ? user.following.length : 0}</p>
+                <p>Following</p>
+              </div>
+            </Group>
+          </Group>
+          {user.username !== myUser.username &&
+            <Button onClick={handleToggleFollow} className={`${!isFollowing ? 'bg-primary' : 'bg-gray-700 hover:bg-gray-800'} my-4 sm:my-0`}>{!isFollowing ? 'Follow' : 'Unfollow'}</Button>
+          }
+        </div>
 
         <Tabs
           position="center"
