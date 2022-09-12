@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
 import AlreadyWatched from "../../components/Profile/AlreadyWatched";
 import Favorites from "../../components/Profile/Favorites";
+import FollowersFollowing from "../../components/Profile/FollowersFollowing";
 import PlanToWatch from "../../components/Profile/PlanToWatch";
 import { User } from "../../constants/types";
 import useUser from "../../hooks/use-user";
@@ -38,6 +39,9 @@ const profile = () => {
 
     setIsFollowing(user.followers ? user.followers.includes(myUser.username) : false)
   }, [user, myUser])
+
+
+  const [opened, setOpened] = useState({ opened: false, tab: 0 });
 
   if (!user || !myUser) {
     return <Loader size="xl" className="w-full p-auto mt-10" variant="dots" />;
@@ -82,17 +86,19 @@ const profile = () => {
           </Group>
           <Group className="space-x-4 mx-8">
             <Group>
-              <div className="flex flex-col items-center">
+              <div onClick={() => setOpened({ opened: true, tab: 0 })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
                 <p>{user.followers ? user.followers.length : 0}</p>
                 <p>Followers</p>
               </div>
             </Group>
             <Group>
-              <div className="flex flex-col items-center">
+              <div onClick={() => setOpened({ opened: true, tab: 1 })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
                 <p>{user.following ? user.following.length : 0}</p>
                 <p>Following</p>
               </div>
             </Group>
+
+            <FollowersFollowing username={String(username)} followers={user.followers} following={user.following} opened={opened} setOpened={setOpened} />
           </Group>
           {user.username !== myUser.username &&
             <Button onClick={handleToggleFollow} className={`${!isFollowing ? 'bg-primary' : 'bg-gray-700 hover:bg-gray-800'} my-4 sm:my-0`}>{!isFollowing ? 'Follow' : 'Unfollow'}</Button>
