@@ -110,17 +110,18 @@ const profile = () => {
           grow
           tabPadding="lg"
           mt={24}
+          styles={{ tabControl: { height: 'unset' } }}
           classNames={{
             tabLabel: "mb-1 sm:text-lg leading-[18px]",
           }}
         >
-          <Tabs.Tab label="Already Watched">
+          <Tabs.Tab label={<TabLabel text="Already Watched" length={user.watched?.length} />}>
             <AlreadyWatched username={String(username)} />
           </Tabs.Tab>
-          <Tabs.Tab label="Plan to Watch">
+          <Tabs.Tab label={<TabLabel text="Plan to Watch" length={user.plan_to?.length} />}>
             <PlanToWatch username={String(username)} />
           </Tabs.Tab>
-          <Tabs.Tab label="Favorites">
+          <Tabs.Tab label={<TabLabel text="Favorites" length={user.favorites?.length} />}>
             <Favorites username={String(username)} />
           </Tabs.Tab>
         </Tabs>
@@ -129,3 +130,19 @@ const profile = () => {
   );
 };
 export default profile;
+
+type TabLabelProps = {
+  text: string;
+  length: number | undefined;
+};
+
+const TabLabel = ({ text, length }: TabLabelProps) => {
+  return (
+    <div className="flex flex-col sm:flex-row whitespace-nowrap items-center sm:space-x-2">
+      <p>{text}</p>
+      <div className="bg-primary rounded-full grid place-items-center h-6 w-6 text-xs text-white">
+        {length ? length : 0}
+      </div>
+    </div>
+  );
+};
