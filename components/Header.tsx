@@ -88,18 +88,24 @@ const Header = () => {
                 size="sm"
                 placement="end"
                 withArrow
+                classNames={{item: "hover:bg-[hsl(230,8%,20%)] text-base"}}
               >
                 {session ? (
                   <>
                     <NextLink href={"/u/" + user?.username}>
                       <Menu.Item>
-                        <p className="font-semibold text-lg">
+                        <p className="font-semibold text-lg ">
                           {user?.username}
                         </p>
                       </Menu.Item>
                     </NextLink>
                     <Divider className="border-t-gray-500" />
 
+                    <NextLink href="/messages">
+                      <Menu.Item>
+                        Messages
+                      </Menu.Item>
+                    </NextLink>
                     <Menu.Item>Settings</Menu.Item>
 
                     <Divider my="xs" labelPosition="center" />

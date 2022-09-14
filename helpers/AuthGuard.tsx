@@ -6,13 +6,15 @@ import { Loader } from "@mantine/core";
 
 export default function AuthGuard({ children }: { children: JSX.Element }) {
   const router = useRouter();
+  console.log('hello')
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
       // The user is not authenticated, handle it here.
-      router.push("/");
+      router.push("/"); //add ?signin
     },
   });
+
   const loading = status === "loading";
 
   /* show loading indicator while the auth provider is still loading */

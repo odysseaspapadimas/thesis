@@ -19,6 +19,7 @@ const UserSchema = new mongoose.Schema(
     favorites: [ListItemSchema],
     followers: [String],
     following: [String],
+    messages: Object
   },
   { versionKey: false }
 );

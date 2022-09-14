@@ -1,4 +1,5 @@
 import { Button, Container, Group, Loader, Tabs } from "@mantine/core";
+import { NextLink } from "@mantine/next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
@@ -101,7 +102,12 @@ const profile = () => {
             <FollowersFollowing username={String(username)} followers={user.followers} following={user.following} opened={opened} setOpened={setOpened} />
           </Group>
           {user.username !== myUser.username &&
-            <Button onClick={handleToggleFollow} className={`${!isFollowing ? 'bg-primary' : 'bg-gray-700 hover:bg-gray-800'} my-4 sm:my-0`}>{!isFollowing ? 'Follow' : 'Unfollow'}</Button>
+            <div className="flex items-center space-x-3">
+              <Button onClick={handleToggleFollow} className={`${!isFollowing ? 'bg-primary' : 'bg-dark hover:bg-dark-hover'} my-4 sm:my-0`}>{!isFollowing ? 'Follow' : 'Unfollow'}</Button>
+              <NextLink href={`/messages/${user.username}`}>
+                <Button className="bg-dark hover:bg-dark-hover">Message</Button>
+              </NextLink>
+            </div>
           }
         </div>
 
