@@ -36,9 +36,18 @@ const Header = () => {
 
   const { data: session, status } = useSession();
 
-  const { user, error } = useUser({ session });
+  const { user, error } = useUser({ session, options: { refreshInterval: 1000 } });
 
-  const matches = useMediaQuery("(max-width: 378px)");
+  let unread = 0;
+
+  for (const message in user?.messages) {
+    const userMessage = user?.messages[message]?.at(-1)
+    if (userMessage && !userMessage.me && !userMessage.read) {
+      unread++;
+    }
+  }
+
+  console.log(unread, 'unread');
 
   return (
     <>
@@ -84,11 +93,11 @@ const Header = () => {
             <Search />
             <Group>
               <Menu
-                control={<Avatar src={session?.user?.image} />}
+                control={<div><Avatar src={session?.user?.image} />{unread ? <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary"></div> : null}</div>}
                 size="sm"
                 placement="end"
                 withArrow
-                classNames={{item: "hover:bg-[hsl(230,8%,20%)] text-base"}}
+                classNames={{ item: "hover:bg-[hsl(230,8%,20%)] text-base" }}
               >
                 {session ? (
                   <>
@@ -102,7 +111,7 @@ const Header = () => {
                     <Divider className="border-t-gray-500" />
 
                     <NextLink href="/messages">
-                      <Menu.Item>
+                      <Menu.Item rightSection={<Notifications num={unread} />}>
                         Messages
                       </Menu.Item>
                     </NextLink>
@@ -161,3 +170,7 @@ const NavLinks = () => (
     </NextLink>
   </div>
 );
+
+const Notifications = ({ num }: { num: number }) => (
+  <div className="absolute right-4 h-5 w-5 rounded-full bg-primary grid place-items-center text-xs font-medium">{num}</div>
+)

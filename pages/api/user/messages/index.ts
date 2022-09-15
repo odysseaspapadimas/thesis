@@ -28,9 +28,10 @@ export default async function handler(
     const user = await User.findOne({ username });
 
     res.status(200).json(user.messages);
+
   } else if (req.method === "POST") {
     const { user, otherUser, text } = req.body;
-    console.log(otherUser, "otheruser");
+    
     if (session) {
       const messageObject = `messages.${otherUser}`;
       const response = await User.updateOne(

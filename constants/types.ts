@@ -280,20 +280,25 @@ export interface AggregateCrew {
   total_episode_count?: number;
 }
 
-
 export interface AggregateCredits {
   cast?: Array<AggregateCast>;
   crew?: Array<AggregateCrew>;
   id?: number;
 }
 
-
 export type ListItem = {
   id: string;
   type: "movie" | "show";
 };
 
-export type User = {
+export interface Message extends Record<string, any> {
+  text: string;
+  sent: Date;
+  me: boolean;
+  read: boolean;
+}
+
+export interface User {
   username: string;
   email: string;
   image_url: string;
@@ -303,4 +308,5 @@ export type User = {
   favorites?: ListItem[];
   following?: string[];
   followers?: string[];
-};
+  messages?: Record<string, Message[]>;
+}
