@@ -18,7 +18,7 @@ type FiltersProps = {
 const isMovieRequest = (
   filters: DiscoverMovieRequest | DiscoverTvRequest
 ): filters is DiscoverMovieRequest => {
-  return (filters as DiscoverMovieRequest)["primary_release_date.lte"] !== undefined; //TODO: DOES NOT WORK ANYMORE FOR SOME REASON
+  return (filters as DiscoverMovieRequest)["primary_release_date.lte"] !== undefined;
 };
 
 const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
@@ -175,8 +175,8 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
             key={id}
             onClick={() => handleGenre(id, name)}
             className={`border border-gray-400 hover:border-transparent px-2 rounded-xl mr-2 ${filters.with_genres?.includes(String(id))
-                ? "bg-[#1864AB] border-transparent"
-                : ""
+              ? "bg-[#1864AB] border-transparent"
+              : ""
               }`}
           >
             {name}

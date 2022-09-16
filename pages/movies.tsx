@@ -57,7 +57,7 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
   const [filters, setFilters] = useState<DiscoverMovieRequest>({
     "vote_average.gte": 0.0,
     "vote_average.lte": 10.0,
-    "primary_release_date.lte": dayjs(new Date()).format("MM/DD/YYYY"),
+    "primary_release_date.lte": dayjs(new Date()).format("YYYY-MM-DD"),
     "include_adult": false
   });
 
@@ -74,6 +74,8 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
       `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}${filtersString}&sort_by=${sortBy}`
     );
   };
+
+  console.log(filteredMovies, 'ez');
 
   return (
     <Container size="xl" py={36}>
