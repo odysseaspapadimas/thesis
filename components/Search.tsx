@@ -4,10 +4,12 @@ import { useRouter } from "next/router";
 import {
   ChangeEvent,
   ChangeEventHandler,
+  Dispatch,
   FormEvent,
   FormEventHandler,
   MutableRefObject,
   Ref,
+  SetStateAction,
   useRef,
   useState,
 } from "react";
@@ -19,7 +21,7 @@ const searchFade = {
   transitionProperty: "opacity, width",
 };
 
-const Search = () => {
+const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolean>> }) => {
   const router = useRouter();
 
   const inputRef = useRef() as MutableRefObject<HTMLInputElement>;
@@ -45,12 +47,12 @@ const Search = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if(!query) return;
+    if (!query) return;
     router.push("/search?query=" + query);
   };
 
   return (
-    <Group ref={ref} className="transition-all">
+    <Group onClick={() => setNavOpened(false)} ref={ref} className="transition-all">
       <MediaQuery
         smallerThan="xs"
         styles={{

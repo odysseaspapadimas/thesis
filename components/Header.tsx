@@ -56,6 +56,7 @@ const Header = () => {
             onClose={() => setNavOpened(false)}
             onClick={() => setNavOpened(false)}
             withCloseButton={false}
+            closeOnClickOutside
             padding="xl"
             size="xl"
             classNames={{
@@ -88,7 +89,7 @@ const Header = () => {
               </div>
             </MediaQuery>
 
-            <Search />
+            <Search setNavOpened={setNavOpened} />
             <Group>
               <Menu
                 control={<div><Avatar src={session?.user?.image} />{unread ? <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-primary"></div> : null}</div>}
