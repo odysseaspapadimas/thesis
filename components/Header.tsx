@@ -47,8 +47,6 @@ const Header = () => {
     }
   }
 
-  console.log(unread, 'unread');
-
   return (
     <>
       <MantineHeader height={70}>
@@ -93,7 +91,7 @@ const Header = () => {
             <Search />
             <Group>
               <Menu
-                control={<div><Avatar src={session?.user?.image} />{unread ? <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary"></div> : null}</div>}
+                control={<div><Avatar src={session?.user?.image} />{unread ? <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-primary"></div> : null}</div>}
                 size="sm"
                 placement="end"
                 withArrow

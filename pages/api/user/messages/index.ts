@@ -42,7 +42,7 @@ export default async function handler(
       const messageObject2 = `messages.${user}`;
       const response2 = await User.updateOne(
         { username: otherUser },
-        { $push: { [messageObject2]: { text, sent: new Date(), me: false } } }
+        { $push: { [messageObject2]: { text, sent: new Date(), me: false, read: false } } }
       );
 
       res

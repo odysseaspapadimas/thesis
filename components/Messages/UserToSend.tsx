@@ -4,9 +4,6 @@ import useUser from "../../hooks/use-user"
 import { default_avatar } from "./User";
 
 const UserToSend = ({ onClick, username }: { onClick: any; username: string }) => {
-
-
-
     const { user } = useUser({ username });
 
     return (

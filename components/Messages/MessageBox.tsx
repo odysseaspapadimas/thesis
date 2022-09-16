@@ -5,8 +5,9 @@ import { useSWRConfig } from "swr";
 import { Message } from "../../constants/types";
 const relativeTime = require('dayjs/plugin/relativeTime')
 
-const scrollbarStyles = {
-
+type Group = {
+    date: string;
+    messages: Message[]
 }
 
 const MessageBox = ({ messages }: { messages: Message[] }) => {
@@ -14,7 +15,7 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
 
     dayjs.extend(relativeTime)
 
-    const groups = messages.reduce((groups: any, message: Message) => {
+    const groups = messages?.reduce((groups: any, message: Message) => {
         const date = String(message.sent).split('T')[0];
         if (!groups[date]) {
             groups[date] = [];
@@ -24,15 +25,12 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
     }, {});
 
     // Edit: to add it in the array format instead
-    const groupedMessages = Object.keys(groups).map((date) => {
+    const groupedMessages = groups && Object.keys(groups).map((date) => {
         return {
             date,
             messages: groups[date]
         };
     });
-
-
-    console.log(groupedMessages);
 
 
     useEffect(() => {
@@ -41,10 +39,10 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
 
     return (
         <div ref={ref} className="overflow-y-auto w-full scrollbar" style={{ height: 'calc(100vh - 168px)' }}>
-            {groupedMessages && groupedMessages.map((messageObj) => (
+            {groupedMessages && groupedMessages.map((messageObj: Group) => (
                 <div key={messageObj.date} className="flex flex-col w-full mx-auto py-2 pr-1 pl-[13px] space-y-2" >
                     <p className="self-center text-sm text-gray-400 mb-4">{dayjs(messageObj.date).format("DD MMM YYYY")}</p>
-                    {messageObj.messages && messageObj.messages.map((message: Message) => (
+                    {messageObj.messages && messageObj.messages.map((message) => (
                         <Tooltip
                             key={String(message.sent)}
                             label={dayjs(message.sent).format("HH:mm")}

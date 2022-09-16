@@ -49,8 +49,6 @@ const Message = () => {
         mutateUser();
 
         mutate(`/api/user/messages?username=${myUser?.username}`)
-
-        console.log(idk, 'response');
     }
 
     const [input, setInput] = useState("");
@@ -92,15 +90,16 @@ const Message = () => {
         })
 
         res = await res.json();;
-
-        console.log(res, 'response!!!')
     }
 
 
     useEffect(() => {
         if (!myUser || !user) return;
-        readMessage();
-        mutate(`/api/user/messages?username=${myUser.username}`);
+
+        if (myUser.messages && myUser.messages[user.username]) {
+            readMessage();
+            mutate(`/api/user/messages?username=${myUser.username}`);
+        }
     }, [myUser, user])
 
     return (

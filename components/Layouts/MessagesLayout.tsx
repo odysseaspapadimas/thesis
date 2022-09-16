@@ -1,9 +1,12 @@
-import { ActionIcon, Container, Group, Modal, TextInput, Tooltip } from "@mantine/core"
+import { ActionIcon, Center, Container, Group, Loader, Modal, TextInput, Tooltip } from "@mantine/core"
+import { useDebouncedValue } from "@mantine/hooks"
 import { NextLink } from "@mantine/next"
 import { useSession } from "next-auth/react"
-import { ReactElement, useState } from "react"
+import Image from "next/image"
+import { ChangeEvent, ReactElement, useEffect, useState } from "react"
 import useSWR from "swr"
 import { Edit } from "tabler-icons-react"
+import { User as IUser } from "../../constants/types"
 import fetcher from "../../helpers/fetcher"
 import useUser from "../../hooks/use-user"
 import User from "../Messages/User"
@@ -19,7 +22,15 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
 
     const [showModal, setShowModal] = useState(false);
 
-    //  console.log(data, 'data');
+    const [query, setQuery] = useState("");
+    const [debouncedQuery] = useDebouncedValue(query, 500);
+
+    const { data: queryResults } = useSWR<IUser[]>(debouncedQuery ? `/api/user/search?query=${debouncedQuery}` : null, fetcher);
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.currentTarget.value)
+    }
+    
     return (
         <Container size="xl" className="flex flex-col md:flex-row md:justify-center">
             <div className="w-full md:max-w-xs">
@@ -33,7 +44,23 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
                         onClose={() => setShowModal(false)}
                         title="Send a new message"
                     >
-                        <TextInput placeholder="Search for a user" />
+                        <TextInput value={query} onChange={handleChange} placeholder="Search for a user" />
+                        <div className="flex flex-col space-y-2 my-2">
+                            {debouncedQuery && queryResults && queryResults.length > 0 ? queryResults.map((user) => (
+                                <NextLink key={user.username} href={`/messages/${user.username}`} className="flex items-center hover:bg-dark px-2 py-2 rounded-md">
+                                    <Image src={user.image_url} className="rounded-full" width={40} height={40} />
+                                    <p className="font-semibold hover:text-gray-200 ml-3">{user.username}</p>
+                                </NextLink>
+                            )) : debouncedQuery && !queryResults ? (
+                                <Center>
+                                    <Loader />
+                                </Center>
+                            ) : debouncedQuery && queryResults?.length === 0 && (
+                                <p>No user found with that username</p>
+                            )}
+                        </div>
+
+                        <h2 className="mt-4 border-b-2 pb-1 w-fit mx-auto text-medium text-2xl">Suggested</h2>
                         <div className="flex flex-col space-y-2 my-2">
                             {user && user.following?.map((username) => (
                                 <UserToSend key={username} onClick={() => setShowModal(false)} username={username} />
@@ -45,8 +72,6 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
                     {data && Object.keys(data).sort((a, b) => {
                         const date1 = new Date(data[a].at(-1).sent).valueOf();
                         const date2 = new Date(data[b].at(-1).sent).valueOf();
-
-                        console.log(date1, date2, 'date');
                         return date2 - date1
                     }).map((username) => (
                         <User key={username} username={username} lastMessage={data[username].at(-1)} />
