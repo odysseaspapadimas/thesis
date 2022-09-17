@@ -8,15 +8,21 @@ const List = ({ data }: { data: ListData }) => {
   const showsLength = data.shows.length;
   return (
     <Tabs
+      className="mt-4"
       variant="pills"
-      color="blue"
+      color="gray"
       classNames={{
-        tabsList: "flex flex-nowrap overflow-x-scroll sm:overflow-x-hidden ",
+        tabsList: "flex flex-nowrap overflow-x-scroll sm:overflow-x-hidden mb-4",
       }}
+      defaultValue="both"
     >
-      <Tabs.Tab
-        label={<TabLabel text="Both" length={moviesLength + showsLength} />}
-      >
+      <Tabs.List>
+        <Tabs.Tab value="both"><TabLabel text="Both" length={moviesLength + showsLength} /></Tabs.Tab>
+        <Tabs.Tab value="movies"><TabLabel text="Movies" length={moviesLength} /></Tabs.Tab>
+        <Tabs.Tab value="shows"><TabLabel text="TV Shows" length={showsLength} /></Tabs.Tab>
+      </Tabs.List>
+
+      <Tabs.Panel value="both">
         {moviesLength + showsLength === 0 ? <p>No items on this list...</p> :
           <>
             <Movies movies={data.movies} />
@@ -24,17 +30,19 @@ const List = ({ data }: { data: ListData }) => {
             <TVShows shows={data.shows} />
           </>
         }
-      </Tabs.Tab>
-      <Tabs.Tab label={<TabLabel text="Movies" length={moviesLength} />}>
+
+      </Tabs.Panel>
+      <Tabs.Panel value="movies">
         {moviesLength === 0 ? <p>No items on this list...</p> :
           <Movies movies={data.movies} />
         }
-      </Tabs.Tab>
-      <Tabs.Tab label={<TabLabel text="TV Shows" length={showsLength} />}>
+
+      </Tabs.Panel>
+      <Tabs.Panel value="shows">
         {showsLength === 0 ? <p>No items on this list...</p> :
           <TVShows shows={data.shows} />
         }
-      </Tabs.Tab>
+      </Tabs.Panel>
     </Tabs>
   );
 };

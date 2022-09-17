@@ -44,7 +44,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
   }
   const matches = useMediaQuery("(max-width: 600px)");
 
-  const titleRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const titleRef = useRef() as MutableRefObject<HTMLHeadingElement>;
   const [lineClamp, setLineClamp] = useState(3);
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
 
   return (
     <div className="flex relative rounded-lg border border-gray-600 h-[152px]">
-      <NextLink href={link} className=" w-fit">
+      <NextLink href={link} className="min-w-[100px]">
         {image_path ? (
           <Image
             src={image_path}
@@ -153,59 +153,61 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       </div>
 
       {session && (
-        <Menu
-          control={
-            <ActionIcon
-              className="hover:bg-slate-800 transition-colors duration-75"
-              variant="filled"
-            >
-              <Dots />
-            </ActionIcon>
-          }
-          size="sm"
-          gutter={0}
-          placement="end"
-          className="absolute top-2 right-2 z-10"
-          classNames={{
-            item: "px-2",
-          }}
-        >
-          <Menu.Item
-            onClick={handleWatched}
-            icon={
-              <Eye
-                size={14}
-                className={onList?.on.includes("watched") ? "text-primary" : ""}
-              />
-            }
+        <div className="absolute top-2 right-2 z-10">
+          <Menu
+            position="bottom-end"
+            classNames={{
+              item: "px-2 whitespace-nowrap",
+            }}
           >
-            Already Watched
-          </Menu.Item>
-          <Menu.Item
-            onClick={handlePlan}
-            icon={
-              <Plus
-                size={14}
-                className={onList?.on.includes("plan") ? "text-primary" : ""}
-              />
-            }
-          >
-            Plan to Watch
-          </Menu.Item>
-          <Menu.Item
-            onClick={handleFavorite}
-            icon={
-              <Heart
-                size={14}
-                className={
-                  onList?.on.includes("favorites") ? "text-red-500" : ""
+            <Menu.Target>
+              <ActionIcon
+                className="hover:bg-slate-800 transition-colors duration-75"
+                variant="filled"
+              >
+                <Dots />
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                onClick={handleWatched}
+                icon={
+                  <Eye
+                    size={14}
+                    className={onList?.on.includes("watched") ? "text-primary" : ""}
+                  />
                 }
-              />
-            }
-          >
-            Favorite
-          </Menu.Item>
-        </Menu>
+              >
+                Already Watched
+              </Menu.Item>
+              <Menu.Item
+                onClick={handlePlan}
+                icon={
+                  <Plus
+                    size={14}
+                    className={onList?.on.includes("plan") ? "text-primary" : ""}
+                  />
+                }
+              >
+                Plan to Watch
+              </Menu.Item>
+              <Menu.Item
+                onClick={handleFavorite}
+                icon={
+                  <Heart
+                    size={14}
+                    className={
+                      onList?.on.includes("favorites") ? "text-red-500" : ""
+                    }
+                  />
+                }
+              >
+                Favorite
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
       )}
     </div>
   );

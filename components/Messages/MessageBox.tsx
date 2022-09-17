@@ -40,17 +40,16 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
     return (
         <div ref={ref} className="overflow-y-auto w-full scrollbar" style={{ height: 'calc(100vh - 168px)' }}>
             {groupedMessages && groupedMessages.map((messageObj: Group) => (
-                <div key={messageObj.date} className="flex flex-col w-full mx-auto py-2 pr-1 pl-[13px] space-y-2" >
+                <div key={messageObj.date} className="flex flex-col w-full mx-auto py-2 pr-1 pl-[13px]" >
                     <p className="self-center text-sm text-gray-400 mb-4">{dayjs(messageObj.date).format("DD MMM YYYY")}</p>
                     {messageObj.messages && messageObj.messages.map((message) => (
                         <Tooltip
                             key={String(message.sent)}
                             label={dayjs(message.sent).format("HH:mm")}
-                            allowPointerEvents
+                            events={{ hover: true, focus: true, touch: true }}
                             position={`${message.me ? "left" : "right"}`}
-                            className={`${message.me ? "self-end bg-primary border border-primary" : "self-start bg-dark border border-dark"} rounded-md px-4 py-2 max-w-[75%]`}
-                            classNames={{ body: "bg-dark text-white text-sm py-2" }}>
-                            <p className="break-all">{message.text} </p>
+                            classNames={{ tooltip: "bg-dark text-white text-sm py-2" }}>
+                            <p className={`${message.me ? "self-end bg-primary border border-primary" : "self-start bg-dark border border-dark"} rounded-md px-4 py-2 my-1 max-w-[75%] break-all`}>{message.text} </p>
                         </Tooltip>
                     ))}
                 </div>

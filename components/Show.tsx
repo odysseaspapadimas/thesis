@@ -86,7 +86,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
   const handlePlan = async () => {
     if (!onList.on.includes("plan")) {
       await addToList("plan", String(data.id), type);
-      
+
       showNotification({
         title: "Added to Plan to Watch list",
         message: `'${name}' was successfully added to your list`,
@@ -154,60 +154,63 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
         </div>
       </NextLink>
       {session && (
-        <Menu
-          control={
-            <ActionIcon
-              className="hover:bg-slate-800 transition-colors duration-75"
-              variant="filled"
-            >
-              <Dots />
-            </ActionIcon>
-          }
-          size="sm"
-          gutter={0}
-          placement="end"
-          className="absolute top-2 right-2 z-10"
-          classNames={{
-            item: "px-2",
-          }}
-        >
-          <Menu.Label>Add to list</Menu.Label>
-          <Menu.Item
-            onClick={handleWatched}
-            icon={
-              <Eye
-                size={14}
-                className={onList?.on.includes("watched") ? "text-primary" : ""}
-              />
-            }
+        <div className="absolute top-2 right-2">
+          <Menu
+            position="bottom-end"
+            classNames={{
+              item: "px-2 whitespace-nowrap",
+            }}
           >
-            Already Watched
-          </Menu.Item>
-          <Menu.Item
-            onClick={handlePlan}
-            icon={
-              <Plus
-                size={14}
-                className={onList?.on.includes("plan") ? "text-primary" : ""}
-              />
-            }
-          >
-            Plan to Watch
-          </Menu.Item>
-          <Menu.Item
-            onClick={handleFavorite}
-            icon={
-              <Heart
-                size={14}
-                className={
-                  onList?.on.includes("favorites") ? "text-red-500" : ""
+            <Menu.Target>
+              <ActionIcon
+                className="hover:bg-slate-800 transition-colors duration-75"
+                variant="filled"
+              >
+                <Dots />
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Label>Add to list</Menu.Label>
+              <Menu.Item
+                onClick={handleWatched}
+                icon={
+                  <Eye
+                    size={14}
+                    className={onList?.on.includes("watched") ? "text-primary" : ""}
+                  />
                 }
-              />
-            }
-          >
-            Favorite
-          </Menu.Item>
-        </Menu>
+              >
+                Already Watched
+              </Menu.Item>
+              <Menu.Item
+                onClick={handlePlan}
+                icon={
+                  <Plus
+                    size={14}
+                    className={onList?.on.includes("plan") ? "text-primary" : ""}
+                  />
+                }
+              >
+                Plan to Watch
+              </Menu.Item>
+              <Menu.Item
+                onClick={handleFavorite}
+                icon={
+                  <Heart
+                    size={14}
+                    className={
+                      onList?.on.includes("favorites") ? "text-red-500" : ""
+                    }
+                  />
+                }
+              >
+                Favorite
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+
+        </div>
       )}
       <p className=" text-base font-semibold mt-1">
         {name} ({release_date})

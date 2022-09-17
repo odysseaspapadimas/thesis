@@ -112,24 +112,30 @@ const profile = () => {
         </div>
 
         <Tabs
-          position="center"
-          grow
-          tabPadding="lg"
           mt={24}
-          styles={{ tabControl: { height: 'unset' } }}
+          styles={{}}
           classNames={{
+            tabsList: "",
+            tab: "min-w-[120px]",
             tabLabel: "mb-1 sm:text-lg leading-[18px]",
           }}
+          defaultValue="watched"
         >
-          <Tabs.Tab label={<TabLabel text="Already Watched" length={user.watched?.length} />}>
+          <Tabs.List grow position="center" className="flex justify-center w-full items-center flex-nowrap">
+            <Tabs.Tab value="watched"><TabLabel text="Already Watched" length={user.watched?.length} /></Tabs.Tab>
+            <Tabs.Tab value="plan"><TabLabel text="Plan To Watch" length={user.plan_to?.length} /></Tabs.Tab>
+            <Tabs.Tab value="favorites"><TabLabel text="Favorites" length={user.favorites?.length} /></Tabs.Tab>
+          </Tabs.List>
+
+          <Tabs.Panel value="watched">
             <AlreadyWatched username={String(username)} />
-          </Tabs.Tab>
-          <Tabs.Tab label={<TabLabel text="Plan to Watch" length={user.plan_to?.length} />}>
+          </Tabs.Panel>
+          <Tabs.Panel value="plan">
             <PlanToWatch username={String(username)} />
-          </Tabs.Tab>
-          <Tabs.Tab label={<TabLabel text="Favorites" length={user.favorites?.length} />}>
+          </Tabs.Panel>
+          <Tabs.Panel value="favorites">
             <Favorites username={String(username)} />
-          </Tabs.Tab>
+          </Tabs.Panel>
         </Tabs>
       </Container>
     </div>

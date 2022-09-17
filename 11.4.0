@@ -1,0 +1,16 @@
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Progress: resolved 28, reused 28, downloaded 0, added 0
+Progress: resolved 53, reused 28, downloaded 0, added 0
+Progress: resolved 270, reused 257, downloaded 0, added 0
+Progress: resolved 288, reused 275, downloaded 0, added 0
+Progress: resolved 294, reused 281, downloaded 0, added 0
+Packages: +22 -4
+++++++++++++++++++++++----
+Progress: resolved 308, reused 295, downloaded 0, added 0
+Progress: resolved 308, reused 295, downloaded 0, added 3
+Progress: resolved 308, reused 295, downloaded 0, added 4, done
+
+dependencies:
++ @emotion/react 11.10.4
++ @emotion/server 11.10.0
+

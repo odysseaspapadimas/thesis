@@ -97,8 +97,12 @@ const Message = () => {
         if (!myUser || !user) return;
 
         if (myUser.messages && myUser.messages[user.username]) {
-            readMessage();
-            mutate(`/api/user/messages?username=${myUser.username}`);
+            if (!myUser.messages[user.username].at(-1)?.read) {
+                const text = myUser.messages[user.username].at(-1)?.text;
+
+                readMessage();
+                mutate(`/api/user/messages?username=${myUser.username}`);
+            }
         }
     }, [myUser, user])
 

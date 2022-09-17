@@ -4,12 +4,12 @@ import { ListData } from "../../constants/types";
 import fetcher from "../../helpers/fetcher";
 import List from "./List/List";
 
-const PlanToWatch = ({username} : {username : string}) => {
+const PlanToWatch = ({ username }: { username: string }) => {
   const { data, error } = useSWR<ListData>(`/api/user/list?username=${username}&list=plan`, fetcher);
   console.log(data, " planlistdata");
   if (!data) {
     return (
-      <Center>
+      <Center my={16}>
         <Loader variant="bars" />
       </Center>
     );

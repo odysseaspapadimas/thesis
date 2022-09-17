@@ -12,7 +12,7 @@ const AlreadyWatched = ({ username }: { username: string }) => {
   console.log(data, " planlistdata");
   if (!data) {
     return (
-      <Center>
+      <Center my={16}>
         <Loader variant="bars" />
       </Center>
     );

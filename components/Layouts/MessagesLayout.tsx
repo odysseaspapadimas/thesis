@@ -30,13 +30,13 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setQuery(e.currentTarget.value)
     }
-    
+
     return (
         <Container size="xl" className="flex flex-col md:flex-row md:justify-center">
             <div className="w-full md:max-w-xs">
                 <div className="flex items-center justify-between w-full">
                     <h1>Messages</h1>
-                    <Tooltip label="Send a new message" classNames={{ body: "bg-dark text-white" }}>
+                    <Tooltip label="Send a new message" classNames={{ tooltip: "bg-dark text-white" }}>
                         <Edit onClick={() => setShowModal(true)} className="hover:bg-dark rounded-md p-1 cursor-pointer" size={32} />
                     </Tooltip>
                     <Modal

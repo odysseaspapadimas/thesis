@@ -85,7 +85,6 @@ const search = ({ results, response }: { results: SearchMultiResponse; response:
           <Pagination
             classNames={{
               item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
-              active: "bg-primary",
             }}
             total={results.total_pages}
             page={activePage}
@@ -136,7 +135,6 @@ const search = ({ results, response }: { results: SearchMultiResponse; response:
           <Pagination
             classNames={{
               item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
-              active: "bg-primary",
             }}
             total={results.total_pages}
             page={activePage}

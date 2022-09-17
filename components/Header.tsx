@@ -23,6 +23,7 @@ import SignInSignUp from "./SignInSignUp";
 import useUser from "../hooks/use-user";
 import { useMediaQuery } from "@mantine/hooks";
 import Search from "./Search";
+import { MenuDivider } from "@mantine/core/lib/Menu/MenuDivider/MenuDivider";
 
 type HeaderP = {
   opened: boolean;
@@ -92,54 +93,58 @@ const Header = () => {
             <Search setNavOpened={setNavOpened} />
             <Group>
               <Menu
-                control={<div><Avatar src={session?.user?.image} />{unread ? <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-primary"></div> : null}</div>}
-                size="sm"
-                placement="end"
+                position="bottom-end"
                 withArrow
-                classNames={{ item: "hover:bg-[hsl(230,8%,20%)] text-base" }}
+              classNames={{item: "text-base"}}
               >
-                {session ? (
-                  <>
-                    <NextLink href={"/u/" + user?.username}>
-                      <Menu.Item>
+                <Menu.Target>
+                  <div className="cursor-pointer">
+                    <Avatar src={session?.user?.image} />
+                    {unread ?
+                      <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-primary"></div>
+                      : null}
+                  </div>
+                </Menu.Target>
+                <Menu.Dropdown className="-translate-x-[8px]">
+                  {session ? (
+                    <>
+                      <Menu.Item component={NextLink} href={"/u/" + user?.username}>
                         <p className="font-semibold text-lg ">
                           {user?.username}
                         </p>
                       </Menu.Item>
-                    </NextLink>
-                    <Divider className="border-t-gray-500" />
+                      <Divider my="xs" className="" />
 
-                    <NextLink href="/messages">
-                      <Menu.Item rightSection={<Notifications num={unread} />}>
+                      <Menu.Item component={NextLink} href="/messages" rightSection={<Notifications num={unread} />}>
                         Messages
                       </Menu.Item>
-                    </NextLink>
-                    <Menu.Item>Settings</Menu.Item>
+                      <Menu.Item>Settings</Menu.Item>
 
-                    <Divider my="xs" labelPosition="center" />
-                    <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
-                  </>
-                ) : (
-                  <>
-                    <Menu.Item
-                      onClick={() => {
-                        setOpened(true);
-                        setActiveTab(0);
-                      }}
-                    >
-                      Sign-in
-                    </Menu.Item>
-                    <Divider />
-                    <Menu.Item
-                      onClick={() => {
-                        setOpened(true);
-                        setActiveTab(1);
-                      }}
-                    >
-                      Sign-up
-                    </Menu.Item>
-                  </>
-                )}
+                      <Divider my="xs" labelPosition="center" />
+                      <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
+                    </>
+                  ) : (
+                    <>
+                      <Menu.Item
+                        onClick={() => {
+                          setOpened(true);
+                          setActiveTab(0);
+                        }}
+                      >
+                        Sign-in
+                      </Menu.Item>
+                      <Divider />
+                      <Menu.Item
+                        onClick={() => {
+                          setOpened(true);
+                          setActiveTab(1);
+                        }}
+                      >
+                        Sign-up
+                      </Menu.Item>
+                    </>
+                  )}
+                </Menu.Dropdown>
               </Menu>
             </Group>
           </Group>
@@ -171,5 +176,5 @@ const NavLinks = () => (
 );
 
 const Notifications = ({ num }: { num: number }) => (
-  <div className="absolute right-4 h-5 w-5 rounded-full bg-primary grid place-items-center text-xs font-medium">{num}</div>
+  <div className="ml-6 h-5 w-5 rounded-full bg-primary grid place-items-center text-xs font-medium">{num}</div>
 )

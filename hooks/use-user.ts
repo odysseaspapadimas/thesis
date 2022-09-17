@@ -3,11 +3,14 @@ import { useSession } from "next-auth/react";
 import useSWR, { KeyedMutator } from "swr";
 import fetcher from "../helpers/fetcher";
 import { User } from "../constants/types";
+import { PublicConfiguration } from "swr/dist/types";
 
 type Props = {
   session?: Session | null;
   username?: string | string[] | undefined;
-  options?: any;
+  options?:
+    | Partial<PublicConfiguration<any, any, (args_0: string) => any>>
+    | undefined;
 };
 
 const useUser = ({

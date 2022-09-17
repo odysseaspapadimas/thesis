@@ -1,10 +1,15 @@
 import { Container, MediaQuery, Text } from "@mantine/core";
 import { NextLink } from "@mantine/next";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import MessagesLayout from "../../components/Layouts/MessagesLayout";
 import { NextPageWithAuth } from "../_app"
 
 const Messages: NextPageWithAuth = () => {
+
+    useEffect(() => {
+        Notification.requestPermission();
+    }, [])
+
     return (
         <MessagesLayout>
             <MediaQuery query="(max-width: 900px)" styles={{display: 'none'}}>
