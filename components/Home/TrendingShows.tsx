@@ -1,6 +1,5 @@
 import useSWR from "swr";
 import fetcher from "../../helpers/fetcher";
-import Movie from "../Movie";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { MovieType, TVShowType } from "../../constants/types";
 import Show from "../Show";

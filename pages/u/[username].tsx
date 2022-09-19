@@ -42,7 +42,7 @@ const profile = () => {
   }, [user, myUser])
 
 
-  const [opened, setOpened] = useState({ opened: false, tab: 0 });
+  const [opened, setOpened] = useState({ opened: false, tab: "followers" });
 
   if (!user || !myUser) {
     return <Loader size="xl" className="w-full p-auto mt-10" variant="dots" />;
@@ -87,13 +87,13 @@ const profile = () => {
           </Group>
           <Group className="space-x-4 mx-8">
             <Group>
-              <div onClick={() => setOpened({ opened: true, tab: 0 })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
+              <div onClick={() => setOpened({ opened: true, tab: "followers" })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
                 <p>{user.followers ? user.followers.length : 0}</p>
                 <p>Followers</p>
               </div>
             </Group>
             <Group>
-              <div onClick={() => setOpened({ opened: true, tab: 1 })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
+              <div onClick={() => setOpened({ opened: true, tab: "following" })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
                 <p>{user.following ? user.following.length : 0}</p>
                 <p>Following</p>
               </div>

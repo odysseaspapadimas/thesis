@@ -1,11 +1,11 @@
-import { Button, Divider, PasswordInput, Tabs, TextInput } from "@mantine/core";
+import { Button, Divider, PasswordInput, Tabs, TabsValue, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
 import { Dispatch, SetStateAction } from "react";
 
 type Props = {
-  activeTab: number;
-  setActiveTab: Dispatch<SetStateAction<number>>;
+  activeTab: TabsValue;
+  setActiveTab: Dispatch<SetStateAction<TabsValue>>;
 };
 
 const SignInSignUp = ({ activeTab, setActiveTab }: Props) => {
@@ -35,12 +35,16 @@ const SignInSignUp = ({ activeTab, setActiveTab }: Props) => {
 
   return (
     <Tabs
-      active={activeTab}
+      value={activeTab}
       onTabChange={setActiveTab}
-      position="center"
       variant="pills"
     >
-      <Tabs.Tab label="Sign-in">
+      <Tabs.List position="center">
+        <Tabs.Tab value="sign-in">Sign-in</Tabs.Tab>
+        <Tabs.Tab value="sign-up">Sign-up</Tabs.Tab>
+      </Tabs.List>
+
+      <Tabs.Panel value="sign-in">
         <div className="grid place-items-center p-4">
           <button
             aria-label="Continue with google"
@@ -57,8 +61,8 @@ const SignInSignUp = ({ activeTab, setActiveTab }: Props) => {
             </p>
           </button>
         </div>
-      </Tabs.Tab>
-      <Tabs.Tab label="Sign-up">
+      </Tabs.Panel>
+      <Tabs.Panel value="sign-up">
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <TextInput
             required
@@ -97,7 +101,7 @@ const SignInSignUp = ({ activeTab, setActiveTab }: Props) => {
             </p>
           </button>
         </div>
-      </Tabs.Tab>
+      </Tabs.Panel>
     </Tabs>
   );
 };

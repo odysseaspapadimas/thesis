@@ -13,6 +13,7 @@ import {
   Divider,
   Group,
   Drawer,
+  TabsValue,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { NextLink } from "@mantine/next";
@@ -33,7 +34,7 @@ type HeaderP = {
 const Header = () => {
   const [opened, setOpened] = useState(false);
   const [navOpened, setNavOpened] = useState(false);
-  const [activeTab, setActiveTab] = useState(1); //Tab for sign-in/up modal
+  const [activeTab, setActiveTab] = useState<TabsValue>("sign-in"); //Tab for sign-in/up modal
 
   const { data: session, status } = useSession();
 
@@ -128,7 +129,7 @@ const Header = () => {
                       <Menu.Item
                         onClick={() => {
                           setOpened(true);
-                          setActiveTab(0);
+                          setActiveTab("sign-in");
                         }}
                       >
                         Sign-in
@@ -137,7 +138,7 @@ const Header = () => {
                       <Menu.Item
                         onClick={() => {
                           setOpened(true);
-                          setActiveTab(1);
+                          setActiveTab("sign-up");
                         }}
                       >
                         Sign-up
@@ -151,7 +152,7 @@ const Header = () => {
         </Container>
       </MantineHeader>
 
-      <Modal opened={opened} onClose={() => setOpened(false)}>
+      <Modal closeOnClickOutside={true} opened={opened} onClose={() => setOpened(false)}>
         <SignInSignUp activeTab={activeTab} setActiveTab={setActiveTab} />
       </Modal>
     </>

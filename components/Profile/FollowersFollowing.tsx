@@ -5,7 +5,7 @@ import fetcher from "../../helpers/fetcher";
 import User from "./User";
 
 export type State = {
-    tab: number;
+    tab: string;
     opened: boolean;
 }
 
@@ -34,29 +34,32 @@ const FollowersFollowing = ({ username, opened, setOpened }: Props) => {
         >
             {/* Modal content */}
             <Tabs
-                position="center"
-                grow
-                active={opened.tab}
-                onTabChange={(tab) => setOpened({ ...opened, tab })}
-                tabPadding="lg"
+                value={opened.tab}
+                onTabChange={(tab) => setOpened({ ...opened, tab: String(tab) })}
                 classNames={{
                     tabLabel: "mb-1 sm:text-lg leading-[18px]",
                 }}
             >
-                <Tabs.Tab label={"Followers"} value={0}>
+                <Tabs.List position="center"
+                    grow>
+                    <Tabs.Tab value="followers">Followers</Tabs.Tab>
+                    <Tabs.Tab value="following">Following</Tabs.Tab>
+                </Tabs.List>
+
+                <Tabs.Panel value="followers">
                     <div className="flex flex-col space-y-3">
                         {followers?.map((user: TUser) => (
                             <User key={user.username} data={user} setOpened={setOpened} />
                         ))}
                     </div>
-                </Tabs.Tab>
-                <Tabs.Tab label={"Following"} value={1}>
+                </Tabs.Panel>
+                <Tabs.Panel value="following">
                     <div className="flex flex-col space-y-3">
                         {following?.map((user: TUser) => (
                             <User key={user.username} data={user} setOpened={setOpened} />
                         ))}
                     </div>
-                </Tabs.Tab>
+                </Tabs.Panel>
             </Tabs>
         </Modal>
 
