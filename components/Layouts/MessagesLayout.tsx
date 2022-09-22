@@ -18,7 +18,7 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
 
     const { user } = useUser(({ session }))
 
-    const { data } = useSWR(user && user.username ? `/api/user/messages?username=${user.username}` : null, fetcher)
+    //const { data } = useSWR(user && user.username ? `/api/user/messages?username=${user.username}` : null, fetcher)
 
     const [showModal, setShowModal] = useState(false);
 
@@ -69,12 +69,19 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
                     </Modal>
                 </div>
                 <div className="flex flex-col space-y-2 max-h-message-list overflow-y-auto">
-                    {data && Object.keys(data).sort((a, b) => {
-                        const date1 = new Date(data[a].at(-1).sent).valueOf();
-                        const date2 = new Date(data[b].at(-1).sent).valueOf();
-                        return date2 - date1
+                    {user && user.messages && Object.keys(user.messages).length > 0 && Object.keys(user.messages).sort((a, b) => {
+                        if (user.messages) {
+                            const date1 = new Date(user.messages[a][user.messages[a].length - 1].sent).valueOf();
+                            const date2 = new Date(user.messages[b][user.messages[b].length - 1].sent).valueOf();
+                            return date2 - date1
+                        } else {
+                            return 0;
+                        }
                     }).map((username) => (
-                        <User key={username} username={username} lastMessage={data[username].at(-1)} />
+                        user.messages && (
+                            <User key={username} username={username} lastMessage={user.messages[username][user.messages[username].length - 1]} />
+                        )
+
                     ))}
                 </div>
             </div>

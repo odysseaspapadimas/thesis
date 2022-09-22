@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Container, Textarea, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Container, Popover, Textarea, TextInput } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { NextLink } from "@mantine/next";
 import { useSession } from "next-auth/react";
@@ -8,9 +8,10 @@ import { MutableRefObject, useEffect } from "react";
 import { useRef } from "react";
 import { ChangeEvent, FormEvent, KeyboardEvent, ReactElement, useState } from "react";
 import { mutate, useSWRConfig } from "swr";
-import { ArrowLeft } from "tabler-icons-react";
+import { ArrowLeft, Plus } from "tabler-icons-react";
 import MessagesLayout from "../../components/Layouts/MessagesLayout";
 import MessageBox from "../../components/Messages/MessageBox";
+import SendMedia from "../../components/Messages/SendMedia";
 import { default_avatar } from "../../components/Messages/User";
 import useUser from "../../hooks/use-user";
 
@@ -124,8 +125,9 @@ const Message = () => {
                 <span className="border-b border-solid border-[rgb(44,46,51)] absolute w-full left-0 top-12"></span>
 
                 <MessageBox messages={myUser?.messages && user ? myUser.messages[user.username] : []} />
-                <form ref={formRef} onSubmit={handleSubmit} className="sticky my-2 self-center w-[95%] flex items-center space-x-2">
-                    <Textarea value={input} onChange={handleChange} onKeyDown={handleKeyDown} className="w-full" placeholder="Enter message" autosize rightSection={<button className={`${!input && "hidden"} hover:text-primary hover:font-medium`}>Send</button>} rightSectionWidth={60} />
+                <form ref={formRef} onSubmit={handleSubmit} className="sticky my-2 self-center w-full px-3 flex items-center space-x-2">
+                    <SendMedia user={myUser?.username} otherUser={user?.username} />
+                    <Textarea value={input} onChange={handleChange} onKeyDown={handleKeyDown} className="flex-1" placeholder="Enter message" autosize rightSection={<button className={`${!input && "hidden"} hover:text-primary hover:font-medium`}>Send</button>} rightSectionWidth={60} />
                 </form>
             </div>
         ) : (
@@ -138,8 +140,9 @@ const Message = () => {
                         </NextLink>
                     </div>
                     <MessageBox messages={myUser?.messages ? myUser.messages[user.username] : []} />
-                    <form ref={formRef} onSubmit={handleSubmit} className="mx-auto mt-auto mb-4 w-fullself-center w-[95%]">
-                        <Textarea value={input} onChange={handleChange} onKeyDown={handleKeyDown} className="w-full" placeholder="Enter message" autosize rightSection={<button className={`${!input && "hidden"} hover:text-primary hover:font-medium`}>Send</button>} rightSectionWidth={60} />
+                    <form ref={formRef} onSubmit={handleSubmit} className="mx-auto mt-auto mb-4 self-center flex items-center space-x-2 w-[95%]">
+                        <SendMedia user={myUser?.username} otherUser={user?.username} />
+                        <Textarea value={input} onChange={handleChange} onKeyDown={handleKeyDown} className="flex-1" placeholder="Enter message" autosize rightSection={<button className={`${!input && "hidden"} hover:text-primary hover:font-medium`}>Send</button>} rightSectionWidth={60} />
                     </form>
                 </div>
             </MessagesLayout>

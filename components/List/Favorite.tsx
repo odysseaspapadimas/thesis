@@ -8,6 +8,7 @@ const Favorite = ({ onList, handler }: ToggleOnListButtonProps) => {
       transitionDuration={50}
       position="bottom"
       withArrow
+      withinPortal
       label="Favorite"
     >
       <ActionIcon

@@ -14,6 +14,7 @@ import {
   Group,
   Drawer,
   TabsValue,
+  Indicator,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { NextLink } from "@mantine/next";
@@ -96,14 +97,13 @@ const Header = () => {
               <Menu
                 position="bottom-end"
                 withArrow
-              classNames={{item: "text-base"}}
+                classNames={{ item: "text-base" }}
               >
                 <Menu.Target>
                   <div className="cursor-pointer">
-                    <Avatar src={session?.user?.image} />
-                    {unread ?
-                      <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-primary"></div>
-                      : null}
+                    <Indicator disabled={!unread}>
+                      <Avatar src={session?.user?.image} />
+                    </Indicator>
                   </div>
                 </Menu.Target>
                 <Menu.Dropdown className="-translate-x-[8px]">

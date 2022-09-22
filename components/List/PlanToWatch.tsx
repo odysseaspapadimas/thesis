@@ -8,6 +8,7 @@ const PlanToWatch = ({ onList, handler }: ToggleOnListButtonProps) => {
       transitionDuration={50}
       position="bottom"
       withArrow
+      withinPortal
       label="Plan to Watch"
     >
       <ActionIcon

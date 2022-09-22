@@ -292,10 +292,14 @@ export type ListItem = {
 };
 
 export interface Message extends Record<string, any> {
-  text: string;
+  text?: string;
   sent: Date;
   me: boolean;
   read: boolean;
+  media_type?: "movie" | "show" | "person";
+  media_id?: string;
+  media_name?: string;
+  image_path? : string;
 }
 
 export interface User {
