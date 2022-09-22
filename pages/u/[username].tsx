@@ -24,8 +24,6 @@ const profile = () => {
 
   const { user: myUser } = useUser({ session })
 
-  console.log(user, 'user', error, 'error ');
-
   useEffect(() => {
     if (!user && !error) return;
     if (!user && error) {
@@ -44,7 +42,7 @@ const profile = () => {
 
   const [opened, setOpened] = useState({ opened: false, tab: "followers" });
 
-  if (!user || !myUser) {
+  if (!user || (!myUser && session)) {
     return <Loader size="xl" className="w-full p-auto mt-10" variant="dots" />;
   }
 
@@ -89,7 +87,7 @@ const profile = () => {
             <Group>
               <div onClick={() => setOpened({ opened: true, tab: "followers" })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
                 <p>{user.followers ? user.followers.length : 0}</p>
-                <p>Followers</p>
+                <p>{user.followers && user.followers.length === 1 ? "Follower" : "Followers"}</p>
               </div>
             </Group>
             <Group>
@@ -101,7 +99,7 @@ const profile = () => {
 
             <FollowersFollowing username={String(username)} followers={user.followers} following={user.following} opened={opened} setOpened={setOpened} />
           </Group>
-          {user.username !== myUser.username &&
+          {myUser && user.username !== myUser.username &&
             <div className="flex items-center space-x-3">
               <Button onClick={handleToggleFollow} className={`${!isFollowing ? 'bg-primary' : 'bg-dark hover:bg-dark-hover'} my-4 sm:my-0`}>{!isFollowing ? 'Follow' : 'Unfollow'}</Button>
               <NextLink href={`/messages/${user.username}`}>

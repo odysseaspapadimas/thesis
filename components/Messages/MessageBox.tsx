@@ -7,6 +7,7 @@ import { useSWRConfig } from "swr";
 import { IMG_URL } from "../../constants/tmdbUrls";
 import { Message } from "../../constants/types";
 const relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
 
 type Group = {
     date: string;
@@ -16,7 +17,6 @@ type Group = {
 const MessageBox = ({ messages }: { messages: Message[] }) => {
     const ref = useRef() as MutableRefObject<HTMLDivElement>;
 
-    dayjs.extend(relativeTime)
 
     const groups = messages?.reduce((groups: any, message: Message) => {
         const date = String(message.sent).split('T')[0];
