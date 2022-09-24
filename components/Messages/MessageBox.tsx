@@ -47,7 +47,7 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
             {groupedMessages && groupedMessages.map((messageObj: Group) => (
                 <div key={messageObj.date} className="flex flex-col w-full mx-auto py-2 pr-1 pl-[13px]" >
                     <p className="self-center text-sm text-gray-400 mb-4">{dayjs(messageObj.date).format("DD MMM YYYY")}</p>
-                    {messageObj.messages && messageObj.messages.map((message) => (
+                    {messageObj.messages && messageObj.messages.map((message, i) => (
                         <Tooltip
                             key={String(message.sent)}
                             withArrow
@@ -56,7 +56,10 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
                             position={`${message.me ? "left" : "right"}`}
                             classNames={{ tooltip: "bg-dark text-white text-sm py-2" }}>
                             {message.text ?
-                                <p className={`${message.me ? "self-end bg-primary border border-primary" : "self-start bg-dark border border-dark"} rounded-md px-4 py-2 my-1 max-w-[75%] break-all`}>{message.text} </p>
+                                <div className={`${message.me ? "self-end" : "self-start"} max-w-[75%] flex flex-col`}>
+                                    <p className={`${message.me ? " bg-primary border border-primary" : " bg-dark border border-dark"} rounded-md px-4 py-2 my-1 break-all`}>{message.text} </p>
+                                    <p className="self-end text-sm text-gray-400">{i === messageObj.messages.length -1 && message.me && message.read.state && "Read"}</p>
+                                </div>
                                 : message.media_type && (
                                     <div className={`${message.me ? "self-end bg-primary border border-primary" : "self-start bg-dark border border-dark"} my-1 rounded-md max-w-[75%] `}>
                                         <NextLink href={`/${message.media_type}/${message.media_id}`} className="flex flex-col items-center space-y-1 text-center p-3">

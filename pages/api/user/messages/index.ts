@@ -47,7 +47,19 @@ export default async function handler(
       if (text) {
         const response = await User.updateOne(
           { username: user },
-          { $push: { [messageObject]: { text, sent: new Date(), me: true } } }
+          {
+            $push: {
+              [messageObject]: {
+                text,
+                sent: new Date(),
+                me: true,
+                read: {
+                  state: false,
+                  at: new Date(),
+                },
+              },
+            },
+          }
         );
 
         const response2 = await User.updateOne(
@@ -58,7 +70,10 @@ export default async function handler(
                 text,
                 sent: new Date(),
                 me: false,
-                read: false,
+                read: {
+                  state: false,
+                  at: new Date(),
+                },
               },
             },
           }
@@ -79,6 +94,10 @@ export default async function handler(
                 media_type,
                 sent: new Date(),
                 me: true,
+                read: {
+                  state: false,
+                  at: new Date(),
+                },
                 media_id,
                 media_name,
                 image_path,
@@ -94,7 +113,10 @@ export default async function handler(
               [messageObject2]: {
                 media_type,
                 sent: new Date(),
-                read: false,
+                read: {
+                  state: false,
+                  at: new Date(),
+                },
                 media_id,
                 media_name,
                 image_path,

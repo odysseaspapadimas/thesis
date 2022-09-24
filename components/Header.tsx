@@ -45,7 +45,7 @@ const Header = () => {
 
   for (const message in user?.messages) {
     const userMessage = user?.messages[message]?.at(-1)
-    if (userMessage && !userMessage.me && !userMessage.read) {
+    if (userMessage && !userMessage.me && !userMessage.read.state) {
       unread++;
     }
   }

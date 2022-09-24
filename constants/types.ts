@@ -295,11 +295,11 @@ export interface Message extends Record<string, any> {
   text?: string;
   sent: Date;
   me: boolean;
-  read: boolean;
+  read: { state: boolean; at: string };
   media_type?: "movie" | "show" | "person";
   media_id?: string;
   media_name?: string;
-  image_path? : string;
+  image_path?: string;
 }
 
 export interface User {
