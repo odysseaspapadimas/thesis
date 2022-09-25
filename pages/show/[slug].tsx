@@ -247,7 +247,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     id: showId,
     append_to_response: "aggregate_credits", //TODO: Switch to aggregate_credits, have to make my own type
   });
-
+  
   console.log(showData, "showdata");
 
   console.log("static showid", showId);

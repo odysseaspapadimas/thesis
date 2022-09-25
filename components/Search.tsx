@@ -1,5 +1,7 @@
-import { Group, MediaQuery, TextInput, Transition } from "@mantine/core";
-import { useClickOutside, useDisclosure } from "@mantine/hooks";
+import { Center, Group, Loader, MediaQuery, TextInput, Transition } from "@mantine/core";
+import { useClickOutside, useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { NextLink } from "@mantine/next";
+import { MovieResult, MovieResultsResponse, SearchPersonResponse, TvResult, TvResultsResponse } from "moviedb-promise";
 import { useRouter } from "next/router";
 import {
   ChangeEvent,
@@ -13,16 +15,47 @@ import {
   useRef,
   useState,
 } from "react";
-import { Search as SearchIcon, X } from "tabler-icons-react";
+import useSWR from "swr";
+import { DeviceTv, Movie, Search as SearchIcon, User, X } from "tabler-icons-react";
+import fetcher from "../helpers/fetcher";
+import Person from "./Search/Results/Person";
+import Show from "./Search/Results/Show";
 
-const searchFade = {
-  in: { opacity: 1, width: "100%" },
-  out: { opacity: 0, width: 0 },
-  transitionProperty: "opacity, width",
-};
+export interface PersonResult {
+  adult?: boolean;
+  gender?: number;
+  id?: number;
+  known_for?: [];
+  known_for_department?: string;
+  media_type: "person";
+  name?: string;
+  popularity?: number;
+  profile_path?: string;
+}
+
+interface SearchMultiResponse {
+  results: Array<MovieResult | TvResult | PersonResult>;
+  total_results: number;
+  total_pages: number;
+}
+
 
 const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolean>> }) => {
   const router = useRouter();
+
+  const matches = useMediaQuery('(max-width: 576px)', true, { getInitialValueInEffect: true })
+
+  const searchFade = {
+    in: { opacity: 1, width: !matches ? "300px" : "100%" },
+    out: { opacity: 0, width: 0 },
+    transitionProperty: "opacity, width",
+  };
+  const resultFade = {
+    in: { opacity: 1, height: "unset" },
+    out: { opacity: 0, height: 0 },
+    transitionProperty: "opacity, height",
+  };
+
 
   const inputRef = useRef() as MutableRefObject<HTMLInputElement>;
   const [showInput, showInputHandler] = useDisclosure(false, {
@@ -32,6 +65,12 @@ const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolea
       }, 200), //0.2s delay just like the animation
   });
   const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebouncedValue(query, 200);
+
+  const { data: movie } = useSWR<MovieResultsResponse>(debouncedQuery ? `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${debouncedQuery}` : null, fetcher);
+  const { data: show } = useSWR<TvResultsResponse>(debouncedQuery ? `https://api.themoviedb.org/3/search/tv?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${debouncedQuery}` : null, fetcher);
+  const { data: person } = useSWR<SearchPersonResponse>(debouncedQuery ? `https://api.themoviedb.org/3/search/person?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${debouncedQuery}` : null, fetcher);
+
 
   const ref = useClickOutside(showInputHandler.close, ["mouseup", "touchend"]);
 
@@ -71,23 +110,92 @@ const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolea
             duration={500}
           >
             {(styles) => (
-              <form onSubmit={handleSubmit}>
-                <TextInput
-                  ref={inputRef}
-                  style={styles}
-                  className="right-[124px]"
-                  value={query}
-                  onChange={onChangeQuery}
-                  placeholder="e.g. The Office"
-                  rightSection={
-                    <X
-                      onClick={handleClearQuery}
-                      size={16}
-                      className="text-gray-400 hover:text-white cursor-pointer"
-                    />
-                  }
-                />
-              </form>
+              <div className="relative">
+                <form onSubmit={handleSubmit}>
+                  <TextInput
+                    ref={inputRef}
+                    style={styles}
+                    value={query}
+                    classNames={{
+                      input: `${!!query && showInput && "rounded-none rounded-t-md"}`
+                    }}
+                    onChange={onChangeQuery}
+                    placeholder="e.g. The Office"
+                    rightSection={
+                      <X
+                        onClick={handleClearQuery}
+                        size={16}
+                        className="text-gray-400 hover:text-white cursor-pointer"
+                      />
+                    }
+                  />
+                </form>
+                <Transition
+                  mounted={!!query && showInput}
+                  transition={resultFade}
+                  exitDuration={500}
+                  duration={500}
+                >
+                  {(styles2) => (
+                    <div style={styles2} className="rounded-b-md absolute bg-[#25262B] w-full">
+                      {!movie || !show || !person ? (
+                        <div className="w-full h-full grid place-items-center">
+                          <Loader />
+                        </div>
+                      ) : !movie.results?.at(0) && !show.results?.at(0) && !person.results?.at(0) ? (
+                        <div className="w-full h-full grid place-items-center">
+                          <p>No results found</p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col">
+                          {movie && movie.results?.at(0) && (
+                            <NextLink onClick={() => {
+                              showInputHandler.close();
+                              setQuery("");
+                            }} href={`/movie/${movie.results[0].id}-${movie.results[0].title?.toLowerCase().replace(/[\W_]+/g, "-")}`}>
+                              <div className="flex w-full justify-between items-center hover:bg-[#1A1B1E] px-3 py-4">
+
+                                <p className="font-semibold">
+                                  {movie.results[0].title}
+                                </p>
+                                <Movie />
+                              </div>
+                            </NextLink>
+                          )}
+                          {show && show.results?.at(0) && (
+                            <NextLink onClick={() => {
+                              showInputHandler.close();
+                              setQuery("");
+                            }} href={`/show/${show.results[0].id}-${show.results[0].name?.toLowerCase().replace(/[\W_]+/g, "-")}`}>
+                              <div className="flex w-full justify-between items-center hover:bg-[#1A1B1E] px-3 py-4">
+
+                                <p className="font-semibold">
+                                  {show.results[0].name}
+                                </p>
+                                <DeviceTv />
+                              </div>
+                            </NextLink>
+                          )}
+                          {person && person.results?.at(0) && (
+                            <NextLink onClick={() => {
+                              showInputHandler.close();
+                              setQuery("");
+                            }} href={`/person/${person.results[0].id}-${person.results[0].name?.toLowerCase().replace(/[\W_]+/g, "-")}`}>
+                              <div className="flex w-full justify-between items-center hover:bg-[#1A1B1E] px-3 py-4">
+
+                                <p className="font-semibold">
+                                  {person.results[0].name}
+                                </p>
+                                <User />
+                              </div>
+                            </NextLink>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Transition>
+              </div>
             )}
           </Transition>
         </div>
@@ -100,7 +208,7 @@ const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolea
       >
         {!showInput ? <SearchIcon spacing="lg" /> : <X spacing="lg" />}
       </div>
-    </Group>
+    </Group >
   );
 };
 export default Search;
