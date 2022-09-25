@@ -117,6 +117,10 @@ const Show = ({
     mutateOnList();
   };
 
+  console.log(new Intl.DisplayNames(['en'], {
+    type: 'language'
+  }), 'lang');
+
   return (
     <div>
       <Head>
@@ -211,8 +215,22 @@ const Show = ({
           </div>
         </Container>
       </div>
-      <Container size="xl">
+      <Container size="xl" className="flex flex-col md:flex-row md:space-x-4">
         <ShowCredits credits={show.aggregate_credits} />
+        <div className="md:py-6">
+          <h2 className="text-2xl font-semibold mb-4">Info</h2>
+          <div>
+            <h3 className="font-semibold">Status</h3>
+            <p>{show.status}</p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold">Original Language</h3>
+            <p>{new Intl.DisplayNames(['en'], {
+              type: 'language'
+            }).of(show.original_language)}</p>
+          </div>
+        </div>
       </Container>
     </div>
   );

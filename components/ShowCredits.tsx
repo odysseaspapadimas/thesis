@@ -14,9 +14,9 @@ const ShowCredits = ({ credits }: { credits: AggregateCredits }) => {
   const scrollRef = useHorizontalScroll();
 
   return (
-    <div className="py-6">
+    <div className="py-6 md:w-[75%]">
       <h2 className="text-2xl font-semibold mb-4">Cast</h2>
-      <ScrollArea viewportRef={scrollRef} scrollbarSize={16} type="always" className="pb-4">
+      <ScrollArea viewportRef={scrollRef} scrollbarSize={16} type="always" className="pb-4 ">
         <div className="flex space-x-4">
           {credits.cast?.map((cast) => (
             <div

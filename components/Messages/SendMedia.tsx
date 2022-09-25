@@ -56,11 +56,12 @@ const SendMedia = ({ user, otherUser }: Props) => {
 
         res = await res.json();
 
+        setInput("");
         console.log(res, 'res')
     }
 
     return (
-        <Popover position="top-start" withArrow width={300} classNames={{ dropdown: "h-[585px]" }}>
+        <Popover position="top-start" withArrow trapFocus width={300} classNames={{ dropdown: "h-[585px]" }}>
             <Popover.Target>
                 <div>
                     <Plus className="border border-white rounded-full cursor-pointer" size={28} />
