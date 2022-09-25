@@ -1,7 +1,7 @@
 import { NextLink } from "@mantine/next";
 import { MovieResult, TvResult } from "moviedb-promise";
 import Image from "next/image";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { ExoticComponent, ForwardRefExoticComponent, MutableRefObject, useEffect, useRef, useState } from "react";
 import { IMG_URL } from "../../../constants/tmdbUrls";
 
 type SearchResultP = {
@@ -40,7 +40,7 @@ const Show = ({ result }: { result: MovieResult | TvResult }) => {
     overview = result.overview;
   }
 
-  const titleRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const titleRef = useRef() as MutableRefObject<HTMLAnchorElement>;
   const [lineClamp, setLineClamp] = useState(3);
 
   useEffect(() => {
@@ -66,9 +66,11 @@ const Show = ({ result }: { result: MovieResult | TvResult }) => {
         )}
       </NextLink>
       <div className="p-3 flex-[2]">
-        <h2 ref={titleRef} className="text-lg font-semibold">
-          {title}
-        </h2>
+        <NextLink href={link} ref={titleRef} className="text-lg font-semibold">
+          <h2 >
+            {title}
+          </h2>
+        </NextLink>
         <p className="text-gray-500">{release_date}</p>
         <div
           className="text-ellipsis overflow-hidden "

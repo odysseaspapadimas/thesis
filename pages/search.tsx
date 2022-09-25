@@ -12,7 +12,7 @@ import { MovieResult, TvResult } from "moviedb-promise";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import Person from "../components/Search/Results/Person";
 import Show from "../components/Search/Results/Show";
@@ -49,26 +49,54 @@ const isUser = (
 
 const URL = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=`;
 
-const search = ({ results, response }: { results: SearchMultiResponse; response: any }) => {
+const search = () => {
 
   const router = useRouter();
-  const { query, page } = router.query;
+  const { q: query, page } = router.query;
 
   const matches = useMediaQuery("(max-width: 400px)", false);
 
+  const { data: firstPage } = useSWR<SearchMultiResponse>(`/api/search?q=${query}&page=1`, fetcher);
+
+
   const [activePage, setPage] = useState(page ? parseInt(String(page)) : 1);
 
-  const { data, error } = useSWR<SearchMultiResponse>(
-    `${URL}${query}&page=${activePage === 1 ? 2 : activePage}`, //fetch the 2nd page before you switch
-    fetcher
-  );
+  useEffect(() => {
+    if (!page) return;
+    setPage(Number(page))
+  }, [page])
 
-  console.log(results)
+  useEffect(() => {
+    if (!page || !firstPage || !firstPage.total_pages) return;
+
+    if (Number(page) > firstPage.total_pages) {
+      console.log('run')
+      setPage(1);
+    } else {
+      setPage(Number(page));
+      console.log(page, 'run3')
+    }
+  }, [page, firstPage])
+
+  useEffect(() => {
+    if (!query || !firstPage || !firstPage.total_pages) return;
+    if(activePage > firstPage.total_pages) return;
+    router.push(`/search?q=${query}&page=${activePage}`);
+  }, [activePage, query, firstPage])
+
+
+  const { data, error } = useSWR<SearchMultiResponse>(`/api/search?q=${query}&page=${activePage}`, fetcher);
 
   const [scroll, scrollTo] = useWindowScroll();
 
   if (!query) return <Container size="xl" py={36}>
     <h2>Try searching for something!</h2>
+  </Container>
+
+  if (!firstPage) return <Container size="xl" py={36}>
+    <Center>
+      <Loader />
+    </Center>
   </Container>
 
   return (
@@ -77,16 +105,16 @@ const search = ({ results, response }: { results: SearchMultiResponse; response:
         <title>"{query}" - Search</title>
       </Head>
       <h2 className="text-xl mb-6">
-        Found {results.total_results} {results.total_results > 1 ? 'results' : 'result'} for "{query}"
+        Found {firstPage.total_results} {firstPage.total_results > 1 ? 'results' : 'result'} for "{query}"
       </h2>
 
-      {results.total_pages > 1 &&
+      {firstPage.total_pages > 1 &&
         <Center className="my-6">
           <Pagination
             classNames={{
               item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
             }}
-            total={results.total_pages}
+            total={firstPage.total_pages}
             page={activePage}
             onChange={(page) => {
               {
@@ -97,8 +125,11 @@ const search = ({ results, response }: { results: SearchMultiResponse; response:
         </Center>
       }
       <div className="flex flex-col space-y-4">
-        {activePage === 1
-          ? results.results?.map((result) => {
+        {!data && !error
+          ? [...Array(20)].map((_, i) => (
+            <Skeleton key={i} height={152} className="rounded-md w-full" />
+          ))
+          : data?.results?.map((result) => {
             if (!isUser(result)) {
               if (result.media_type === "person") {
                 return <Person key={result.id} result={result} />;
@@ -110,33 +141,16 @@ const search = ({ results, response }: { results: SearchMultiResponse; response:
               result = result as IUser;
               return <User key={result.username} data={result} />
             }
-          })
-          : !data && !error
-            ? [...Array(20)].map(() => (
-              <Skeleton height={152} className="rounded-md w-full" />
-            ))
-            : data?.results?.map((result) => {
-              if (!isUser(result)) {
-                if (result.media_type === "person") {
-                  return <Person key={result.id} result={result} />;
-                } else if (result.media_type === "movie" || result.media_type === "tv") {
-                  return <Show key={result.id} result={result} />;
-                }
-              }
-              else {
-                result = result as IUser;
-                return <User key={result.username} data={result} />
-              }
-            })}
+          })}
       </div>
 
-      {results.total_pages > 1 &&
+      {firstPage.total_pages > 1 &&
         <Center className="mt-6">
           <Pagination
             classNames={{
               item: matches ? "px-1 h-7 w-7 min-w-[unset]" : "",
             }}
-            total={results.total_pages}
+            total={firstPage.total_pages}
             page={activePage}
             onChange={(page) => {
               {
@@ -152,57 +166,57 @@ const search = ({ results, response }: { results: SearchMultiResponse; response:
 };
 export default search;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { query } = ctx.query;
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const { query } = ctx.query;
 
-  //const res = await fetch(URL + query);
-  const atlasPlugin = require('mongoose-atlas-search');
+//   //const res = await fetch(URL + query);
+//   const atlasPlugin = require('mongoose-atlas-search');
 
-  await dbConnect();
+//   await dbConnect();
 
-  atlasPlugin.initialize({
-    model: UserModel,
-    overwriteFind: true,
-    searchKey: 'search',
-    searchFunction: (query: any) => {
-      return {
-        "index": "username",
-        "text": {
-          "query": `${query}`,
-          "path": {
-            "wildcard": "*"
-          }
-        }
-      }
-    }
+//   atlasPlugin.initialize({
+//     model: UserModel,
+//     overwriteFind: true,
+//     searchKey: 'search',
+//     searchFunction: (query: any) => {
+//       return {
+//         "index": "username",
+//         "text": {
+//           "query": `${query}`,
+//           "path": {
+//             "wildcard": "*"
+//           }
+//         }
+//       }
+//     }
 
-  });
+//   });
 
-  const usersResults = await UserModel.find({ search: String(query) });
+//   const usersResults = await UserModel.find({ search: String(query) });
 
-  console.log(usersResults, 'search');
+//   console.log(usersResults, 'search');
 
-  const results = await tmdb.searchMulti({ query: String(query) });
+//   const results = await tmdb.searchMulti({ query: String(query) });
 
-  if (results.results) {
-    if (results.results.length === 20) {
+//   if (results.results) {
+//     if (results.results.length === 20) {
 
-      results.results.pop();
-    }
-  }
+//       results.results.pop();
+//     }
+//   }
 
-  if (usersResults && results.total_results) {
-    console.log('total results');
-    results.total_results += usersResults.length;
-  } else if (usersResults && !results.total_results) {
-    results.total_results = usersResults.length;
-  }
+//   if (usersResults && results.total_results) {
+//     console.log('total results');
+//     results.total_results += usersResults.length;
+//   } else if (usersResults && !results.total_results) {
+//     results.total_results = usersResults.length;
+//   }
 
-  results.results = JSON.parse(JSON.stringify(usersResults)).concat(results.results);
+//   results.results = JSON.parse(JSON.stringify(usersResults)).concat(results.results);
 
-  return {
-    props: {
-      results,
-    },
-  };
-};
+//   return {
+//     props: {
+//       results,
+//     },
+//   };
+// };

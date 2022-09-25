@@ -48,7 +48,7 @@ const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolea
     e.preventDefault();
 
     if (!query) return;
-    router.push("/search?query=" + query);
+    router.push("/search?q=" + query + "&page=1");
   };
 
   return (

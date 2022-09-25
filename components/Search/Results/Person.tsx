@@ -27,7 +27,9 @@ const Person = ({ result }: { result: PersonResult }) => {
         )}
       </NextLink>
       <div className="p-3 flex-[2]">
-        <h2 className="text-lg font-semibold">{result.name}</h2>
+        <NextLink href={link} className="text-lg font-semibold">
+          <h2 >{result.name}</h2>
+        </NextLink>
         <p>{result.known_for_department}</p>
         <span
           className="text-ellipsis overflow-hidden"
