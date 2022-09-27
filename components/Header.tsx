@@ -26,6 +26,7 @@ import useUser from "../hooks/use-user";
 import { useMediaQuery } from "@mantine/hooks";
 import Search from "./Search";
 import { MenuDivider } from "@mantine/core/lib/Menu/MenuDivider/MenuDivider";
+import { Session } from "next-auth";
 
 type HeaderP = {
   opened: boolean;
@@ -67,7 +68,7 @@ const Header = () => {
             }}
             className=" translate-y-[70px] "
           >
-            <NavLinks />
+            <NavLinks session={session} />
           </Drawer>
 
           <Group position="apart">
@@ -88,7 +89,7 @@ const Header = () => {
 
             <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
               <div className="flex-[2] ml-6">
-                <NavLinks />
+                <NavLinks session={session} />
               </div>
             </MediaQuery>
 
@@ -161,7 +162,7 @@ const Header = () => {
 
 export default Header;
 
-const NavLinks = () => (
+const NavLinks = ({ session }: { session: Session | null }) => (
   <div className="flex md:space-x-4 items-center flex-col md:flex-row space-y-4 md:space-y-0 text-xl sm:text-base">
     <NextLink href="/movies">
       <span className="text-gray-300 hover:text-white font-semibold">
@@ -173,6 +174,14 @@ const NavLinks = () => (
         TV Shows
       </span>
     </NextLink>
+
+    {session &&
+      <NextLink href="/calendar">
+        <span className="text-gray-300 hover:text-white font-semibold">
+          Calendar
+        </span>
+      </NextLink>
+    }
   </div>
 );
 

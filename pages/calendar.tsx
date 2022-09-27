@@ -1,134 +1,113 @@
-import { Indicator, Tooltip, HoverCard, Text } from '@mantine/core';
+import { Indicator, Tooltip, HoverCard, Text, LoadingOverlay } from '@mantine/core';
 import { CalendarBase } from '@mantine/dates';
-import dayjs from 'dayjs';
+import { ShowResponse } from 'moviedb-promise';
 import React, { useEffect, useState } from 'react'
 import useSWR from 'swr';
 import fetcher from '../helpers/fetcher';
+import { traktShow } from '../utils/trakt';
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
+import { NextLink } from '@mantine/next';
+import { NextPageWithAuth } from './_app';
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
-const BEARER = process.env.NEXT_PUBLIC_TVDB_API_KEY
+type AiringShow = {
+  name: string | undefined;
+  date: Date;
+  id: number | undefined;
+}
 
-const Calendar = () => {
-  const { data, error } = useSWR<any>(
-    "/api/user/list?list=watched",
+const Calendar : NextPageWithAuth = () => {
+  const { data, error } = useSWR<ShowResponse[]>(
+    "/api/user/calendar",
     fetcher
   );
 
-  const [showsList, setShowsList] = useState<any[]>([]);
+  const [showsList, setShowsList] = useState<AiringShow[]>([]);
 
-  const fetchIdk = async () => {
-    let shows = []
+  const [loading, setLoading] = useState(true);
 
-    for (let i = 0; i < data.shows.length; i++) {
-      const showId = data.shows[i].id;
+  const createDates = async () => {
 
-      let res = await fetch(`https://api4.thetvdb.com/v4/search/remoteid/${showId}`, {
-        headers: {
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_TBDB_API_KEY}`
-        }
-      });
+    const showsList = data as ShowResponse[];
 
-      let { data: results } = await res.json();
+    for (let i = 0; i < showsList.length; i++) {
+      const show = showsList[i];
+      const showName = show.name?.toLowerCase().replace(/[\W_]+/g, "-")
 
-      const show = results.filter((item: any) => {
-        if (item.hasOwnProperty("series")) {
-          return true;
-        }
-        else return false;
-      })[0].series
 
-      shows.push(show);
-    }
+      if (show.next_episode_to_air && show.name && show.name.length > 0) {
 
-    for (let i = 0; i < shows.length; i++) {
-      const showId = shows[i].id as number;
+        const data = await traktShow({ slug: showName })
 
-      let res = await fetch(`https://api4.thetvdb.com/v4/series/${showId}/extended`, {
-        headers: {
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_TBDB_API_KEY}`
-        }
-      });
+        console.log(data.airs, 'airs')
+        //@ts-ignore
+        const sourceDate = show.next_episode_to_air.air_date + " " + data.airs.time
+        dayjs.tz.setDefault(data.airs.timezone)
 
-      let { data } = await res.json();
+        // The same behavior with dayjs.tz("2014-06-01 12:00", "America/New_York")
 
-      if (data.originalLanguage !== "eng") {
-        let res = await fetch(`https://api4.thetvdb.com/v4/series/${showId}/translations/eng`, {
-          headers: {
-            "Authorization": `Bearer ${process.env.NEXT_PUBLIC_TBDB_API_KEY}`
-          }
-        });
-
-        let { data: translations } = await res.json();
-        data.name = translations.name;
+        setShowsList((prev) => [...prev, { name: show.name, date: dayjs.tz(sourceDate).local().toDate(), id: show.id }])
       }
 
-      shows[i] = data;
     }
-    setShowsList(shows);
-    console.log(shows, 'movies!')
+
+    setLoading(false);
   }
 
   useEffect(() => {
     if (!data) return;
-    fetchIdk();
+    createDates();
   }, [data])
 
-  const [value, setValue] = useState<Date>();
-
   return (
-    <div className="flex flex-col space-y-4">
-      {false && showsList.map((show: any) => (
-        <div>
-          <p> {show.name}</p>
-          {Object.keys(show.airsDays).map((day) => {
-            if (show.airsDays[day]) {
-              return day;
+    <div className="w-full grid place-items-center">
+      <div className="border border-gray-700 rounded-md mt-8 p-2 relative">
+        <LoadingOverlay visible={loading} overlayBlur={0.5} />
+        <CalendarBase
+          renderDay={(date) => {
+            const day = date.getDate();
+            let isAirDate = false;
+            let showAiring = { name: "", date: new Date(), id: 0 } as AiringShow;
+            showsList.forEach((show) => {
+              if (dayjs(show.date).format("YYYY-MM-DD") === dayjs(date).format("YYYY-MM-DD")) {
+                isAirDate = true;
+                showAiring = show as AiringShow;
+              }
+            })
+            if (isAirDate) {
+              return (
+                <HoverCard position='top' width={275} shadow="md" withinPortal openDelay={0} closeDelay={40} transitionDuration={0} exitTransitionDuration={0}>
+                  <HoverCard.Target>
+                    <Indicator size={6} color="red" offset={8}>
+                      <div>{day}</div>
+                    </Indicator>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown className='cursor-default absolute text-center p-1'>
+                    {showAiring &&
+                      <div className="hover:bg-dark p-1">
+                        <NextLink href={`/show/${showAiring.id}`} >
+                          <Text size="sm" color="white">
+                            {showAiring.name} at {dayjs(showAiring.date).format("hh:mm")}
+                          </Text>
+                        </NextLink>
+                      </div>
+                    }
+                  </HoverCard.Dropdown>
+                </HoverCard>
+              )
+            } else {
+              return <div>{day}</div>
             }
-          })}
-
-          <p>{show.airsTime}</p>
-        </div>
-      ))}
-
-      <CalendarBase
-        renderDay={(date) => {
-          const day = date.getDate();
-          let isAirDate = false;
-          let showAiring = { name: "" };
-
-          showsList.forEach((show) => {
-            if (show.nextAired === dayjs(date).format("YYYY-MM-DD")) {
-              isAirDate = true;
-              showAiring = show;
-            }
-          })
-          if (isAirDate) {
-            return (
-              // <Tooltip label={showAiring?.name} className="w-full h-full">
-              //   <Indicator size={6} color="red" offset={8}>
-              //     <div>{day}</div>
-              //   </Indicator>
-              // </Tooltip>
-              <HoverCard width={280} shadow="md">
-                <HoverCard.Target>
-                  <Indicator size={6} color="red" offset={8}>
-                    <div>{day}</div>
-                  </Indicator>
-                </HoverCard.Target>
-                <HoverCard.Dropdown>
-                  <Text size="sm">
-                    {showAiring?.name}
-                  </Text>
-                </HoverCard.Dropdown>
-              </HoverCard>
-
-            )
-          } else {
-            return <div>{day}</div>
-          }
-        }}
-      />
+          }}
+        />
+      </div>
     </div>
   )
 }
 
 export default Calendar
+
+Calendar.requireAuth = true;

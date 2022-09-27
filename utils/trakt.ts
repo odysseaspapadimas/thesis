@@ -1,10 +1,9 @@
 import { ShowSummary_Full } from "better-trakt";
 
-if (!process.env.TRAKT_CLIENT_ID)
+if (!process.env.NEXT_PUBLIC_TRAKT_CLIENT_ID)
   throw Error("TRAKT_CLIENT_ID environment variable is not set");
 
-const { TRAKT_CLIENT_ID: apiKey } = process.env;
-
+const apiKey = process.env.NEXT_PUBLIC_TRAKT_CLIENT_ID;
 
 type ShowProps = {
   showId?: string;
@@ -25,9 +24,7 @@ export const traktShow = async ({ showId, slug }: ShowProps) => {
     }
   );
 
-  
   const data = (await res.json()) as ShowSummary_Full;
-  console.log(data, 'traktdata');
 
   return data;
 };

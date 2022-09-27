@@ -274,14 +274,29 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const showId = slug.split("-")[0];
 
+
+
+
   const showData = await tmdb.tvInfo({
     id: showId,
     append_to_response: "aggregate_credits", //TODO: Switch to aggregate_credits, have to make my own type
   });
 
+  const showName = showData.name?.toLowerCase().replace(/[\W_]+/g, "-")
+
+  if (!slug.split("-").slice(1).join("-")) {
+    return {
+      redirect: {
+        destination: `/show/${showId}-${showName}`,
+        permanent: true,
+      },
+    }
+  }
+
+
   const providers = await tmdb.tvWatchProviders({ id: showId })
 
-  const data = await traktShow({ slug: slug.split("-").slice(1).join("-") })
+  const data = await traktShow({ slug: showName })
 
 
   return {
@@ -300,24 +315,3 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: "blocking",
   };
 };
-
-function changeTimeZone(date: Date, timeZone: string) {
-
-  function getLocale() {
-    return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
-  }
-
-  if (typeof date === 'string') {
-    return new Date(
-      new Date(date).toLocaleString(getLocale(), {
-        timeZone,
-      }),
-    );
-  }
-
-  return new Date(
-    date.toLocaleString(getLocale(), {
-      timeZone,
-    }),
-  );
-}
