@@ -9,7 +9,6 @@ import { IMG_URL } from "../constants/tmdbUrls";
 import { AggregateCredits } from "../constants/types";
 
 const ShowCredits = ({ credits }: { credits: AggregateCredits }) => {
-  console.log(credits, "credits");
 
   const scrollRef = useHorizontalScroll();
 

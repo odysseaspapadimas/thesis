@@ -137,7 +137,7 @@ const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolea
                   duration={500}
                 >
                   {(styles2) => (
-                    <div style={styles2} className="rounded-b-md absolute bg-[#25262B] w-full">
+                    <div style={styles2} className="rounded-b-md absolute bg-[#25262B] w-full z-[999]">
                       {!movie || !show || !person ? (
                         <div className="w-full h-full grid place-items-center">
                           <Loader />

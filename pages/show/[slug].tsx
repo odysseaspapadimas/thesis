@@ -24,13 +24,28 @@ import { tmdb } from "../../utils/tmdb";
 import { Genre, TVShowType, AggregateCredits } from "../../constants/types";
 import Head from "next/head";
 import ShowCredits from "../../components/ShowCredits";
+import { traktShow } from "../../utils/trakt";
+import { ApiResponse, ShowSummary_Full } from "better-trakt";
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+type Airs = {
+  day: string;
+  time: string;
+  timezone: string;
+}
 
 const Show = ({
   show,
-  providers
+  providers,
+  airs
 }: {
   show: TVShowType & { aggregate_credits: AggregateCredits };
   providers: any;
+  airs: Airs
 }) => {
   const router = useRouter();
 
@@ -43,14 +58,24 @@ const Show = ({
   const { user, error: userError } = useUser({ session });
 
   console.log(show, "show");
+  console.log(show.episode_run_time, "airs");
 
   const [providersList, setProvidersList] = useState<any>();
+
+  const [airDate, setAirDate] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     const locale = window.navigator.language.split("-")[1]
     console.log(locale)
     console.log(providers.results[locale]);
     setProvidersList(providers.results[locale]);
+
+    const sourceDate = show.next_episode_to_air.air_date + " " + airs.time
+    dayjs.tz.setDefault(airs.timezone)
+
+    // The same behavior with dayjs.tz("2014-06-01 12:00", "America/New_York")
+    console.log(dayjs.tz(sourceDate).local().toDate(), 'date123')
+    setAirDate(dayjs.tz(sourceDate).local().toDate());
   }, [])
 
   const type = "show"; //What kind of media is this to make seperate calls when adding/removing from lists
@@ -151,7 +176,7 @@ const Show = ({
             {providersList?.link &&
               <div className="flex justify-center items-center py-4 bg-slate-800">
                 <Button className="bg-primary" rightIcon={<ExternalLink />}>
-                  <a href={providersList?.link} target="_blank">Watch providers</a>
+                  <a href={`https://www.themoviedb.org/tv/${showId}/watch`} target="_blank">Watch providers</a>
                 </Button>
               </div>
             }
@@ -174,7 +199,13 @@ const Show = ({
                   {i < show.genres.length - 1 && ", "}
                 </React.Fragment>
               ))}{" "}
-              &bull; {show.episode_run_time}m
+              {show.episode_run_time.length > 0 &&
+                <>&bull; {show.episode_run_time}m</>
+              }
+            </div>
+
+            <div>
+              <div>Airs: <span>{dayjs(airDate).format("dddd")}s at {dayjs(airDate).format("hh:mm")}</span> </div>
             </div>
 
             <div className="flex items-center flex-col sm:flex-row sm:py-4">
@@ -247,19 +278,17 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     id: showId,
     append_to_response: "aggregate_credits", //TODO: Switch to aggregate_credits, have to make my own type
   });
-  
-  console.log(showData, "showdata");
-
-  console.log("static showid", showId);
 
   const providers = await tmdb.tvWatchProviders({ id: showId })
 
+  const data = await traktShow({ slug: slug.split("-").slice(1).join("-") })
 
 
   return {
     props: {
       show: showData,
-      providers
+      providers,
+      airs: data.airs
     },
     revalidate: 60 * 60 * 24, //Once a day
   };
@@ -271,3 +300,24 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: "blocking",
   };
 };
+
+function changeTimeZone(date: Date, timeZone: string) {
+
+  function getLocale() {
+    return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
+  }
+
+  if (typeof date === 'string') {
+    return new Date(
+      new Date(date).toLocaleString(getLocale(), {
+        timeZone,
+      }),
+    );
+  }
+
+  return new Date(
+    date.toLocaleString(getLocale(), {
+      timeZone,
+    }),
+  );
+}
