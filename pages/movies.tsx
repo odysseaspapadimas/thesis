@@ -21,6 +21,7 @@ import { tmdb } from "../utils/tmdb";
 import { Genre } from "moviedb-promise/dist/types";
 import Head from "next/head";
 import dayjs from "dayjs";
+import { useRouter } from "next/router";
 
 const MovieSection = ({ page, url }: { page: number; url: string }) => {
   const { data } = useSWR(`${url}&page=${page}`, fetcher);
@@ -34,7 +35,8 @@ const MovieSection = ({ page, url }: { page: number; url: string }) => {
     </>
   );
 };
-const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> }) => {
+const movies = ({ movies, genresList }: { movies: MovieType[]; genresList: Array<Genre> }) => {
+
   const matches = useMediaQuery("(max-width: 400px)", false);
   const [page, setPage] = useState(1);
 
@@ -69,6 +71,8 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
       filtersString += `&${filter}=${filters[filter]}`;
     }
 
+    console.log(filters["with_genres"], 'filtergenres')
+
     setFilter(filtersString);
     setUrl(
       `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}${filtersString}&sort_by=${sortBy}`
@@ -86,7 +90,7 @@ const movies = ({ movies, genres }: { movies: MovieType[]; genres: Array<Genre> 
       <div className="flex flex-col md:flex-row">
         <div className="flex flex-col space-y-2 mb-4">
           <Sort sortBy={sortBy} setSortBy={setSortBy} type="movies" />
-          <Filters filters={filters} setFilters={setFilters} genres={genres} type="movies" />
+          <Filters filters={filters} setFilters={setFilters} genresList={genresList} handleSearch={handleSearch} type="movies" />
           <Button onClick={handleSearch} className="bg-primary">
             Filter
           </Button>
@@ -141,12 +145,12 @@ export const getStaticProps = async () => {
 
   const { results: movies } = await res.json();
 
-  const { genres } = await tmdb.genreMovieList();
+  const { genres: genresList } = await tmdb.genreMovieList();
 
   return {
     props: {
       movies,
-      genres
+      genresList
     },
     revalidate: 60 * 60 * 24,
   };

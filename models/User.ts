@@ -8,12 +8,13 @@ const ListItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const UserSchema = new mongoose.Schema(
+export const UserSchema = new mongoose.Schema(
   {
     email: String,
     username: String,
     createdAt: String,
     image_url: String,
+    password: String,
     plan_to: [ListItemSchema],
     watched: [ListItemSchema],
     favorites: [ListItemSchema],

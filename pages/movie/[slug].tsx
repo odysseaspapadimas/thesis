@@ -18,6 +18,7 @@ import { Genre, MovieType } from "../../constants/types";
 import { CreditsResponse } from "moviedb-promise";
 import Credits from "../../components/Credits";
 import Head from "next/head";
+import { NextLink } from "@mantine/next";
 
 const Movie = ({
   movie,
@@ -139,7 +140,9 @@ const Movie = ({
               {movie.release_date} &bull;{" "}
               {movie.genres.map((genre: Genre, i: number) => (
                 <React.Fragment key={i}>
-                  {genre.name}
+                  <NextLink href={`/movies?genres=${genre.name.split(" ")[0].toLowerCase()}`} className="hover:underline">
+                    {genre.name}
+                  </NextLink>
                   {i < movie.genres.length - 1 && ", "}
                 </React.Fragment>
               ))}{" "}

@@ -33,6 +33,7 @@ export default async function handler(
             path: {
               wildcard: "*",
             },
+            fuzzy: {}
           },
         };
       },
@@ -40,7 +41,10 @@ export default async function handler(
 
     const usersResults = await User.find({ search: String(query) });
 
-    const results = await tmdb.searchMulti({ query: String(query), page: Number(page) });
+    const results = await tmdb.searchMulti({
+      query: String(query),
+      page: Number(page),
+    });
 
     if (results.results) {
       if (results.results.length === 20) {
@@ -59,6 +63,6 @@ export default async function handler(
       results.results
     );
 
-    res.status(200).json(results)
+    res.status(200).json(results);
   }
 }

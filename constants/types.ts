@@ -305,6 +305,7 @@ export interface Message extends Record<string, any> {
 export interface User {
   username: string;
   email: string;
+  password?: string;
   image_url: string;
   created_at: string;
   watched?: ListItem[];

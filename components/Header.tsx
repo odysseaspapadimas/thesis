@@ -154,7 +154,7 @@ const Header = () => {
       </MantineHeader>
 
       <Modal closeOnClickOutside={true} opened={opened} onClose={() => setOpened(false)}>
-        <SignInSignUp activeTab={activeTab} setActiveTab={setActiveTab} />
+        <SignInSignUp activeTab={activeTab} setActiveTab={setActiveTab} setOpened={setOpened} />
       </Modal>
     </>
   );

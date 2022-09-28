@@ -82,7 +82,7 @@ const Calendar : NextPageWithAuth = () => {
                 <HoverCard position='top' width={275} shadow="md" withinPortal openDelay={0} closeDelay={40} transitionDuration={0} exitTransitionDuration={0}>
                   <HoverCard.Target>
                     <Indicator size={6} color="red" offset={8}>
-                      <div>{day}</div>
+                      <div className={`${dayjs(date).format("YYYY-MM-DD") === dayjs(new Date()).format("YYYY-MM-DD") && "bg-primary"}`}>{day}</div>
                     </Indicator>
                   </HoverCard.Target>
                   <HoverCard.Dropdown className='cursor-default absolute text-center p-1'>
@@ -99,7 +99,7 @@ const Calendar : NextPageWithAuth = () => {
                 </HoverCard>
               )
             } else {
-              return <div>{day}</div>
+              return <div className={`${dayjs(date).format("YYYY-MM-DD") === dayjs(new Date()).format("YYYY-MM-DD") && "bg-primary rounded-md hover:bg-[hsl(209,77%,38%)]"}`}>{day}</div>
             }
           }}
         />

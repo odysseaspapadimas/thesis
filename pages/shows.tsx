@@ -35,7 +35,7 @@ const ShowSection = ({ page, url }: { page: number; url: string }) => {
   );
 };
 
-const shows = ({ shows, genres }: { shows: TVShowType[]; genres: Array<Genre> }) => {
+const shows = ({ shows, genresList }: { shows: TVShowType[]; genresList: Array<Genre> }) => {
   const matches = useMediaQuery("(max-width: 400px)", false);
   const [page, setPage] = useState(1);
 
@@ -86,7 +86,7 @@ const shows = ({ shows, genres }: { shows: TVShowType[]; genres: Array<Genre> })
       <div className="flex flex-col md:flex-row justify-center">
         <div className="flex flex-col space-y-2 mb-4">
           <Sort sortBy={sortBy} setSortBy={setSortBy} type="shows"/>
-          <Filters filters={filters} setFilters={setFilters} genres={genres} type="show" />
+          <Filters filters={filters} setFilters={setFilters} genresList={genresList} handleSearch={handleSearch} type="shows" />
           <Button onClick={handleSearch} className="bg-primary">
             Filter
           </Button>
@@ -139,12 +139,12 @@ export const getStaticProps = async () => {
 
   const { results: shows } = await res.json();
 
-  const { genres } = await tmdb.genreTvList();
+  const { genres: genresList } = await tmdb.genreTvList();
 
   return {
     props: {
       shows,
-      genres
+      genresList
     },
     revalidate: 60 * 60 * 24,
   };

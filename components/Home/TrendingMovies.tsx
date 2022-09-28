@@ -1,6 +1,3 @@
-import useSWR from "swr";
-import fetcher from "../../helpers/fetcher";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { MovieType } from "../../constants/types";
 import Show from "../Show";
 import { Group, Skeleton } from "@mantine/core";

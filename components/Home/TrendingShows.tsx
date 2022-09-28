@@ -1,9 +1,6 @@
-import useSWR from "swr";
-import fetcher from "../../helpers/fetcher";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { MovieType, TVShowType } from "../../constants/types";
+import { TVShowType } from "../../constants/types";
 import Show from "../Show";
-import { Group, Skeleton } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 
 const TrendingShows = ({ shows }: { shows: TVShowType[] }) => {

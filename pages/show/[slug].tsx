@@ -29,6 +29,7 @@ import { ApiResponse, ShowSummary_Full } from "better-trakt";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
+import { NextLink } from "@mantine/next";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -70,6 +71,7 @@ const Show = ({
     console.log(providers.results[locale]);
     setProvidersList(providers.results[locale]);
 
+    if (!show.next_episode_to_air) return;
     const sourceDate = show.next_episode_to_air.air_date + " " + airs.time
     dayjs.tz.setDefault(airs.timezone)
 
@@ -192,10 +194,12 @@ const Show = ({
               </p>
             </div>
 
-            <div className="flex space-x-2">
+            <div className="">
               {show.genres.map((genre: Genre, i: number) => (
                 <React.Fragment key={i}>
-                  {genre.name}
+                  <NextLink href={`/shows?genres=${genre.name.split(" ")[0].toLowerCase()}`} className="hover:underline ">
+                    {genre.name}
+                  </NextLink>
                   {i < show.genres.length - 1 && ", "}
                 </React.Fragment>
               ))}{" "}
@@ -204,9 +208,10 @@ const Show = ({
               }
             </div>
 
-            <div>
+            {airDate &&
               <div>Airs: <span>{dayjs(airDate).format("dddd")}s at {dayjs(airDate).format("hh:mm")}</span> </div>
-            </div>
+            }
+
 
             <div className="flex items-center flex-col sm:flex-row sm:py-4">
               <RingProgress
@@ -273,9 +278,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   const slug = ctx.params?.slug as string;
 
   const showId = slug.split("-")[0];
-
-
-
 
   const showData = await tmdb.tvInfo({
     id: showId,

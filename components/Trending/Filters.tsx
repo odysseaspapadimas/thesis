@@ -5,14 +5,16 @@ import { DiscoverMovieRequest } from "moviedb-promise";
 import { DiscoverTvRequest } from "../../constants/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Genre } from "moviedb-promise/dist/types";
+import { useRouter } from "next/router";
 
 type FiltersProps = {
   filters: DiscoverMovieRequest | DiscoverTvRequest;
   setFilters:
   | Dispatch<SetStateAction<DiscoverMovieRequest>>
   | Dispatch<SetStateAction<DiscoverTvRequest>>;
-  genres: Array<Genre>;
-  type: "movies" | "show";
+  genresList: Array<Genre>;
+  type: "movies" | "shows";
+  handleSearch: () => void;
 };
 
 const isMovieRequest = (
@@ -21,12 +23,38 @@ const isMovieRequest = (
   return (filters as DiscoverMovieRequest)["primary_release_date.lte"] !== undefined;
 };
 
-const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
+const Filters = ({ filters, setFilters, genresList, type, handleSearch }: FiltersProps) => {
+
+  const router = useRouter();
+  const { genres } = router.query;
 
   const [includeOnList, setIncludeOnList] = useState(true);
 
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(new Date());
+
+  useEffect(() => {
+    if (!genres || !genresList || !setFilters) return;
+    let newFilters = filters;
+    newFilters["with_genres"] = "";
+    genresList.forEach((genre) => {
+      String(genres).split(",").forEach((_genre) => {
+        console.log(genre.name?.split(" ")[0].toLocaleLowerCase(), _genre, 'tests')
+        if (genre.name?.split(" ")[0].toLocaleLowerCase() === _genre.trim() && genre.id) {
+          if (!newFilters["with_genres"]) {
+            newFilters["with_genres"] += `${genre.id}`
+          } else {
+            newFilters["with_genres"] += `,${genre.id}`
+          }
+        }
+      })
+    })
+
+    //@ts-ignore
+    setFilters(newFilters)
+    handleSearch();
+    console.log(newFilters, 'genres')
+  }, [genres, genresList, setFilters])
 
   const handleVote = (value: [number, number]) => {
     let newFilters = filters;
@@ -170,7 +198,7 @@ const Filters = ({ filters, setFilters, genres, type }: FiltersProps) => {
       />
 
       <div className="max-w-fit my-4 space-y-2">
-        {genres.map(({ id, name }) => (
+        {genresList.map(({ id, name }) => (
           <Button
             key={id}
             onClick={() => handleGenre(id, name)}
