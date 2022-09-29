@@ -58,11 +58,11 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
                             {message.text ?
                                 <div className={`${message.me ? "self-end" : "self-start"} max-w-[75%] flex flex-col`}>
                                     <p className={`${message.me ? " bg-primary border border-primary" : " bg-dark border border-dark"} rounded-md px-4 py-2 my-1 break-all`}>{message.text} </p>
-                                    <p className="self-end text-sm text-gray-400">{i === messageObj.messages.length -1 && message.me && message.read.state && "Read"}</p>
+                                    <p className="self-end text-sm text-gray-400">{i === messageObj.messages.length - 1 && message.me && message.read.state && "Read"}</p>
                                 </div>
                                 : message.media_type && (
-                                    <div className={`${message.me ? "self-end bg-primary border border-primary" : "self-start bg-dark border border-dark"} my-1 rounded-md max-w-[75%] `}>
-                                        <NextLink href={`/${message.media_type}/${message.media_id}`} className="flex flex-col items-center space-y-1 text-center p-3">
+                                    <div className={`${message.me ? "self-end" : "self-start"} max-w-[75%] flex flex-col`}>
+                                        <NextLink href={`/${message.media_type}/${message.media_id}`} className={`${message.me ? " bg-primary border border-primary" : " bg-dark border border-dark"}  my-1 rounded-md flex flex-col items-center space-y-1 text-center p-3`}>
                                             {message.image_path ?
                                                 <Image width={100} height={150} src={IMG_URL(message.image_path)} />
                                                 : (
@@ -70,6 +70,7 @@ const MessageBox = ({ messages }: { messages: Message[] }) => {
                                                 )}
                                             <p>{message.media_name}</p>
                                         </NextLink>
+                                        <p className="self-end text-sm text-gray-400">{i === messageObj.messages.length - 1 && message.me && message.read.state && "Read"}</p>
                                     </div>
                                 )}
                         </Tooltip>

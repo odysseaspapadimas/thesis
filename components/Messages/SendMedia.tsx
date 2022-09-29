@@ -24,7 +24,7 @@ const SendMedia = ({ user, otherUser }: Props) => {
     const [input, setInput] = useState("");
     const [query] = useDebouncedValue(input, 400);
 
-    const { data } = useSWR<SearchMultiResponse>(query ? `/api/search?q=${query}` : null, fetcher);
+    const { data } = useSWR<SearchMultiResponse>(query ? `/api/search?q=${query}&type=media` : null, fetcher);
 
     const handleSend = async (media: MovieResult | TvResult | PersonResult) => {
         let name, image_path, media_type

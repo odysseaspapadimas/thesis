@@ -37,14 +37,17 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
                 <div className="flex items-center justify-between w-full">
                     <h1>Messages</h1>
                     <Tooltip label="Send a new message" classNames={{ tooltip: "bg-dark text-white" }}>
-                        <Edit onClick={() => setShowModal(true)} className="hover:bg-dark rounded-md p-1 cursor-pointer" size={32} />
+                        <div>
+                            <Edit onClick={() => setShowModal(true)} className="hover:bg-dark rounded-md p-1 cursor-pointer" size={32} />
+                        </div>
                     </Tooltip>
                     <Modal
                         opened={showModal}
                         onClose={() => setShowModal(false)}
+                        trapFocus
                         title="Send a new message"
                     >
-                        <TextInput value={query} onChange={handleChange} placeholder="Search for a user" />
+                        <TextInput data-autofocus value={query} onChange={handleChange} placeholder="Search for a user" />
                         <div className="flex flex-col space-y-2 my-2">
                             {debouncedQuery && queryResults && queryResults.length > 0 ? queryResults.map((user) => (
                                 <NextLink key={user.username} href={`/messages/${user.username}`} className="flex items-center hover:bg-dark px-2 py-2 rounded-md">
