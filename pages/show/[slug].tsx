@@ -25,13 +25,11 @@ import { Genre, TVShowType, AggregateCredits } from "../../constants/types";
 import Head from "next/head";
 import ShowCredits from "../../components/ShowCredits";
 import { traktShow } from "../../utils/trakt";
-import { ApiResponse, ShowSummary_Full } from "better-trakt";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
 import { NextLink } from "@mantine/next";
 import Episode from "../../components/Show/Episode";
-import { useMediaQuery } from "@mantine/hooks";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -150,8 +148,6 @@ const Show = ({
     mutateOnList();
   };
 
-  const matches = useMediaQuery("(max-width: 640px)", true, { getInitialValueInEffect: true })
-
   return (
     <div>
       <Head>
@@ -214,9 +210,8 @@ const Show = ({
             </div>
 
             {nextAirDate && show.status !== "Ended" &&
-              <div>Airs: <span>{dayjs(nextAirDate).format("dddd")}s at {dayjs(nextAirDate).format("hh:mm")}</span> </div>
+              <div>Airs: <span>{dayjs(nextAirDate).format("dddd")}s at {dayjs(nextAirDate).format("HH:mm")}</span> </div>
             }
-
 
             <div className="flex items-center flex-col sm:flex-row sm:py-4">
               <RingProgress
@@ -264,7 +259,7 @@ const Show = ({
               </div>
             }
 
-            {show.created_by &&
+            {show.created_by && show.created_by.length > 0 &&
               <div className="mt-4">
                 <p className="font-semibold">Created by: </p>
                 <div className="">

@@ -25,6 +25,7 @@ module.exports = {
         },
       },
       spacing: {
+        "calendar" : "calc(100vh - 204px)",
         "screen-minus-header": "calc(100vh - 70px)",
         "message-list": "calc(100vh - 120px)",
       }
