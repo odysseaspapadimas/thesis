@@ -30,6 +30,8 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
 import { NextLink } from "@mantine/next";
+import Episode from "../../components/Show/Episode";
+import { useMediaQuery } from "@mantine/hooks";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -58,17 +60,17 @@ const Show = ({
 
   const { user, error: userError } = useUser({ session });
 
-  console.log(show, "show");
-  console.log(show.episode_run_time, "airs");
+  useEffect(() => {
+    console.log(show, "show");
+  }, [show])
 
   const [providersList, setProvidersList] = useState<any>();
 
-  const [airDate, setAirDate] = useState<Date | undefined>(undefined);
+  const [nextAirDate, setNextAirDate] = useState<Date | undefined>(undefined);
+  const [lastAirDate, setLastAirDate] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     const locale = window.navigator.language.split("-")[1]
-    console.log(locale)
-    console.log(providers.results[locale]);
     setProvidersList(providers.results[locale]);
 
     if (!show.next_episode_to_air) return;
@@ -76,9 +78,20 @@ const Show = ({
     dayjs.tz.setDefault(airs.timezone)
 
     // The same behavior with dayjs.tz("2014-06-01 12:00", "America/New_York")
-    console.log(dayjs.tz(sourceDate).local().toDate(), 'date123')
-    setAirDate(dayjs.tz(sourceDate).local().toDate());
-  }, [])
+    setNextAirDate(dayjs.tz(sourceDate).local().toDate());
+  }, [show.next_episode_to_air])
+
+  useEffect(() => {
+    const locale = window.navigator.language.split("-")[1]
+    setProvidersList(providers.results[locale]);
+
+    if (!show.last_episode_to_air) return;
+    const sourceDate = show.last_episode_to_air.air_date + " " + airs.time
+    dayjs.tz.setDefault(airs.timezone)
+
+    // The same behavior with dayjs.tz("2014-06-01 12:00", "America/New_York")
+    setLastAirDate(dayjs.tz(sourceDate).local().toDate());
+  }, [show.last_episode_to_air])
 
   const type = "show"; //What kind of media is this to make seperate calls when adding/removing from lists
 
@@ -93,11 +106,6 @@ const Show = ({
     fetcher
   );
 
-  useEffect(() => {
-    //console.log(router);
-    console.log(onList, "onList");
-  }, [onList]);
-
   if (!show) {
     return (
       <div>
@@ -107,7 +115,6 @@ const Show = ({
   }
 
   const handleWatched = async () => {
-    console.log("hi");
     if (!onList.on.includes("watched")) {
       await addToList("watched", showId, type);
 
@@ -135,7 +142,6 @@ const Show = ({
   };
 
   const handleFavorite = async () => {
-    console.log("hi");
     if (!onList.on.includes("favorites")) {
       await addToList("favorites", showId, type);
     } else if (onList.on.includes("favorites")) {
@@ -144,9 +150,7 @@ const Show = ({
     mutateOnList();
   };
 
-  console.log(new Intl.DisplayNames(['en'], {
-    type: 'language'
-  }), 'lang');
+  const matches = useMediaQuery("(max-width: 640px)", true, { getInitialValueInEffect: true })
 
   return (
     <div>
@@ -162,21 +166,22 @@ const Show = ({
         </div>
         <Container
           size="xl"
-          className="relative h-full grid place-items-center sm:flex sm:items-center py-10 sm:py-20"
+          className="relative h-full sm:flex py-10 sm:py-20"
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center justify-center">
             <Image
               height={450}
               width={300}
+              layout="fixed"
               src={IMG_URL(show.poster_path)}
-              className={`rounded-t-md ${!providersList?.link && "rounded-b-md"} flex-1`}
+              className={`rounded-t-md ${!providersList?.link && "rounded-b-md"} flex-1 self-center place-self-center`}
               placeholder="blur"
               blurDataURL={`/_next/image?url=${IMG_URL(
                 show.poster_path
               )}&w=16&q=1`}
             />
             {providersList?.link &&
-              <div className="flex justify-center items-center py-4 bg-slate-800">
+              <div className="flex justify-center items-center py-4 bg-slate-800 w-[300px]">
                 <Button className="bg-primary" rightIcon={<ExternalLink />}>
                   <a href={`https://www.themoviedb.org/tv/${showId}/watch`} target="_blank">Watch providers</a>
                 </Button>
@@ -184,12 +189,12 @@ const Show = ({
             }
 
           </div>
-          <div className="flex-1 flex flex-col mt-8 sm:max-w-2xl sm:ml-8">
+          <div className="flex-1 flex flex-col mt-4 sm:mt-0 sm:max-w-2xl sm:ml-8">
             <div className="flex">
               <p className="text-3xl font-semibold">
-                {show.name}
+                {show.name}{" "}
                 <span className="text-2xl">
-                  &nbsp;({show.first_air_date.split("-")[0]})
+                  ({show.first_air_date.split("-")[0]}-{show.status === "Ended" && show.last_air_date && show.last_air_date.split("-")[0]})
                 </span>
               </p>
             </div>
@@ -208,8 +213,8 @@ const Show = ({
               }
             </div>
 
-            {airDate &&
-              <div>Airs: <span>{dayjs(airDate).format("dddd")}s at {dayjs(airDate).format("hh:mm")}</span> </div>
+            {nextAirDate && show.status !== "Ended" &&
+              <div>Airs: <span>{dayjs(nextAirDate).format("dddd")}s at {dayjs(nextAirDate).format("hh:mm")}</span> </div>
             }
 
 
@@ -248,24 +253,66 @@ const Show = ({
                   : "There's no available overview."}
               </Text>
             </div>
+
+            <div className="mt-4">
+              <p><span className="font-medium">Seasons: </span>{show.number_of_seasons} &bull; <span className="font-medium">Episodes:</span> {show.number_of_episodes}</p>
+            </div>
+
+            {show.status !== "Ended" && show.last_episode_to_air &&
+              <div>
+                <p><span className="font-medium">Currently:</span> {show.last_episode_to_air.season_number}x{show.last_episode_to_air.episode_number}</p>
+              </div>
+            }
+
+            {show.created_by &&
+              <div className="mt-4">
+                <p className="font-semibold">Created by: </p>
+                <div className="">
+                  {show.created_by.map((creator, i) => (
+                    <span key={creator.credit_id}>{creator.name}{i < show.created_by.length - 1 && ", "}</span>
+                  ))}
+                </div>
+              </div>
+            }
           </div>
         </Container>
       </div>
-      <Container size="xl" className="flex flex-col md:flex-row md:space-x-4">
-        <ShowCredits credits={show.aggregate_credits} />
-        <div className="md:py-6">
-          <h2 className="text-2xl font-semibold mb-4">Info</h2>
-          <div>
-            <h3 className="font-semibold">Status</h3>
-            <p>{show.status}</p>
+      <Container size="xl" className="flex flex-col pb-6">
+
+        <div className="flex flex-col sm:flex-row sm:space-x-4">
+          {show.next_episode_to_air &&
+            <Episode episode={show.next_episode_to_air} backdrop={show.backdrop_path} airDate={nextAirDate} title="Next Episode" />
+          }
+          {show.last_episode_to_air &&
+            <Episode episode={show.last_episode_to_air} backdrop={show.backdrop_path} airDate={lastAirDate} title="Last Episode" />
+          }
+        </div>
+
+        <div className="flex flex-col md:flex-row md:space-x-4 w-full ">
+          <ShowCredits credits={show.aggregate_credits} />
+
+          <div className="md:py-6 sm:mx-auto">
+            <h2 className="text-2xl font-semibold mb-4">Info</h2>
+            <div>
+              <h3 className="font-semibold">Status</h3>
+              <p>{show.status}</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold">Original Language</h3>
+              <p>{new Intl.DisplayNames(['en'], {
+                type: 'language'
+              }).of(show.original_language)}</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold">Networks</h3>
+              <p className="flex flex-col space-y-2">{show.networks.map((network, i) => (
+                <>{network.name}{i < show.networks.length - 1 && ", "}</>
+              ))}</p>
+            </div>
           </div>
 
-          <div>
-            <h3 className="font-semibold">Original Language</h3>
-            <p>{new Intl.DisplayNames(['en'], {
-              type: 'language'
-            }).of(show.original_language)}</p>
-          </div>
         </div>
       </Container>
     </div>
