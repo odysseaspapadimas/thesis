@@ -28,3 +28,26 @@ export const traktShow = async ({ showId, slug }: ShowProps) => {
 
   return data;
 };
+
+type WeekProps = {
+  startDate: string;
+  days: number;
+};
+
+export const traktWeek = async ({ startDate, days }: WeekProps) => {
+  const res = await fetch(
+    `https://api.trakt.tv/calendars/all/shows/${startDate}/${days}`,
+    {
+      method: "GET",
+      headers: new Headers({
+        "Content-type": "application/json",
+        "trakt-api-version": "2",
+        "trakt-api-key": apiKey,
+      }),
+    }
+  );
+
+  const data = (await res.json()) as any;
+
+  return data;
+};
