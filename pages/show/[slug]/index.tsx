@@ -11,33 +11,30 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { ExternalLink } from "tabler-icons-react";
-import AlreadyWatched from "../../components/List/AlreadyWatched";
-import PlanToWatch from "../../components/List/PlanToWatch";
-import Favorite from "../../components/List/Favorite";
-import { IMG_URL } from "../../constants/tmdbUrls";
-import fetcher from "../../helpers/fetcher";
-import useUser from "../../hooks/use-user";
-import addToList from "../../utils/addToList";
-import removeFromList from "../../utils/removeFromList";
+import AlreadyWatched from "../../../components/List/AlreadyWatched";
+import PlanToWatch from "../../../components/List/PlanToWatch";
+import Favorite from "../../../components/List/Favorite";
+import { IMG_URL } from "../../../constants/tmdbUrls";
+import fetcher from "../../../helpers/fetcher";
+import useUser from "../../../hooks/use-user";
+import addToList from "../../../utils/addToList";
+import removeFromList from "../../../utils/removeFromList";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { tmdb } from "../../utils/tmdb";
-import { Genre, TVShowType, AggregateCredits } from "../../constants/types";
+import { tmdb } from "../../../utils/tmdb";
+import { Genre, TVShowType, AggregateCredits, Airs } from "../../../constants/types";
 import Head from "next/head";
-import ShowCredits from "../../components/ShowCredits";
-import { traktShow } from "../../utils/trakt";
+import ShowCredits from "../../../components/ShowCredits";
+import { traktShow } from "../../../utils/trakt";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
 import { NextLink } from "@mantine/next";
-import Episode from "../../components/Show/Episode";
+import Episode from "../../../components/Show/Episode";
+import seasons from "./seasons";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-type Airs = {
-  day: string;
-  time: string;
-  timezone: string;
-}
+
 
 const Show = ({
   show,
@@ -57,6 +54,8 @@ const Show = ({
   const { data: session, status } = useSession();
 
   const { user, error: userError } = useUser({ session });
+
+  const lastSeason = show.seasons[show.seasons.length - 1];
 
   useEffect(() => {
     console.log(show, "show");
@@ -303,11 +302,39 @@ const Show = ({
             <div>
               <h3 className="font-semibold">Networks</h3>
               <p className="flex flex-col space-y-2">{show.networks.map((network, i) => (
-                <>{network.name}{i < show.networks.length - 1 && ", "}</>
+                <span key={network.id}>{network.name}{i < show.networks.length - 1 && ", "}</span>
               ))}</p>
             </div>
           </div>
 
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Last Season</h2>
+          <div className="flex items-center space-x-4">
+            <NextLink href={`/show/${router.query.slug}/season/${lastSeason.season_number}`}>
+              <div style={{ width: 150, height: 225 }}>
+                <Image src={IMG_URL(lastSeason.poster_path)} width={150} height={225} layout="fixed" className="rounded-l-md" />
+              </div>
+            </NextLink>
+            <div>
+              <div>
+                <NextLink href={`/show/${router.query.slug}/season/${lastSeason.season_number}`}>
+                  <h3 className="text-xl font-semibold hover:text-gray-300">{lastSeason.name}</h3>
+                </NextLink>
+                <span className="font-medium">{lastSeason?.air_date?.split("-")[0]} | {lastSeason.episode_count} Episodes</span>
+              </div>
+              <div className="mt-4">
+                {lastSeason.overview.split("\n").map((text, i) => (
+                  <p key={i} className="mb-2">{text}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <NextLink href={`/show/${router.query.slug}/seasons`}>
+            <h3 className="text-lg font-semibold hover:text-gray-300 mt-2">View All Seasons</h3>
+          </NextLink>
         </div>
       </Container>
     </div>

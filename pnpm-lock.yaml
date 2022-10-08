@@ -17,6 +17,7 @@ specifiers:
   bcrypt: ^5.0.1
   better-trakt: ^0.8.0
   dayjs: ^1.11.3
+  fast-average-color: ^9.1.1
   mongodb: ^4.5.0
   mongoose: ^6.5.2
   mongoose-atlas-search: ^1.0.8
@@ -46,6 +47,7 @@ dependencies:
   bcrypt: 5.0.1
   better-trakt: 0.8.0
   dayjs: 1.11.3
+  fast-average-color: 9.1.1
   mongodb: 4.7.0
   mongoose: 6.5.2
   mongoose-atlas-search: 1.0.8
@@ -883,6 +885,10 @@ packages:
   /@types/node/17.0.4:
     resolution: {integrity: sha512-6xwbrW4JJiJLgF+zNypN5wr2ykM9/jHcL7rQ8fZe2vuftggjzZeRSM4OwRc6Xk8qWjwJ99qVHo/JgOGmomWRog==}
 
+  /@types/offscreencanvas/2019.7.0:
+    resolution: {integrity: sha512-PGcyveRIpL1XIqK8eBsmRBt76eFgtzuPiSTyKHZxnGemp2yzGzWpjYKAfK3wIMiU7eH+851yEpiuP8JZerTmWg==}
+    dev: false
+
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
     dev: false
@@ -1376,6 +1382,13 @@ packages:
   /escape-string-regexp/4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
+    dev: false
+
+  /fast-average-color/9.1.1:
+    resolution: {integrity: sha512-PJizLBcGb/jqUzrH66385te4+GcOK7wcUiCDvBUszdpzc/pvV1kwifvvsFygV3mS+7qwnWmK9/BrZniaOOC9ag==}
+    engines: {node: '>= 12'}
+    dependencies:
+      '@types/offscreencanvas': 2019.7.0
     dev: false
 
   /fast-deep-equal/3.1.3:

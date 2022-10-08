@@ -152,6 +152,12 @@ export interface TVShowType {
   vote_count: number;
 }
 
+export type Airs = {
+  day: string;
+  time: string;
+  timezone: string;
+};
+
 export interface ListData {
   movies: MovieType[];
   shows: TVShowType[];
