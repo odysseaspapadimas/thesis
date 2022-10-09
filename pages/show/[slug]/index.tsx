@@ -30,7 +30,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
 import { NextLink } from "@mantine/next";
 import Episode from "../../../components/Show/Episode";
-import seasons from "./seasons";
+import Recommend from "../../../components/Recommend";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -147,6 +147,7 @@ const Show = ({
     mutateOnList();
   };
 
+
   return (
     <div>
       <Head>
@@ -231,10 +232,13 @@ const Show = ({
               />
 
               {user && (
-                <div className="flex justify-around items-center sm:ml-8 space-x-8">
-                  <AlreadyWatched onList={onList} handler={handleWatched} />
-                  <PlanToWatch onList={onList} handler={handlePlan} />
-                  <Favorite onList={onList} handler={handleFavorite} />
+                <div className="flex flex-col space-y-4 sm:ml-8">
+                  <div className="flex justify-around items-center space-x-8">
+                    <AlreadyWatched onList={onList} handler={handleWatched} />
+                    <PlanToWatch onList={onList} handler={handlePlan} />
+                    <Favorite onList={onList} handler={handleFavorite} />
+                  </div>
+                  <Recommend user={user.username} users={user.messages} show={show} />
                 </div>
               )}
             </div>

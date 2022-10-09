@@ -19,6 +19,7 @@ import { CreditsResponse } from "moviedb-promise";
 import Credits from "../../components/Credits";
 import Head from "next/head";
 import { NextLink } from "@mantine/next";
+import Recommend from "../../components/Recommend";
 
 const Movie = ({
   movie,
@@ -168,10 +169,13 @@ const Movie = ({
               />
 
               {user && (
-                <div className="flex justify-around items-center sm:ml-8 space-x-8">
-                  <AlreadyWatched onList={onList} handler={handleWatched} />
-                  <PlanToWatch onList={onList} handler={handlePlan} />
-                  <Favorite onList={onList} handler={handleFavorite} />
+                <div className="flex flex-col space-y-4 sm:ml-8">
+                  <div className="flex justify-around items-center space-x-8">
+                    <AlreadyWatched onList={onList} handler={handleWatched} />
+                    <PlanToWatch onList={onList} handler={handlePlan} />
+                    <Favorite onList={onList} handler={handleFavorite} />
+                  </div>
+                  <Recommend user={user.username} users={user.messages} movie={movie} />
                 </div>
               )}
             </div>
