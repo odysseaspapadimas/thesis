@@ -58,7 +58,7 @@ const Show = ({
   const lastSeason = show.seasons[show.seasons.length - 1];
 
   useEffect(() => {
-    console.log(show, "show");
+    console.log(show, airs, "show");
   }, [show])
 
   const [providersList, setProvidersList] = useState<any>();
@@ -70,25 +70,25 @@ const Show = ({
     const locale = window.navigator.language.split("-")[1]
     setProvidersList(providers.results[locale]);
 
-    if (!show.next_episode_to_air) return;
+    if (!show.next_episode_to_air || !airs.time) return;
     const sourceDate = show.next_episode_to_air.air_date + " " + airs.time
     dayjs.tz.setDefault(airs.timezone)
 
     // The same behavior with dayjs.tz("2014-06-01 12:00", "America/New_York")
     setNextAirDate(dayjs.tz(sourceDate).local().toDate());
-  }, [show.next_episode_to_air])
+  }, [show.next_episode_to_air, airs])
 
   useEffect(() => {
     const locale = window.navigator.language.split("-")[1]
     setProvidersList(providers.results[locale]);
 
-    if (!show.last_episode_to_air) return;
+    if (!show.last_episode_to_air || !airs.time) return;
     const sourceDate = show.last_episode_to_air.air_date + " " + airs.time
     dayjs.tz.setDefault(airs.timezone)
 
     // The same behavior with dayjs.tz("2014-06-01 12:00", "America/New_York")
     setLastAirDate(dayjs.tz(sourceDate).local().toDate());
-  }, [show.last_episode_to_air])
+  }, [show.last_episode_to_air, airs])
 
   const type = "show"; //What kind of media is this to make seperate calls when adding/removing from lists
 

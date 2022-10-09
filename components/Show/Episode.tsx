@@ -18,11 +18,13 @@ const Episode = ({ episode, backdrop, airDate, title }: Props) => {
 
             <div className="relative">
                 <img className="w-[400px] brightness-[0.4] rounded-sm" src={IMG_URL(episode?.still_path ? episode?.still_path : backdrop)} style={{ aspectRatio: "500 / 281" }} />
-                {/* @ts-ignore */}
-                <p className="absolute left-4 top-4 py-1 px-2 text-sm bg-primary rounded-sm z-10">{airDate && dayjs(airDate).format("DD MMM YYYY hh:mm")} - {dayjs(airDate).fromNow()}</p>
+                {airDate &&
+                    /* @ts-ignore */
+                    <p className="absolute left-4 top-4 py-1 px-2 text-sm bg-primary rounded-sm z-10">{dayjs(airDate).format("DD MMM YYYY hh:mm")} - {dayjs(airDate).fromNow()}</p>
+                }
                 <p className="font-semibold text-lg absolute bottom-4 left-4 z-10" >{episode?.season_number && `${episode.season_number}x`}{episode?.episode_number} - {episode?.name}</p>
             </div>
-        </div>
+        </div >
     )
 }
 export default Episode

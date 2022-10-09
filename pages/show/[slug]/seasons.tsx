@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { ArrowLeft } from "tabler-icons-react";
 import { IMG_URL } from "../../../constants/tmdbUrls";
 import { TVShowType } from "../../../constants/types";
@@ -19,11 +19,15 @@ type Props = {
 const seasons = ({ show }: Props) => {
   const router = useRouter();
 
-  console.log(show, 'show')
+  const [bgColor, setBgColor] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    fac.getColorAsync(IMG_URL(show.poster_path)).then((color) => setBgColor(color.hex))
+  }, [show])
 
   return (
     <div>
-      <header className=" bg-primary" >
+      <header className={`${!bgColor && "bg-primary"}`} style={{ backgroundColor: bgColor }}>
         <Container size="xl" className="flex items-center space-x-4 py-4">
           {show.poster_path && (
             <Image
@@ -35,7 +39,7 @@ const seasons = ({ show }: Props) => {
             />
           )}
           <div>
-            <h1 className="font-semibold">
+            <h1 className="className='font-semibold text-2xl sm:text-3xl">
               {show.name}{" "}
               <span className="text-gray-300 font-normal">
                 ({show.first_air_date.split("-")[0]}-

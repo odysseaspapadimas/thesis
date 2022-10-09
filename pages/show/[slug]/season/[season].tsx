@@ -5,7 +5,9 @@ import { TvSeasonResponse } from "moviedb-promise";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router"
+import { useEffect, useState } from "react";
 import { ArrowBack, ArrowLeft, Star } from "tabler-icons-react";
+import { FastAverageColor } from 'fast-average-color';
 import { IMG_URL } from "../../../../constants/tmdbUrls";
 import { Airs, TVShowType } from "../../../../constants/types";
 import { tmdb } from "../../../../utils/tmdb";
@@ -16,19 +18,28 @@ type Props = {
     season: TvSeasonResponse;
 }
 
+const fac = new FastAverageColor();
+
+
 const Season = ({ show, season }: Props) => {
     const router = useRouter();
+
+    const [bgColor, setBgColor] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        fac.getColorAsync(IMG_URL(season.poster_path)).then((color) => setBgColor(color.hex))
+    }, [season])
 
     console.log(season, 'season router')
     return (
         <>
-            <header className=" bg-primary">
+            <header className={`${!bgColor && "bg-primary"}`} style={{ backgroundColor: bgColor }}>
                 <Container size="xl" className="flex items-center space-x-4 py-4">
                     {season.poster_path &&
-                        <Image src={IMG_URL(season.poster_path)} alt="season poster path" width={75} height={125} className="rounded-md" />
+                        <Image src={IMG_URL(season.poster_path)} alt="season poster path" width={100} height={150} className="rounded-md" />
                     }
                     <div>
-                        <h1 className='font-semibold'>{season.name} <span className="text-gray-300 font-normal">({season.air_date?.split("-")[0]})</span></h1>
+                        <h1 className='font-semibold text-2xl sm:text-3xl'>{season.name} <span className="text-gray-300 font-normal">({season.air_date?.split("-")[0]})</span></h1>
                         <NextLink href={`/show/${router.query.slug}/seasons`}>
                             <div className="flex items-center space-x-2 text-gray-200 hover:text-gray-300">
                                 <ArrowLeft className="" />
@@ -43,25 +54,22 @@ const Season = ({ show, season }: Props) => {
 
                 <div className="flex flex-col space-y-8 pb-4">
                     {season.episodes?.map((episode) => (
-                        <div key={episode.id} className="flex flex-col md:flex-row items-center md:space-x-4 w-full">
-                            {episode.still_path ?
-                                (
-
-                                    <img src={IMG_URL(episode.still_path)} alt="episode image" className="md:rounded-l-md my-3 md:my-0  md:w-[217px] md:h-[117px]" />
-                                ) : (
-                                    <div className="md:rounded-l-md my-3 md:my-0 md:w-[217px] md:h-[117px] bg-dark"></div>
-                                )
-                            }
-                            <div className="w-full">
+                        <div key={episode.id} className="flex flex-col md:flex-row items-center md:space-x-4">
+                            {episode.still_path ? (
+                                <img src={IMG_URL(episode.still_path)} alt="episode image" className="md:rounded-l-md md:w-[217px] md:h-[117px]" />
+                            ) : (
+                                <div className="md:rounded-l-md md:w-[217px] md:h-[117px] bg-dark"></div>
+                            )}
+                            <div className="flex-1">
                                 <div className="w-full flex flex-col md:flex-row md:items-start">
                                     <div className="flex items-center space-x-3 order-2 md:order-1">
                                         <span className="font-semibold">{episode.episode_number}</span>
-                                        {episode.vote_average &&
+                                        {episode.vote_count && episode.vote_count > 0 && episode.vote_average && episode.vote_average > 0 ? (
                                             <div className="flex items-center space-x-1 rounded-md py-1 px-2" style={{ backgroundColor: `hsl(${(85 * episode.vote_average) / 10}, 100%, 28%)` }}>
                                                 <Star size={20} />
                                                 <span>{Math.round(episode.vote_average * 10) / 10}</span>
                                             </div>
-                                        }
+                                        ) : <></>}
                                         <h3 className="font-semibold break-words">{episode.name}</h3>
                                     </div>
 
