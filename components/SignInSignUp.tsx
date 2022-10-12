@@ -1,9 +1,9 @@
-import { Button, Divider, PasswordInput, Tabs, TabsValue, TextInput } from "@mantine/core";
+import { Button, Divider, Loader, PasswordInput, Tabs, TabsValue, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { signIn, SignInOptions } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 type Props = {
   activeTab: TabsValue;
@@ -12,8 +12,6 @@ type Props = {
 };
 
 const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
-  const router = useRouter();
-
   const form = useForm({
     initialValues: {
       email: "",
@@ -60,11 +58,15 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
     },
   });
 
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [signupLoading, setSignupLoading] = useState(false);
+
   type FormValues = typeof form.values;
 
   const handleLogin = async (values: FormValues) => {
     form.validate();
-    console.log(values);
+
+    setLoginLoading(true);
 
     const options = { redirect: false, email: values.email, password: values.password } as SignInOptions;
 
@@ -87,14 +89,18 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
     } else if (res?.error?.includes("exist")) {
       form.setFieldError("email", res?.error);
     }
+
+
+    setLoginLoading(false);
   };
 
 
   type FormSignupValues = typeof formSignUp.values;
 
   const handleSignup = async (values: FormSignupValues) => {
-    form.validate();
-    console.log(values);
+    formSignUp.validate();
+
+    setSignupLoading(true);
 
     const res = await fetch("/api/auth/signup", {
       method: "POST",
@@ -125,7 +131,8 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
         })
       }
     }
-    console.log(data, 'signupres');
+
+    setSignupLoading(false);
   };
 
   return (
@@ -162,8 +169,12 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
             {...form.getInputProps("password")}
           />
 
-          <Button className="bg-primary mt-4" type="submit">
-            Sign-in
+          <Button className="bg-primary mt-4" style={{width: "86px"}} type="submit" disabled={loginLoading}>
+            {loginLoading ? (
+              <Loader size={20} variant="dots" style={{ fill: "white" }} />
+            ) : (
+              <>Sign-in</>
+            )}
           </Button>
 
           <Divider my="xs" label="or" labelPosition="center" />
@@ -211,8 +222,12 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
             {...formSignUp.getInputProps("password")}
           />
 
-          <Button className="bg-primary mt-4" type="submit">
-            Sign-up
+          <Button className="bg-primary mt-4" type="submit" style={{width: "90px"}} disabled={signupLoading}>
+            {signupLoading ? (
+              <Loader size={20} variant="dots" style={{ fill: "white" }} />
+            ) : (
+              <>Sign-up</>
+            )}
           </Button>
 
           <Divider my="xs" label="or" labelPosition="center" />

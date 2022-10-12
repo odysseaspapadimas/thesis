@@ -75,7 +75,7 @@ const Recommend = ({ user, users, movie, show }: Props) => {
                         <p>No user found with that username</p>
                     ) : (
                         users && Object.keys(users).map((user) => (
-                            <User onClick={recommend} username={user} />
+                            <User key={user} onClick={recommend} username={user} />
                         ))
                     )}
                 </div>
