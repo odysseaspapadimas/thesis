@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { ExternalLink } from "tabler-icons-react";
+import { ChevronRight, ExternalLink } from "tabler-icons-react";
 import AlreadyWatched from "../../../components/List/AlreadyWatched";
 import PlanToWatch from "../../../components/List/PlanToWatch";
 import Favorite from "../../../components/List/Favorite";
@@ -31,6 +31,7 @@ import timezone from 'dayjs/plugin/timezone' // dependent on utc plugin
 import { NextLink } from "@mantine/next";
 import Episode from "../../../components/Show/Episode";
 import Recommend from "../../../components/Recommend";
+import { showNotification as _showNotification } from "@mantine/notifications";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -111,15 +112,44 @@ const Show = ({
     );
   }
 
+  const showNotification = ({ title, msg, list }: { title: string, msg: string, list: "watched" | "plan" | "favorites" }) => {
+    _showNotification({
+      title,
+      message: <div>
+        <div>{msg}</div>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2"><ChevronRight /></div>
+      </div>,
+      onClick: () => router.push(`/u/${user.username}?list=${list}`),
+      classNames: { body: "cursor-pointer" },
+      disallowClose: true,
+    })
+  }
+
   const handleWatched = async () => {
     if (!onList.on.includes("watched")) {
-      await addToList("watched", showId, type);
+      await addToList("watched", String(show.id), type);
+
+      showNotification({
+        title: "Added to Already Watched list",
+        msg: `'${name}' was successfully added to your list`,
+        list: "watched"
+      });
 
       if (onList.on.includes("plan")) {
-        await removeFromList("plan", showId, type);
+        await removeFromList("plan", String(show.id), type);
+        showNotification({
+          title: "Removed from Plan to Watch list",
+          msg: `'${name}' was successfully removed from your list`,
+          list: "plan"
+        });
       }
     } else if (onList.on.includes("watched")) {
-      await removeFromList("watched", showId, type);
+      await removeFromList("watched", String(show.id), type);
+      showNotification({
+        title: "Removed from Already Watched list",
+        msg: `'${name}' was successfully removed from your list`,
+        list: "plan"
+      });
     }
 
     mutateOnList();
@@ -127,22 +157,49 @@ const Show = ({
 
   const handlePlan = async () => {
     if (!onList.on.includes("plan")) {
-      await addToList("plan", showId, type);
+      await addToList("plan", String(show.id), type);
+
+      showNotification({
+        title: "Added to Plan to Watch list",
+        msg: `'${name}' was successfully added to your list`,
+        list: "plan"
+      });
 
       if (onList.on.includes("watched")) {
-        await removeFromList("watched", showId, type);
+        await removeFromList("watched", String(show.id), type);
+        showNotification({
+          title: "Removed from Already Watched list",
+          msg: `'${name}' was successfully removed from your list`,
+          list: "watched"
+        });
       }
     } else if (onList.on.includes("plan")) {
-      await removeFromList("plan", showId, type);
+      await removeFromList("plan", String(show.id), type);
+      showNotification({
+        title: "Removed from Plan to Watch list",
+        msg: `'${name}' was successfully removed from your list`,
+        list: "plan"
+      });
     }
     mutateOnList();
   };
 
   const handleFavorite = async () => {
+    console.log("hi");
     if (!onList.on.includes("favorites")) {
-      await addToList("favorites", showId, type);
+      await addToList("favorites", String(show.id), type);
+      showNotification({
+        title: "Added to Favorites list",
+        msg: `'${name}' was successfully added to your list`,
+        list: "favorites"
+      });
     } else if (onList.on.includes("favorites")) {
-      await removeFromList("favorites", showId, type);
+      await removeFromList("favorites", String(show.id), type);
+      showNotification({
+        title: "Removed from Favorites list",
+        msg: `'${name}' was successfully removed from your list`,
+        list: "favorites"
+      });
     }
     mutateOnList();
   };

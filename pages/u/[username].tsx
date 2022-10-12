@@ -16,6 +16,8 @@ import useUser from "../../hooks/use-user";
 const profile = () => {
   const router = useRouter();
 
+  const { list } = router.query;
+
   const { username } = router.query;
 
   const { data: session } = useSession();
@@ -117,7 +119,8 @@ const profile = () => {
             tab: "min-w-[120px]",
             tabLabel: "mb-1 sm:text-lg leading-[18px]",
           }}
-          defaultValue="watched"
+          defaultValue={list ? String(list) : "watched"}
+          onTabChange={(tab) => router.replace(`/u/${user.username}?list=${tab}`)}
         >
           <Tabs.List grow position="center" className="flex justify-center w-full items-center flex-nowrap">
             <Tabs.Tab value="watched"><TabLabel text="Already Watched" length={user.watched?.length} /></Tabs.Tab>

@@ -5,7 +5,7 @@ import { ActionIcon, Button, Divider, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Tooltip } from "@mantine/core";
 import { NextLink } from "@mantine/next";
-import { Dots, Eye, Heart, Plus } from "tabler-icons-react";
+import { CaretRight, ChevronRight, Dots, Eye, Heart, Plus } from "tabler-icons-react";
 import { MovieType, TVShowType } from "../constants/types";
 import { useSession } from "next-auth/react";
 import useUser from "../hooks/use-user";
@@ -13,10 +13,12 @@ import useSWR from "swr";
 import fetcher from "../helpers/fetcher";
 import addToList, { Type } from "../utils/addToList";
 import removeFromList from "../utils/removeFromList";
-import { showNotification } from "@mantine/notifications";
+import { showNotification as _showNotification } from "@mantine/notifications";
+import { useRouter } from "next/router";
 
 const Show = ({ data }: { data: MovieType | TVShowType }) => {
-  const [opened, handlers] = useDisclosure(false);
+  const router = useRouter();
+
   let name: string, release_date, link;
   let type = "movie" as Type;
 
@@ -56,27 +58,44 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
     fetcher
   );
 
+
+  const showNotification = ({ title, msg, list }: { title: string, msg: string, list: "watched" | "plan" | "favorites" }) => {
+    _showNotification({
+      title,
+      message: <div>
+        <div>{msg}</div>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2"><ChevronRight /></div>
+      </div>,
+      onClick: () => router.push(`/u/${user.username}?list=${list}`),
+      classNames: { body: "cursor-pointer" },
+      disallowClose: true,
+    })
+  }
+
   const handleWatched = async () => {
     if (!onList.on.includes("watched")) {
       await addToList("watched", String(data.id), type);
 
       showNotification({
         title: "Added to Already Watched list",
-        message: `'${name}' was successfully added to your list`,
+        msg: `'${name}' was successfully added to your list`,
+        list: "watched"
       });
 
       if (onList.on.includes("plan")) {
         await removeFromList("plan", String(data.id), type);
         showNotification({
           title: "Removed from Plan to Watch list",
-          message: `'${name}' was successfully removed from your list`,
+          msg: `'${name}' was successfully removed from your list`,
+          list: "plan"
         });
       }
     } else if (onList.on.includes("watched")) {
       await removeFromList("watched", String(data.id), type);
       showNotification({
-        title: "Removed from Plan to Watch list",
-        message: `'${name}' was successfully removed from your list`,
+        title: "Removed from Already Watched list",
+        msg: `'${name}' was successfully removed from your list`,
+        list: "plan"
       });
     }
 
@@ -89,21 +108,24 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
 
       showNotification({
         title: "Added to Plan to Watch list",
-        message: `'${name}' was successfully added to your list`,
+        msg: `'${name}' was successfully added to your list`,
+        list: "plan"
       });
 
       if (onList.on.includes("watched")) {
         await removeFromList("watched", String(data.id), type);
         showNotification({
           title: "Removed from Already Watched list",
-          message: `'${name}' was successfully removed from your list`,
+          msg: `'${name}' was successfully removed from your list`,
+          list: "watched"
         });
       }
     } else if (onList.on.includes("plan")) {
       await removeFromList("plan", String(data.id), type);
       showNotification({
         title: "Removed from Plan to Watch list",
-        message: `'${name}' was successfully removed from your list`,
+        msg: `'${name}' was successfully removed from your list`,
+        list: "plan"
       });
     }
     mutateOnList();
@@ -115,13 +137,15 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       await addToList("favorites", String(data.id), type);
       showNotification({
         title: "Added to Favorites list",
-        message: `'${name}' was successfully added to your list`,
+        msg: `'${name}' was successfully added to your list`,
+        list: "favorites"
       });
     } else if (onList.on.includes("favorites")) {
       await removeFromList("favorites", String(data.id), type);
       showNotification({
         title: "Removed from Favorites list",
-        message: `'${name}' was successfully removed from your list`,
+        msg: `'${name}' was successfully removed from your list`,
+        list: "favorites"
       });
     }
     mutateOnList();
