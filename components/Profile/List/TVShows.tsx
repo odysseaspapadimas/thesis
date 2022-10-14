@@ -6,7 +6,7 @@ const TVShows = ({ shows }: { shows: TVShowType[] }) => {
     <div className="flex flex-col space-y-4">
       {shows.map((show) => (
         <Show key={show.id} data={show} />
-      ))}
+      )).reverse()}
     </div>
   );
 };

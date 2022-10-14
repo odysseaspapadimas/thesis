@@ -6,7 +6,7 @@ import List from "./List/List";
 
 const PlanToWatch = ({ username }: { username: string }) => {
   const { data, error } = useSWR<ListData>(`/api/user/list?username=${username}&list=plan`, fetcher);
-  console.log(data, " planlistdata");
+  
   if (!data) {
     return (
       <Center my={16}>

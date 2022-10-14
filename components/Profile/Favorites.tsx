@@ -6,7 +6,7 @@ import List from "./List/List";
 
 const Favorites = ({ username }: { username: string }) => {
   const { data, error } = useSWR<ListData>(`/api/user/list?username=${username}&list=favorites`, fetcher);
-  console.log(data, " favorites");
+  
   if (!data) {
     return (
       <Center my={16}>

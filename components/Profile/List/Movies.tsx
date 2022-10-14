@@ -6,7 +6,7 @@ const Movies = ({ movies }: { movies: MovieType[] }) => {
     <div className="flex flex-col space-y-4">
       {movies.map((movie) => (
         <Show key={movie.id} data={movie} />
-      ))}
+      )).reverse()}
     </div>
   );
 };

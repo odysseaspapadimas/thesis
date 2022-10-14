@@ -9,7 +9,7 @@ const AlreadyWatched = ({ username }: { username: string }) => {
     `/api/user/list?username=${username}&list=watched`,
     fetcher
   );
-  console.log(data, " planlistdata");
+  
   if (!data) {
     return (
       <Center my={16}>
