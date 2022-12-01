@@ -84,7 +84,7 @@ const Header = () => {
               />
             </MediaQuery>
             <NextLink href="/" className="text-2xl font-bold mx-auto">
-              ZeTell
+              Thesis
             </NextLink>
 
             <MediaQuery smallerThan="sm" styles={{ display: "none" }}>

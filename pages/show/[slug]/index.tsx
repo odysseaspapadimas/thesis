@@ -35,8 +35,6 @@ import { showNotification as _showNotification } from "@mantine/notifications";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-
-
 const Show = ({
   show,
   providers,
