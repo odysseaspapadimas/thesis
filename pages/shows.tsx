@@ -83,8 +83,8 @@ const shows = ({ shows, genresList }: { shows: TVShowType[]; genresList: Array<G
         <title>Popular TV Shows</title>
       </Head>
       <h1>Popular TV Shows</h1>
-      <div className="flex flex-col md:flex-row justify-center">
-        <div className="flex flex-col space-y-2 mb-4">
+      <div className="flex flex-col md:flex-row md:space-x-4">
+        <div className="flex flex-col flex-1 space-y-2 mb-4">
           <Sort sortBy={sortBy} setSortBy={setSortBy} type="shows"/>
           <Filters filters={filters} setFilters={setFilters} genresList={genresList} handleSearch={handleSearch} type="shows" />
           <Button onClick={handleSearch} className="bg-primary">

@@ -87,8 +87,8 @@ const movies = ({ movies, genresList }: { movies: MovieType[]; genresList: Array
         <title>Popular Movies</title>
       </Head>
       <h1>Popular Movies</h1>
-      <div className="flex flex-col md:flex-row">
-        <div className="flex flex-col space-y-2 mb-4">
+      <div className="flex flex-col md:flex-row md:space-x-4">
+        <div className="flex flex-col flex-1 space-y-2 mb-4">
           <Sort sortBy={sortBy} setSortBy={setSortBy} type="movies" />
           <Filters filters={filters} setFilters={setFilters} genresList={genresList} handleSearch={handleSearch} type="movies" />
           <Button onClick={handleSearch} className="bg-primary">
