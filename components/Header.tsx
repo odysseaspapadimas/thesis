@@ -98,14 +98,16 @@ const Header = () => {
             <Group>
               <Search setNavOpened={setNavOpened} />
 
-              <Tooltip label="Activity">
-                <NextLink href="/activity">
-                  <div className="border border-transparent hover:border-primary transition-all cursor-pointer rounded-sm h-[38px] w-[38px] grid place-items-center">
-                    <Activity />
-                  </div>
-                </NextLink>
-              </Tooltip>
-
+              {session &&
+                <Tooltip label="Activity">
+                  <NextLink href="/activity">
+                    <div className="border border-transparent hover:border-primary transition-all cursor-pointer rounded-sm h-[38px] w-[38px] grid place-items-center">
+                      <Activity />
+                    </div>
+                  </NextLink>
+                </Tooltip>
+              }
+              
               <Group>
                 <Menu
                   position="bottom-end"
@@ -116,7 +118,7 @@ const Header = () => {
                     <div className="cursor-pointer">
                       <Indicator disabled={!unread}>
                         <div className="rounded-sm border border-transparent hover:border-primary">
-                          <Avatar src={session?.user?.image} className="rounded-sm"/>
+                          <Avatar src={session?.user?.image} className="rounded-sm" />
                         </div>
                       </Indicator>
                     </div>

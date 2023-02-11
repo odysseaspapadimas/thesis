@@ -8,9 +8,10 @@ import { NextLink } from "@mantine/next"
 import relativeTime from 'dayjs/plugin/relativeTime'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import Head from "next/head"
+import { NextPageWithAuth } from "./_app"
 dayjs.extend(relativeTime)
 
-const ActivityPage = () => {
+const ActivityPage : NextPageWithAuth = () => {
 
     const { data, error } = useSWR<any>("/api/user/activity", fetcher)
 
@@ -53,6 +54,9 @@ const ActivityPage = () => {
         </>
     )
 }
+
+ActivityPage.requireAuth = true
+
 export default ActivityPage
 
 const MediaLink = ({ id, media_type, media_name }: { id: string, media_type: "movie" | "show", media_name: string }) => {
