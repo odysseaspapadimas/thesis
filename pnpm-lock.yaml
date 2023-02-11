@@ -5,12 +5,12 @@ specifiers:
   '@emotion/react': ^11.10.4
   '@emotion/server': ^11.10.0
   '@google-cloud/storage': ^6.5.2
-  '@mantine/core': latest
-  '@mantine/dates': latest
-  '@mantine/form': latest
-  '@mantine/hooks': latest
-  '@mantine/next': latest
-  '@mantine/notifications': latest
+  '@mantine/core': 5.10.3
+  '@mantine/dates': 5.10.3
+  '@mantine/form': 5.10.3
+  '@mantine/hooks': 5.10.3
+  '@mantine/next': 5.10.3
+  '@mantine/notifications': 5.10.3
   '@types/bcrypt': ^5.0.0
   '@types/node': 17.0.4
   '@types/react': 17.0.38
