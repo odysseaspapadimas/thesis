@@ -100,7 +100,7 @@ const search = () => {
   </Container>
 
   return (
-    <Container size="xl" py={36}>
+    <Container py={36}>
       <Head>
         <title>"{query}" - Search</title>
       </Head>

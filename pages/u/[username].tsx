@@ -80,7 +80,7 @@ const profile = () => {
       <Head>
         <title>{username} - Profile</title>
       </Head>
-      <Container size="xl" py={12}>
+      <Container py={12}>
         <div className="flex flex-col items-center sm:flex-row">
           <Group className="self-start">
             <Image

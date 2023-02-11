@@ -95,7 +95,7 @@ const CalendarPage: NextPageWithAuth = () => {
 
 
   return (
-    <Container size="xl" className="">
+    <Container className="">
       <p className="text-gray-400 text-sm mt-4 mb-1 text-right">*Times converted to your local timezone ({new Date()
         .toLocaleDateString('en-US', {
           day: '2-digit',

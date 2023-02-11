@@ -63,7 +63,7 @@ const Header = () => {
         {error === "User not found" && (
           <div>{session && <SignupModal session={session} />}</div>
         )}
-        <Container size="xl" className="h-full grid ">
+        <Container className="h-full grid ">
           <Drawer
             opened={navOpened}
             onClose={() => setNavOpened(false)}

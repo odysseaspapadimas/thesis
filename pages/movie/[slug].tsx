@@ -258,7 +258,7 @@ const Movie = ({
         </Container>
       </div>
 
-      <Container size="xl">
+      <Container>
         <Credits credits={movie.credits} />
       </Container>
     </div>

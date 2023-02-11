@@ -34,7 +34,7 @@ const Season = ({ show, season }: Props) => {
     return (
         <>
             <header className={`${!bgColor && "bg-primary"}`} style={{ backgroundColor: bgColor }}>
-                <Container size="xl" className="flex items-center space-x-4 py-4">
+                <Container className="flex items-center space-x-4 py-4">
                     {season.poster_path &&
                         <Image src={IMG_URL(season.poster_path)} alt="season poster path" width={100} height={150} className="rounded-md" />
                     }
@@ -49,7 +49,7 @@ const Season = ({ show, season }: Props) => {
                     </div>
                 </Container>
             </header>
-            <Container size="xl" className="mt-4">
+            <Container className="mt-4">
                 <h2 className="text-xl font-semibold mb-2">Episodes <span className="text-gray-300 font-normal">{season.episodes?.length}</span> </h2>
 
                 <div className="flex flex-col space-y-8 pb-4">

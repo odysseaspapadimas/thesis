@@ -32,7 +32,7 @@ const MessagesLayout = ({ children }: { children: ReactElement }) => {
     }
 
     return (
-        <Container size="xl" className="flex flex-col md:flex-row md:justify-center">
+        <Container className="flex flex-col md:flex-row md:justify-center">
             <div className="w-full md:max-w-xs">
                 <div className="flex items-center justify-between w-full">
                     <h1>Messages</h1>

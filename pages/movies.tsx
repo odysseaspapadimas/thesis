@@ -82,7 +82,7 @@ const movies = ({ movies, genresList }: { movies: MovieType[]; genresList: Array
   console.log(filteredMovies, 'ez');
 
   return (
-    <Container size="xl" py={36}>
+    <Container py={36}>
       <Head>
         <title>Popular Movies</title>
       </Head>
@@ -101,7 +101,7 @@ const movies = ({ movies, genresList }: { movies: MovieType[]; genresList: Array
             style={{
               gridTemplateColumns: matches
                 ? "repeat(auto-fit, minmax(140px, 1fr))"
-                : "repeat(auto-fit, minmax(175px, 1fr))",
+                : "repeat(auto-fit, minmax(150px, 1fr))",
             }}
           >
             {!filter
@@ -110,7 +110,7 @@ const movies = ({ movies, genresList }: { movies: MovieType[]; genresList: Array
                 ? [...Array(20)].map((_, i) => (
                   <Skeleton
                     key={i}
-                    className="w-[140px] sm:w-[175px]"
+                    className="w-[140px] sm:w-[150px]"
                     style={{ aspectRatio: "1 / 1.5" }}
                   />
                 ))

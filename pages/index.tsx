@@ -23,7 +23,7 @@ const Home = ({ movies, shows }: HomeProps) => {
   );
 
   return (
-    <Container size="xl" className="py-10">
+    <Container py={36}>
       {data && !data.userExists && (
         <div>{session && <SignupModal session={session} />}</div>
       )}

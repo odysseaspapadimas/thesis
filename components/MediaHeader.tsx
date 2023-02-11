@@ -26,7 +26,7 @@ const MediaHeader = ({ media }: Props) => {
 
     return (
         <header className={`${!bgColor && "bg-primary"}`} style={{ backgroundColor: bgColor }}>
-            <Container size="xl" className="flex items-center space-x-4 py-4">
+            <Container className="flex items-center space-x-4 py-4">
                 {media.poster_path &&
                     <Image src={IMG_URL(media.poster_path)} alt="media poster path" width={100} height={150} className="rounded-md" />
                 }

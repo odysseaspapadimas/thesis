@@ -152,7 +152,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
   };
 
   return (
-    <div className="relative w-[140px] sm:w-[175px]">
+    <div className="relative w-[140px] sm:w-[150px]">
       <div
         className="absolute top-2 left-2 z-10 rounded-full grid place-items-center border-[3px] h-[34px] w-[34px]"
         style={{
@@ -164,7 +164,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
       </div>
       <NextLink href={link} className="">
         <div
-          className="w-[140px] sm:w-[175px] relative cursor-pointer rounded-sm border border-transparent hover:border-blue-400"
+          className="w-[140px] sm:w-[150px] relative cursor-pointer rounded-sm border border-transparent hover:border-blue-400"
           style={{ aspectRatio: "1 / 1.5" }}
         >
           <Image

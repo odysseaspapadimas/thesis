@@ -8,7 +8,7 @@ type Props = {
 }
 const credits = ({ show }: Props) => {
     return (
-        <Container size="xl">Credits</Container>
+        <Container>Credits</Container>
     )
 }
 export default credits

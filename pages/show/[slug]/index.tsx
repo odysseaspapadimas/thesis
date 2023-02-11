@@ -336,7 +336,7 @@ const Show = ({
           </div>
         </Container>
       </div>
-      <Container size="xl" className="flex flex-col pb-6">
+      <Container className="flex flex-col pb-6">
 
         <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:space-x-4 pt-6">
           {show.next_episode_to_air &&

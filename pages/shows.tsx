@@ -78,7 +78,7 @@ const shows = ({ shows, genresList }: { shows: TVShowType[]; genresList: Array<G
   };
 
   return (
-    <Container size="xl" py={36}>
+    <Container py={36}>
       <Head>
         <title>Popular TV Shows</title>
       </Head>
@@ -97,7 +97,7 @@ const shows = ({ shows, genresList }: { shows: TVShowType[]; genresList: Array<G
             style={{
               gridTemplateColumns: matches
                 ? "repeat(auto-fit, minmax(140px, 1fr))"
-                : "repeat(auto-fit, minmax(175px, 1fr))",
+                : "repeat(auto-fit, minmax(150px, 1fr))",
             }}
           >
             {!filters
@@ -106,7 +106,7 @@ const shows = ({ shows, genresList }: { shows: TVShowType[]; genresList: Array<G
                 ? [...Array(20)].map((_, i) => (
                   <Skeleton
                     key={i}
-                    className="w-[140px] sm:w-[175px]"
+                    className="w-[140px] sm:w-[150px]"
                     style={{ aspectRatio: "1 / 1.5" }}
                   />
                 ))

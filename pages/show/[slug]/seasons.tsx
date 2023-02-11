@@ -28,7 +28,7 @@ const seasons = ({ show }: Props) => {
   return (
     <div>
       <header className={`${!bgColor && "bg-primary"}`} style={{ backgroundColor: bgColor }}>
-        <Container size="xl" className="flex items-center space-x-4 py-4">
+        <Container className="flex items-center space-x-4 py-4">
           {show.poster_path && (
             <Image
               src={IMG_URL(show.poster_path)}
@@ -58,7 +58,7 @@ const seasons = ({ show }: Props) => {
           </div>
         </Container>
       </header>
-      <Container size="xl" my={16}>
+      <Container my={16}>
         <div className="flex flex-col space-y-8">
           {show.seasons.map((season) => (
             <div key={season.id} className="flex items-start space-x-4">

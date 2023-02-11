@@ -1,4 +1,4 @@
-import { Container, Loader } from "@mantine/core"
+import { Center, Container, Loader } from "@mantine/core"
 import fetcher from "../helpers/fetcher"
 import useSWR from "swr"
 import { Activity } from "../constants/types"
@@ -9,6 +9,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import Head from "next/head"
 import { NextPageWithAuth } from "./_app"
+import { useMediaQuery } from "@mantine/hooks"
 dayjs.extend(relativeTime)
 
 const ActivityPage: NextPageWithAuth = () => {
@@ -17,16 +18,18 @@ const ActivityPage: NextPageWithAuth = () => {
 
     console.log(data, ' activity')
 
+    const isMobile = useMediaQuery('(max-width: 768px)', true, { getInitialValueInEffect: false });
+
     return (
         <>
             <Head>
                 <title>Activity</title>
             </Head>
-            <Container size="xl" py={36}>
+            <Container py={36}>
                 <h1>Activity</h1>
-                <div className="flex flex-col space-y-4">
+                <div className="mx-auto flex flex-col space-y-4 ">
                     {data && data.length > 0 ? data.map((activity: Activity) => (
-                        <div key={String(activity.createdAt)} className="flex items-center space-x-4">
+                        <div key={String(activity.createdAt)} className="flex items-center space-x-4 w-full text-sm md:text-base">
                             <NextLink href={`/u/${activity.user.username}`} className="next-link rounded-full border-2 border-transparent hover:border-primary">
                                 <Image src={activity.user.image_url} width={30} height={30} className="rounded-full" layout="fixed" />
                             </NextLink>
@@ -44,10 +47,14 @@ const ActivityPage: NextPageWithAuth = () => {
                                     <> liked <MediaLink id={activity.media.id} media_type={activity.media.type} media_name={activity.media.media_name} /></>
                                 )}
                             </p>
-                            <p className="text-gray-300 text-sm">{dayjs().to(activity.createdAt)}</p>
+                            {!isMobile &&
+                                <p className="text-gray-300 text-sm flex-1 text-right">{dayjs().to(activity.createdAt)}</p>
+                            }
                         </div>
                     )) : !data ? (
-                        <Loader />
+                        <Center py={24}>
+                            <Loader />
+                        </Center>
                     ) : data && data.length === 0 && (
                         <p >No activity yet...</p>
                     )}
