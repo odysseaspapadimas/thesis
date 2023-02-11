@@ -89,11 +89,11 @@ const search = () => {
 
   const [scroll, scrollTo] = useWindowScroll();
 
-  if (!query) return <Container size="xl" py={36}>
+  if (!query) return <Container py={36}>
     <h2>Try searching for something!</h2>
   </Container>
 
-  if (!firstPage) return <Container size="xl" py={36}>
+  if (!firstPage) return <Container py={36}>
     <Center>
       <Loader />
     </Center>

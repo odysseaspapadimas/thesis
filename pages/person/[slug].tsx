@@ -33,7 +33,6 @@ const Person = ({
         <title>{person.name}</title>
       </Head>
       <Container
-        size="xl"
         className="relative h-full flex flex-col items-center md:flex-row md:items-start py-4 sm:py-20"
       >
         <div>

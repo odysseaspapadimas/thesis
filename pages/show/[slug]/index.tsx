@@ -217,7 +217,6 @@ const Show = ({
           />
         </div>
         <Container
-          size="xl"
           className="relative h-full sm:flex py-10 sm:py-20"
         >
           <div className="flex flex-col items-center justify-center">
