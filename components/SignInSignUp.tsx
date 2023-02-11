@@ -230,7 +230,6 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
             required
             placeholder="Password"
             label="Password"
-            description="Password must include at least one letter, number and special character"
             {...formSignUp.getInputProps("password")}
           />
 

@@ -11,7 +11,7 @@ import Head from "next/head"
 import { NextPageWithAuth } from "./_app"
 dayjs.extend(relativeTime)
 
-const ActivityPage : NextPageWithAuth = () => {
+const ActivityPage: NextPageWithAuth = () => {
 
     const { data, error } = useSWR<any>("/api/user/activity", fetcher)
 
@@ -22,13 +22,13 @@ const ActivityPage : NextPageWithAuth = () => {
             <Head>
                 <title>Activity</title>
             </Head>
-            <Container size="xl" py={16}>
-                <h2 className="text-xl font-semibold mb-4">Activity</h2>
+            <Container size="xl" py={36}>
+                <h1>Activity</h1>
                 <div className="flex flex-col space-y-4">
-                    {data ? data.map((activity: Activity) => (
+                    {data && data.length > 0 ? data.map((activity: Activity) => (
                         <div key={String(activity.createdAt)} className="flex items-center space-x-4">
                             <NextLink href={`/u/${activity.user.username}`} className="next-link rounded-full border-2 border-transparent hover:border-primary">
-                                <Image src={activity.user.image_url} width={30} height={30} className="rounded-full" layout="fixed"  />
+                                <Image src={activity.user.image_url} width={30} height={30} className="rounded-full" layout="fixed" />
                             </NextLink>
                             <p className="text-gray-300">
                                 <NextLink href={`/u/${activity.user.username}`}>
@@ -46,8 +46,10 @@ const ActivityPage : NextPageWithAuth = () => {
                             </p>
                             <p className="text-gray-300 text-sm">{dayjs().to(activity.createdAt)}</p>
                         </div>
-                    )) : (
+                    )) : !data ? (
                         <Loader />
+                    ) : data && data.length === 0 && (
+                        <p >No activity yet...</p>
                     )}
                 </div>
             </Container>

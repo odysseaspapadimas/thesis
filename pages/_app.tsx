@@ -5,6 +5,9 @@ import { NextComponentType, NextPage, NextPageContext } from "next";
 import AuthGuard from "../helpers/AuthGuard";
 import { NotificationsProvider } from "@mantine/notifications";
 import Header from "../components/Header";
+import useSWR from "swr";
+import fetcher from "../helpers/fetcher";
+import SignupModal from "../components/Home/SignupModal";
 
 interface AppProps {
   pageProps: any;
@@ -18,6 +21,12 @@ export type NextPageWithAuth<P = {}, IP = P> = NextPage<P, IP> & {
 };
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+
+  const { data, error } = useSWR(
+    session ? `/api/user/userExists?email=${session.user?.email}` : null,
+    fetcher
+  );
+
   return (
     <MantineProvider
       withGlobalStyles
@@ -45,6 +54,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     >
       <NotificationsProvider>
         <SessionProvider session={session}>
+          {data && !data.userExists && (
+            <div>{session && <SignupModal session={session} />}</div>
+          )}
           <Header />
           {Component.requireAuth ? (
             <AuthGuard>

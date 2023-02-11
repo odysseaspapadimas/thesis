@@ -29,6 +29,7 @@ import Search from "./Search";
 import { MenuDivider } from "@mantine/core/lib/Menu/MenuDivider/MenuDivider";
 import { Session } from "next-auth";
 import { Activity } from "tabler-icons-react";
+import SignupModal from "./Home/SignupModal";
 
 type HeaderP = {
   opened: boolean;
@@ -44,6 +45,8 @@ const Header = () => {
 
   const { user, error } = useUser({ session, options: { refreshInterval: 1000 } });
 
+  console.log(user, error, 'user')
+
   let unread = 0;
 
   for (const message in user?.messages) {
@@ -56,6 +59,10 @@ const Header = () => {
   return (
     <>
       <MantineHeader height={70}>
+
+        {error === "User not found" && (
+          <div>{session && <SignupModal session={session} />}</div>
+        )}
         <Container size="xl" className="h-full grid ">
           <Drawer
             opened={navOpened}
@@ -107,7 +114,7 @@ const Header = () => {
                   </NextLink>
                 </Tooltip>
               }
-              
+
               <Group>
                 <Menu
                   position="bottom-end"
