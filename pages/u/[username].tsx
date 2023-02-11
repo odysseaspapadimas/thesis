@@ -1,5 +1,4 @@
-import { Button, Container, Group, Loader, Tabs } from "@mantine/core";
-import { NextLink } from "@mantine/next";
+import { Button, Container, Group, Loader, Tabs } from "@mantine/core/"
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
@@ -12,6 +11,7 @@ import FollowersFollowing from "../../components/Profile/FollowersFollowing";
 import PlanToWatch from "../../components/Profile/PlanToWatch";
 import { User } from "../../constants/types";
 import useUser from "../../hooks/use-user";
+import { NextLink } from "@mantine/next";
 
 const profile = () => {
   const router = useRouter();
@@ -35,6 +35,8 @@ const profile = () => {
 
   const [isFollowing, setIsFollowing] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     if (!user || !myUser) return;
 
@@ -52,6 +54,7 @@ const profile = () => {
   //const isFollowing = user.followers?.includes(myUser.username);
 
   const handleToggleFollow = async () => {
+    setIsLoading(true);
     console.log(isFollowing);
 
     const res = await fetch(
@@ -65,6 +68,9 @@ const profile = () => {
 
     console.log(response)
 
+    if(response.acknowledged) {
+       setIsLoading(false);
+    }
     mutateUser();
   }
 
@@ -87,13 +93,13 @@ const profile = () => {
           </Group>
           <Group className="space-x-4 mx-8">
             <Group>
-              <div onClick={() => setOpened({ opened: true, tab: "followers" })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
+              <div onClick={() => setOpened({ opened: true, tab: "followers" })} className="p-2 w-[85px] flex flex-col justify-center items-center hover:bg-[#27292e] hover:cursor-pointer">
                 <p>{user.followers ? user.followers.length : 0}</p>
                 <p>{user.followers && user.followers.length === 1 ? "Follower" : "Followers"}</p>
               </div>
             </Group>
             <Group>
-              <div onClick={() => setOpened({ opened: true, tab: "following" })} className="p-2 flex flex-col items-center hover:bg-[#27292e] hover:cursor-pointer">
+              <div onClick={() => setOpened({ opened: true, tab: "following" })} className="p-2 w-[85px] flex flex-col justify-center items-center hover:bg-[#27292e] hover:cursor-pointer">
                 <p>{user.following ? user.following.length : 0}</p>
                 <p>Following</p>
               </div>
@@ -103,9 +109,9 @@ const profile = () => {
           </Group>
           {myUser && user.username !== myUser.username &&
             <div className="flex items-center space-x-3">
-              <Button onClick={handleToggleFollow} className={`${!isFollowing ? 'bg-primary' : 'bg-dark hover:bg-dark-hover'} my-4 sm:my-0`}>{!isFollowing ? 'Follow' : 'Unfollow'}</Button>
+              <Button onClick={handleToggleFollow} loading={isLoading} loaderPosition="center" w={100} className={`${!isFollowing ? 'bg-primary' : 'bg-dark hover:bg-dark-hover'} my-4 sm:my-0`}>{!isFollowing ? 'Follow' : 'Unfollow'}</Button>
               <NextLink href={`/messages/${user.username}`}>
-                <Button className="bg-dark hover:bg-dark-hover">Message</Button>
+                <Button w={100} className="bg-dark hover:bg-dark-hover">Message</Button>
               </NextLink>
             </div>
           }
