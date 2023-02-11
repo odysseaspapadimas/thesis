@@ -82,7 +82,7 @@ const Person = ({
             </div>
           </div>
         </div>
-        <div className="flex-1 flex flex-col self-stretch sm:max-w-lg md:max-w-2xl lg:max-w-4xl sm:ml-8">
+        <div className="flex-1 flex flex-col self-stretch sm:max-w-lg md:max-w-2xl sm:ml-8">
           <h1 className="font-bold">{person.name}</h1>
           <h2 className="text-2xl font-semibold my-2 whitespace">Biography:</h2>
           <div>
