@@ -320,4 +320,20 @@ export interface User {
   following?: string[];
   followers?: string[];
   messages?: Record<string, Message[]>;
+  activity?: any;
+}
+
+export interface Activity {
+  createdAt: Date;
+  type: string;
+  user: {
+    username: string;
+    image_url: string;
+  }
+  media: {
+    id: string;
+    media_name: string;
+    image_path: string;
+    type: "movie" | "show";
+  }
 }

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const ListItemSchema = new mongoose.Schema(
   {
@@ -20,7 +20,8 @@ export const UserSchema = new mongoose.Schema(
     favorites: [ListItemSchema],
     followers: [String],
     following: [String],
-    messages: Object
+    messages: Object,
+    activity: Array,
   },
   { versionKey: false }
 );

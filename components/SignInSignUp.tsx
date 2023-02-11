@@ -30,6 +30,7 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
   });
 
   const formSignUp = useForm({
+    validateInputOnBlur: true,
     initialValues: {
       email: "",
       password: "",
@@ -45,6 +46,8 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
       password: (value) =>
         value.length >= 8 ? null : "Password must be at least 8 characters",
       username: (value) => {
+
+
         if (value.length >= 3 && value.toLowerCase() === value && !/\s/.test(value)) {
           return null
         } else if (value.length < 3) {
@@ -98,11 +101,20 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
   type FormSignupValues = typeof formSignUp.values;
 
   const handleSignup = async (values: FormSignupValues) => {
-    formSignUp.validate();
-
     setSignupLoading(true);
 
-    const res = await fetch("/api/auth/signup", {
+    formSignUp.validate();
+
+    const res1 = await fetch(`api/user?username=${values.username}`);
+    const data1 = await res1.json();
+
+    if (data1.user?.username === values.username) {
+      formSignUp.setFieldError("username", "Username already exists");
+      setSignupLoading(false);
+      return;
+    }
+
+    const res2 = await fetch("/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -114,7 +126,7 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
       })
     })
 
-    const data = await res.json();
+    const data = await res2.json();
 
     if (data.ok) {
       const options = { redirect: false, email: values.email, password: values.password } as SignInOptions;
@@ -169,7 +181,7 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
             {...form.getInputProps("password")}
           />
 
-          <Button className="bg-primary mt-4" style={{width: "86px"}} type="submit" disabled={loginLoading}>
+          <Button className="bg-primary mt-4" style={{ width: "86px" }} type="submit" disabled={loginLoading}>
             {loginLoading ? (
               <Loader size={20} variant="dots" style={{ fill: "white" }} />
             ) : (
@@ -222,7 +234,7 @@ const SignInSignUp = ({ activeTab, setActiveTab, setOpened }: Props) => {
             {...formSignUp.getInputProps("password")}
           />
 
-          <Button className="bg-primary mt-4" type="submit" style={{width: "90px"}} disabled={signupLoading}>
+          <Button className="bg-primary mt-4" type="submit" style={{ width: "90px" }} disabled={signupLoading}>
             {signupLoading ? (
               <Loader size={20} variant="dots" style={{ fill: "white" }} />
             ) : (

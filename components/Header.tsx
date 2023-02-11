@@ -15,6 +15,7 @@ import {
   Drawer,
   TabsValue,
   Indicator,
+  Tooltip,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { NextLink } from "@mantine/next";
@@ -27,6 +28,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import Search from "./Search";
 import { MenuDivider } from "@mantine/core/lib/Menu/MenuDivider/MenuDivider";
 import { Session } from "next-auth";
+import { Activity } from "tabler-icons-react";
 
 type HeaderP = {
   opened: boolean;
@@ -93,61 +95,75 @@ const Header = () => {
               </div>
             </MediaQuery>
 
-            <Search setNavOpened={setNavOpened} />
             <Group>
-              <Menu
-                position="bottom-end"
-                withArrow
-                classNames={{ item: "text-base" }}
-              >
-                <Menu.Target>
-                  <div className="cursor-pointer">
-                    <Indicator disabled={!unread}>
-                      <Avatar src={session?.user?.image} />
-                    </Indicator>
+              <Search setNavOpened={setNavOpened} />
+
+              <Tooltip label="Activity">
+                <NextLink href="/activity">
+                  <div className="border border-transparent hover:border-primary transition-all cursor-pointer rounded-sm h-[38px] w-[38px] grid place-items-center">
+                    <Activity />
                   </div>
-                </Menu.Target>
-                <Menu.Dropdown className="-translate-x-[8px]">
-                  {session ? (
-                    <>
-                      <Menu.Item component={NextLink} href={"/u/" + user?.username}>
-                        <p className="font-semibold text-lg ">
-                          {user?.username}
-                        </p>
-                      </Menu.Item>
-                      <Divider my="xs" className="" />
+                </NextLink>
+              </Tooltip>
 
-                      <Menu.Item component={NextLink} href="/messages" rightSection={<Notifications num={unread} />}>
-                        Messages
-                      </Menu.Item>
-                      <Menu.Item>Settings</Menu.Item>
+              <Group>
+                <Menu
+                  position="bottom-end"
+                  withArrow
+                  classNames={{ item: "text-base" }}
+                >
+                  <Menu.Target>
+                    <div className="cursor-pointer">
+                      <Indicator disabled={!unread}>
+                        <div className="rounded-sm border border-transparent hover:border-primary">
+                          <Avatar src={session?.user?.image} className="rounded-sm"/>
+                        </div>
+                      </Indicator>
+                    </div>
+                  </Menu.Target>
+                  <Menu.Dropdown className="-translate-x-[8px]">
+                    {session ? (
+                      <>
+                        <Menu.Item component={NextLink} href={"/u/" + user?.username}>
+                          <p className="font-semibold text-lg ">
+                            {user?.username}
+                          </p>
+                        </Menu.Item>
+                        <Divider my="xs" className="" />
 
-                      <Divider my="xs" labelPosition="center" />
-                      <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
-                    </>
-                  ) : (
-                    <>
-                      <Menu.Item
-                        onClick={() => {
-                          setOpened(true);
-                          setActiveTab("sign-in");
-                        }}
-                      >
-                        Sign-in
-                      </Menu.Item>
-                      <Divider />
-                      <Menu.Item
-                        onClick={() => {
-                          setOpened(true);
-                          setActiveTab("sign-up");
-                        }}
-                      >
-                        Sign-up
-                      </Menu.Item>
-                    </>
-                  )}
-                </Menu.Dropdown>
-              </Menu>
+                        <Menu.Item component={NextLink} href="/messages" rightSection={<Notifications num={unread} />}>
+                          Messages
+                        </Menu.Item>
+                        <Menu.Item disabled={true}>Settings</Menu.Item>
+
+                        <Divider my="xs" labelPosition="center" />
+                        <Menu.Item onClick={() => signOut()}>Sign-out</Menu.Item>
+                      </>
+                    ) : (
+                      <>
+                        <Menu.Item
+                          onClick={() => {
+                            setOpened(true);
+                            setActiveTab("sign-in");
+                          }}
+                        >
+                          Sign-in
+                        </Menu.Item>
+                        <Divider />
+                        <Menu.Item
+                          onClick={() => {
+                            setOpened(true);
+                            setActiveTab("sign-up");
+                          }}
+                        >
+                          Sign-up
+                        </Menu.Item>
+                      </>
+                    )}
+                  </Menu.Dropdown>
+                </Menu>
+              </Group>
+
             </Group>
           </Group>
         </Container>

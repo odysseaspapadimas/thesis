@@ -20,6 +20,9 @@ import Credits from "../../components/Credits";
 import Head from "next/head";
 import { NextLink } from "@mantine/next";
 import Recommend from "../../components/Recommend";
+import { showNotification as _showNotification } from "@mantine/notifications";
+import FriendActivity from "../../components/FriendActivity";
+import { ChevronRight } from "tabler-icons-react";
 
 const Movie = ({
   movie,
@@ -62,15 +65,44 @@ const Movie = ({
     );
   }
 
-  const handleWatched = async () => {
+  const showNotification = ({ title, msg, list }: { title: string, msg: string, list: "watched" | "plan" | "favorites" }) => {
+    _showNotification({
+      title,
+      message: <div>
+        <div>{msg}</div>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2"><ChevronRight /></div>
+      </div>,
+      onClick: () => router.push(`/u/${user.username}?list=${list}`),
+      classNames: { body: "cursor-pointer" },
+      disallowClose: true,
+    })
+  }
+
+   const handleWatched = async () => {
     if (!onList.on.includes("watched")) {
       await addToList("watched", movieId, type);
 
+      showNotification({
+        title: "Added to Already Watched list",
+        msg: `'${movie.title}' was successfully added to your list`,
+        list: "watched"
+      });
+
       if (onList.on.includes("plan")) {
         await removeFromList("plan", movieId, type);
+        showNotification({
+          title: "Removed from Plan to Watch list",
+          msg: `'${movie.title}' was successfully removed from your list`,
+          list: "plan"
+        });
       }
     } else if (onList.on.includes("watched")) {
       await removeFromList("watched", movieId, type);
+      showNotification({
+        title: "Removed from Already Watched list",
+        msg: `'${movie.title}' was successfully removed from your list`,
+        list: "plan"
+      });
     }
 
     mutateOnList();
@@ -80,11 +112,27 @@ const Movie = ({
     if (!onList.on.includes("plan")) {
       await addToList("plan", movieId, type);
 
+      showNotification({
+        title: "Added to Plan to Watch list",
+        msg: `'${movie.title}' was successfully added to your list`,
+        list: "plan"
+      });
+
       if (onList.on.includes("watched")) {
         await removeFromList("watched", movieId, type);
+        showNotification({
+          title: "Removed from Already Watched list",
+          msg: `'${movie.title}' was successfully removed from your list`,
+          list: "watched"
+        });
       }
     } else if (onList.on.includes("plan")) {
       await removeFromList("plan", movieId, type);
+      showNotification({
+        title: "Removed from Plan to Watch list",
+        msg: `'${movie.title}' was successfully removed from your list`,
+        list: "plan"
+      });
     }
     mutateOnList();
   };
@@ -93,8 +141,18 @@ const Movie = ({
     console.log("hi");
     if (!onList.on.includes("favorites")) {
       await addToList("favorites", movieId, type);
+      showNotification({
+        title: "Added to Favorites list",
+        msg: `'${movie.title}' was successfully added to your list`,
+        list: "favorites"
+      });
     } else if (onList.on.includes("favorites")) {
       await removeFromList("favorites", movieId, type);
+      showNotification({
+        title: "Removed from Favorites list",
+        msg: `'${movie.title}' was successfully removed from your list`,
+        list: "favorites"
+      });
     }
     mutateOnList();
   };
@@ -115,16 +173,24 @@ const Movie = ({
           size="xl"
           className="relative h-full grid place-items-center sm:flex sm:items-center py-10 sm:py-20"
         >
-          <Image
-            height={450}
-            width={300}
-            src={IMG_URL(movie.poster_path)}
-            className="rounded-md flex-1"
-            placeholder="blur"
-            blurDataURL={`/_next/image?url=${IMG_URL(
-              movie.poster_path
-            )}&w=16&q=1`}
-          />
+
+          <div className="flex flex-col items-center justify-center">
+            <Image
+              height={450}
+              width={300}
+              src={IMG_URL(movie.poster_path)}
+              className="rounded-md flex-1"
+              placeholder="blur"
+              blurDataURL={`/_next/image?url=${IMG_URL(
+                movie.poster_path
+              )}&w=16&q=1`}
+            />
+
+
+            {session &&
+              <FriendActivity type={type} id={movieId} />
+            }
+          </div>
 
           <div className="flex-1 flex flex-col mt-8 sm:max-w-2xl sm:ml-8">
             <div className="flex">

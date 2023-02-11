@@ -19,52 +19,43 @@ export type NextPageWithAuth<P = {}, IP = P> = NextPage<P, IP> & {
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <>
-      <style jsx global>
-        {`
-          body {
-            font-family: "Manrope", sans-serif !important;
-          }
-        `}
-      </style>
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          /** Put your mantine theme override here */
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{
+        /** Put your mantine theme override here */
 
-          colorScheme: "dark",
-          colors: {
-            dark: [
-              "#fff",
-              "#A6A7AB",
-              "#909296",
-              "#5C5F66",
-              "#373A40",
-              "#2C2E33",
-              "#25262B",
-              "#1A1B1E",
-              "#141517",
-              "#101113",
-            ],
-          },
-          fontFamily: "Manrope, sans-serif",
-        }}
-      >
-        <NotificationsProvider>
-          <SessionProvider session={session}>
-            <Header />
-            {Component.requireAuth ? (
-              <AuthGuard>
-                <Component {...pageProps} />
-              </AuthGuard>
-            ) : (
+        colorScheme: "dark",
+        colors: {
+          dark: [
+            "#fff",
+            "#A6A7AB",
+            "#909296",
+            "#5C5F66",
+            "#373A40",
+            "#2C2E33",
+            "#25262B",
+            "#1A1B1E",
+            "#141517",
+            "#101113",
+          ],
+        },
+        fontFamily: "Manrope, sans-serif",
+      }}
+    >
+      <NotificationsProvider>
+        <SessionProvider session={session}>
+          <Header />
+          {Component.requireAuth ? (
+            <AuthGuard>
               <Component {...pageProps} />
-            )}
-          </SessionProvider>
-        </NotificationsProvider>
-      </MantineProvider>
-    </>
+            </AuthGuard>
+          ) : (
+            <Component {...pageProps} />
+          )}
+        </SessionProvider>
+      </NotificationsProvider>
+    </MantineProvider>
   );
 }
 

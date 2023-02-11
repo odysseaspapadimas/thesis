@@ -32,6 +32,7 @@ import { NextLink } from "@mantine/next";
 import Episode from "../../../components/Show/Episode";
 import Recommend from "../../../components/Recommend";
 import { showNotification as _showNotification } from "@mantine/notifications";
+import FriendActivity from "../../../components/FriendActivity";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -129,7 +130,7 @@ const Show = ({
 
       showNotification({
         title: "Added to Already Watched list",
-        msg: `'${name}' was successfully added to your list`,
+        msg: `'${show.name}' was successfully added to your list`,
         list: "watched"
       });
 
@@ -137,7 +138,7 @@ const Show = ({
         await removeFromList("plan", String(show.id), type);
         showNotification({
           title: "Removed from Plan to Watch list",
-          msg: `'${name}' was successfully removed from your list`,
+          msg: `'${show.name}' was successfully removed from your list`,
           list: "plan"
         });
       }
@@ -145,7 +146,7 @@ const Show = ({
       await removeFromList("watched", String(show.id), type);
       showNotification({
         title: "Removed from Already Watched list",
-        msg: `'${name}' was successfully removed from your list`,
+        msg: `'${show.name}' was successfully removed from your list`,
         list: "plan"
       });
     }
@@ -159,7 +160,7 @@ const Show = ({
 
       showNotification({
         title: "Added to Plan to Watch list",
-        msg: `'${name}' was successfully added to your list`,
+        msg: `'${show.name}' was successfully added to your list`,
         list: "plan"
       });
 
@@ -167,7 +168,7 @@ const Show = ({
         await removeFromList("watched", String(show.id), type);
         showNotification({
           title: "Removed from Already Watched list",
-          msg: `'${name}' was successfully removed from your list`,
+          msg: `'${show.name}' was successfully removed from your list`,
           list: "watched"
         });
       }
@@ -175,7 +176,7 @@ const Show = ({
       await removeFromList("plan", String(show.id), type);
       showNotification({
         title: "Removed from Plan to Watch list",
-        msg: `'${name}' was successfully removed from your list`,
+        msg: `'${show.name}' was successfully removed from your list`,
         list: "plan"
       });
     }
@@ -188,14 +189,14 @@ const Show = ({
       await addToList("favorites", String(show.id), type);
       showNotification({
         title: "Added to Favorites list",
-        msg: `'${name}' was successfully added to your list`,
+        msg: `'${show.name}' was successfully added to your list`,
         list: "favorites"
       });
     } else if (onList.on.includes("favorites")) {
       await removeFromList("favorites", String(show.id), type);
       showNotification({
         title: "Removed from Favorites list",
-        msg: `'${name}' was successfully removed from your list`,
+        msg: `'${show.name}' was successfully removed from your list`,
         list: "favorites"
       });
     }
@@ -237,6 +238,10 @@ const Show = ({
                   <a href={`https://www.themoviedb.org/tv/${showId}/watch`} target="_blank">Watch providers</a>
                 </Button>
               </div>
+            }
+
+            {session &&
+              <FriendActivity type={type} id={showId} />
             }
 
           </div>
@@ -294,6 +299,7 @@ const Show = ({
                     <Favorite onList={onList} handler={handleFavorite} />
                   </div>
                   <Recommend user={user.username} users={user.messages} show={show} />
+
                 </div>
               )}
             </div>
@@ -332,13 +338,15 @@ const Show = ({
       </div>
       <Container size="xl" className="flex flex-col pb-6">
 
-        <div className="flex flex-col sm:flex-row sm:space-x-4">
+        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:space-x-4 pt-6">
           {show.next_episode_to_air &&
             <Episode episode={show.next_episode_to_air} backdrop={show.backdrop_path} airDate={nextAirDate} title="Next Episode" />
           }
           {show.last_episode_to_air &&
             <Episode episode={show.last_episode_to_air} backdrop={show.backdrop_path} airDate={lastAirDate} title="Last Episode" />
           }
+
+
         </div>
 
         <div className="flex flex-col md:flex-row md:space-x-4 w-full ">

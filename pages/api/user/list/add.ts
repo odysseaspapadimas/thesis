@@ -26,17 +26,47 @@ export default async function handler(
     if (list === "plan") {
       response = await User.updateOne(
         { email },
-        { $push: { plan_to: { id, type } } }
+        {
+          $push: {
+            plan_to: { id, type },
+            activity: {
+              type: list,
+              createdAt: new Date(),
+              media: { id, type },
+            },
+          },
+        }
       );
     } else if (list === "watched") {
       response = await User.updateOne(
         { email },
-        { $push: { watched: { id, type } } }
+        {
+          $push: {
+            watched: { id, type },
+            activity: {
+              type: list,
+              createdAt: new Date(),
+              media: { id, type },
+            },
+          },
+        }
       );
     } else {
       response = await User.updateOne(
         { email },
-        { $push: { favorites: { id, type } } }
+        {
+          $push: {
+            favorites: {
+              id,
+              type,
+            },
+            activity: {
+              type: list,
+              createdAt: new Date(),
+              media: { id, type },
+            },
+          },
+        }
       );
     }
 

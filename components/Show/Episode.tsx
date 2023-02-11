@@ -1,7 +1,7 @@
 import { IMG_URL } from "../../constants/tmdbUrls";
 import { TVShowType } from "../../constants/types"
-const relativeTime = require('dayjs/plugin/relativeTime')
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 const Episode = ({ episode, backdrop, airDate, title }: Props) => {
     console.log(airDate, title, 'airdate')
     return (
-        <div className="mt-6 ">
+        <div className="">
             <h2 className="text-2xl font-semibold mb-2">{title}</h2>
 
             <div className="relative">

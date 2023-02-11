@@ -123,7 +123,7 @@ const Message = () => {
                 </div>
                 <span className="border-b border-solid border-[rgb(44,46,51)] absolute w-full left-0 top-12"></span>
 
-                <MessageBox messages={myUser?.messages && user ? myUser.messages[user.username] : []} />
+                <MessageBox messages={myUser?.messages && user ? myUser.messages[user?.username] : []} />
                 <form ref={formRef} onSubmit={handleSubmit} className="sticky my-2 self-center w-full px-3 flex items-center space-x-2">
                     <SendMedia user={myUser?.username} otherUser={user?.username} />
                     <Textarea value={input} onChange={handleChange} onKeyDown={handleKeyDown} className="flex-1" placeholder="Enter message" autosize rightSection={<button className={`${!input && "hidden"} hover:text-primary hover:font-medium`}>Send</button>} rightSectionWidth={60} />
@@ -138,7 +138,7 @@ const Message = () => {
                             <h2 className="text-xl">{username}</h2>
                         </NextLink>
                     </div>
-                    <MessageBox messages={myUser?.messages ? myUser.messages[user.username] : []} />
+                    <MessageBox messages={myUser?.messages ? myUser.messages[user?.username] : []} />
                     <form ref={formRef} onSubmit={handleSubmit} className="mx-auto mt-auto mb-4 self-center flex items-center space-x-2 w-[95%]">
                         <SendMedia user={myUser?.username} otherUser={user?.username} />
                         <Textarea value={input} onChange={handleChange} onKeyDown={handleKeyDown} className="flex-1" placeholder="Enter message" autosize rightSection={<button className={`${!input && "hidden"} hover:text-primary hover:font-medium`}>Send</button>} rightSectionWidth={60} />

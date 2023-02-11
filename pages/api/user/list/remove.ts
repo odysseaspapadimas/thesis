@@ -23,17 +23,17 @@ export default async function handler(
     if (list === "plan") {
       response = await User.updateOne(
         { email },
-        { $pull: { plan_to: { id, type } } }
+        { $pull: { plan_to: { id, type }, activity: { type: list, media: { id, type}} } }
       );
     } else if (list === "watched") {
       response = await User.updateOne(
         { email },
-        { $pull: { watched: { id, type } } }
+        { $pull: { watched: { id, type }, activity: { type: list, media: { id, type}} } }
       );
     } else {
       response = await User.updateOne(
         { email },
-        { $pull: { favorites: { id, type } } }
+        { $pull: { favorites: { id, type }, activity: { type: list, media: { id, type}} } }
       );
     }
 

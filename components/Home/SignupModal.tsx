@@ -13,14 +13,14 @@ const SignupModal = ({ session }: { session: Session }) => {
     },
 
     validate: {
-      username: (value) => {
+      username:  (value) => {
         if (value.length >= 3 && value.toLowerCase() === value && !/\s/.test(value)) {
           return null
         } else if (value.length < 3) {
           return "Username should be at least 3 characters long"
         } else if (value.toLowerCase() !== value) {
           return "Username should be in all lowercase"
-        } else if(/\s/.test(value)) {
+        } else if (/\s/.test(value)) {
           return "Username should not include spaces"
         }
       },
@@ -36,6 +36,13 @@ const SignupModal = ({ session }: { session: Session }) => {
   const handleSubmit = async (values: FormValues) => {
     form.validate();
     console.log(values);
+
+    const res1 = await fetch(`api/user?username=${values.username}`);
+    const data1 = await res1.json();
+    if (data1.user?.username === values.username) {
+      form.setFieldError("username", "Username already exists");
+      return;
+    }
 
     const res = await fetch("/api/user/createUser", {
       method: "POST",
