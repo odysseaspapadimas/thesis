@@ -17,10 +17,10 @@ const TrendingShows = ({ shows }: { shows: TVShowType[] }) => {
         </NextLink>
       </Group>
 
-      <div className="grid justify-items-center gap-y-3 md:space-y-0 w-full grid-cols-2 md:grid-cols-5 md:gap-2">
+      <div className="grid justify-items-center gap-y-3 md:space-y-0 w-full grid-cols-2 md:grid-cols-6 md:gap-2">
         {shows
           .map((data: TVShowType) => <Show key={data.id} data={data} />)
-          .slice(0, 5)}
+          .slice(0, 6)}
       </div>
     </div>
   );
