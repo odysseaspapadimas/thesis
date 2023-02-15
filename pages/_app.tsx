@@ -22,11 +22,6 @@ export type NextPageWithAuth<P = {}, IP = P> = NextPage<P, IP> & {
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
-  const { data, error } = useSWR(
-    session ? `/api/user/userExists?email=${session.user?.email}` : null,
-    fetcher
-  );
-
   return (
     <MantineProvider
       withGlobalStyles
@@ -54,9 +49,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     >
       <NotificationsProvider>
         <SessionProvider session={session}>
-          {data && !data.userExists && (
-            <div>{session && <SignupModal session={session} />}</div>
-          )}
           <Header />
           {Component.requireAuth ? (
             <AuthGuard>

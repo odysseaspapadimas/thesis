@@ -8,7 +8,7 @@ export type List = {
   on: [ListTypes];
 };
 
-export type ListTypes = "watched" | "plan" | "favorites";
+export type ListTypes = "watched" | "plan" | "favorites" | "rated";
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,27 +19,34 @@ export default async function handler(
   if (session) {
     await dbConnect();
 
-    const { username, id } = req.query;
+    const { username, id, type } = req.query;
 
     const user = await User.findOne({ username });
 
     let on = [] as unknown as List["on"];
 
     for (let i = 0; i < user.watched.length; i++) {
-      if (user.watched[i].id === id) {
+      if (user.watched[i].id === id && user.watched[i].type === type) {
         on.push("watched");
         break;
       }
     }
     for (let i = 0; i < user.plan_to.length; i++) {
-      if (user.plan_to[i].id === id) {
+      if (user.plan_to[i].id === id && user.plan_to[i].type === type) {
         on.push("plan");
         break;
       }
     }
     for (let i = 0; i < user.favorites.length; i++) {
-      if (user.favorites[i].id === id) {
+      if (user.favorites[i].id === id && user.favorites[i].type === type) {
         on.push("favorites");
+        break;
+      }
+    }
+
+    for(let i = 0; i < user.ratings.length; i++) {
+      if(user.ratings[i].id === id && user.ratings[i].type === type) {
+        on.push("rated")
         break;
       }
     }

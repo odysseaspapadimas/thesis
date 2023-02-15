@@ -24,9 +24,13 @@ export const traktShow = async ({ showId, slug }: ShowProps) => {
     }
   );
 
-  const data = (await res.json()) as ShowSummary_Full;
+  if (res.ok) {
+    const data = (await res.json()) as ShowSummary_Full;
 
-  return data;
+    return data;
+  } else {
+    return null;
+  }
 };
 
 type WeekProps = {

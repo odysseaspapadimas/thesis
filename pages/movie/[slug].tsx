@@ -23,11 +23,17 @@ import Recommend from "../../components/Recommend";
 import { showNotification as _showNotification } from "@mantine/notifications";
 import FriendActivity from "../../components/FriendActivity";
 import { ChevronRight } from "tabler-icons-react";
+import Rate from "../../components/List/Rate";
+import dbConnect from "../../lib/dbConnect";
+import Media from "../../models/Media";
+import RatingRing from "../../components/RatingRing";
 
 const Movie = ({
   movie,
+  media
 }: {
   movie: MovieType & { credits: CreditsResponse };
+  media: any;
 }) => {
   const router = useRouter();
 
@@ -47,7 +53,7 @@ const Movie = ({
     mutate: mutateOnList,
   } = useSWR(
     user
-      ? `/api/user/list/onList?username=${user.username}&id=${movieId}`
+      ? `/api/user/list/onList?username=${user.username}&id=${movieId}&type=${type}`
       : null,
     fetcher
   );
@@ -78,7 +84,7 @@ const Movie = ({
     })
   }
 
-   const handleWatched = async () => {
+  const handleWatched = async () => {
     if (!onList.on.includes("watched")) {
       await addToList("watched", movieId, type);
 
@@ -170,7 +176,6 @@ const Movie = ({
           />
         </div>
         <Container
-          size="xl"
           className="relative h-full grid place-items-center sm:flex sm:items-center py-10 sm:py-20"
         >
 
@@ -217,22 +222,7 @@ const Movie = ({
             </div>
 
             <div className="flex items-center flex-col sm:flex-row sm:my-4">
-              <RingProgress
-                sections={[
-                  {
-                    value: movie.vote_average * 10,
-                    color: `hsl(${(115 * movie.vote_average) / 10}, 100%, 28%)`,
-                  },
-                ]}
-                size={100}
-                roundCaps
-                className="rounded-full bg-black bg-opacity-50 my-4 sm:my-0"
-                label={
-                  <Text color="white" weight={700} align="center" size="lg">
-                    {Math.round(movie.vote_average * 10)}%
-                  </Text>
-                }
-              />
+              <RatingRing vote_average={movie.vote_average} vote_count={movie.vote_count} media={media} />
 
               {user && (
                 <div className="flex flex-col space-y-4 sm:ml-8">
@@ -240,6 +230,7 @@ const Movie = ({
                     <AlreadyWatched onList={onList} handler={handleWatched} />
                     <PlanToWatch onList={onList} handler={handlePlan} />
                     <Favorite onList={onList} handler={handleFavorite} />
+                    <Rate id={movieId} type={type} onList={onList} ratings={user.ratings} username={user.username} mutate={mutateOnList} />
                   </div>
                   <Recommend user={user.username} users={user.messages} movie={movie} />
                 </div>
@@ -277,9 +268,37 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     append_to_response: "credits",
   });
 
+  await dbConnect()
+  const media = await Media.findOne({ id: movieId, type: "movie" })
+
+  let media_vote_average = 0 as number | null;
+
+  if (media && media.ratings.length > 0 && media_vote_average === 0) {
+    for (let i = 0; i < media.ratings.length; i++) {
+      media_vote_average += media.ratings[i].rating
+    }
+
+    media_vote_average = media_vote_average / media.ratings.length;
+  } else {
+    media_vote_average = null;
+  }
+
+
+
+  if (movieData.vote_average && movieData.vote_count && media_vote_average) {
+    movieData.vote_average = (((movieData.vote_average * movieData.vote_count) + (media_vote_average * 2)) / (media.ratings.length + movieData.vote_count))
+  } else if (media_vote_average) {
+    movieData.vote_average = media_vote_average * 2;
+  }
+
   return {
     props: {
       movie: movieData,
+      media: JSON.parse(JSON.stringify({
+        ratings: media?.ratings,
+        vote_average: media_vote_average,
+        vote_count: media?.ratings.length ?? 0,
+      })),
     },
     revalidate: 60 * 60 * 24, //Once a day
   };

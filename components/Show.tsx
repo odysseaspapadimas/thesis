@@ -53,7 +53,7 @@ const Show = ({ data }: { data: MovieType | TVShowType }) => {
     mutate: mutateOnList,
   } = useSWR(
     user
-      ? `/api/user/list/onList?username=${user.username}&id=${data.id}`
+      ? `/api/user/list/onList?username=${user.username}&id=${data.id}&type=${type}`
       : null,
     fetcher
   );

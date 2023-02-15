@@ -1,9 +1,19 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 const ListItemSchema = new mongoose.Schema(
   {
     id: String,
     type: String,
+  },
+  { _id: false }
+);
+
+const RatingSchema = new mongoose.Schema(
+  {
+    id: String,
+    type: String,
+    rating: Number,
+    review: String,
   },
   { _id: false }
 );
@@ -22,6 +32,7 @@ export const UserSchema = new mongoose.Schema(
     following: [String],
     messages: Object,
     activity: Array,
+    ratings: [RatingSchema],
   },
   { versionKey: false }
 );

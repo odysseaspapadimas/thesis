@@ -297,6 +297,13 @@ export type ListItem = {
   type: "movie" | "show";
 };
 
+export type RatingItem = {
+  id: string;
+  type: "movie" | "show";
+  rating: number;
+  review: string;
+};
+
 export interface Message extends Record<string, any> {
   text?: string;
   sent: Date;
@@ -321,6 +328,7 @@ export interface User {
   followers?: string[];
   messages?: Record<string, Message[]>;
   activity?: any;
+  ratings?: RatingItem[];
 }
 
 export interface Activity {
@@ -329,11 +337,11 @@ export interface Activity {
   user: {
     username: string;
     image_url: string;
-  }
+  };
   media: {
     id: string;
     media_name: string;
     image_path: string;
     type: "movie" | "show";
-  }
+  };
 }

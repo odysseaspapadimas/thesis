@@ -40,13 +40,7 @@ export default async function handler(
     ).map((user) => ({ ...user, list: "watched" }));
 
     let users = [...planToUsers, ...watchedUsers];
-
-    //if the id is in a plan_to, favorites, or watched array, then make a variable that states which list it is in
-
-    console.log(users, "users");
-
-    //filter the user himself and the users that he is not following
-
+    
     users = users.filter(
       (_user) =>
         _user._doc.username !== user.username &&

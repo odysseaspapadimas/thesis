@@ -11,7 +11,6 @@ type Props = {
     title: string;
 }
 const Episode = ({ episode, backdrop, airDate, title }: Props) => {
-    console.log(airDate, title, 'airdate')
     return (
         <div className="">
             <h2 className="text-2xl font-semibold mb-2">{title}</h2>

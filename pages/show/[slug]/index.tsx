@@ -33,17 +33,23 @@ import Episode from "../../../components/Show/Episode";
 import Recommend from "../../../components/Recommend";
 import { showNotification as _showNotification } from "@mantine/notifications";
 import FriendActivity from "../../../components/FriendActivity";
+import Rate from "../../../components/List/Rate";
+import RatingRing from "../../../components/RatingRing";
+import dbConnect from "../../../lib/dbConnect";
+import Media from "../../../models/Media";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
 const Show = ({
   show,
   providers,
-  airs
+  airs,
+  media
 }: {
   show: TVShowType & { aggregate_credits: AggregateCredits };
   providers: any;
-  airs: Airs
+  airs: Airs;
+  media: any;
 }) => {
   const router = useRouter();
 
@@ -70,6 +76,8 @@ const Show = ({
     const locale = window.navigator.language.split("-")[1]
     setProvidersList(providers.results[locale]);
 
+    if (!airs) return;
+
     if (!show.next_episode_to_air || !airs.time) return;
     const sourceDate = show.next_episode_to_air.air_date + " " + airs.time
     dayjs.tz.setDefault(airs.timezone)
@@ -81,6 +89,8 @@ const Show = ({
   useEffect(() => {
     const locale = window.navigator.language.split("-")[1]
     setProvidersList(providers.results[locale]);
+
+    if (!airs) return;
 
     if (!show.last_episode_to_air || !airs.time) return;
     const sourceDate = show.last_episode_to_air.air_date + " " + airs.time
@@ -98,7 +108,7 @@ const Show = ({
     mutate: mutateOnList,
   } = useSWR(
     user
-      ? `/api/user/list/onList?username=${user.username}&id=${showId}`
+      ? `/api/user/list/onList?username=${user.username}&id=${showId}&type=${type}`
       : null,
     fetcher
   );
@@ -184,7 +194,6 @@ const Show = ({
   };
 
   const handleFavorite = async () => {
-    console.log("hi");
     if (!onList.on.includes("favorites")) {
       await addToList("favorites", String(show.id), type);
       showNotification({
@@ -273,22 +282,7 @@ const Show = ({
             }
 
             <div className="flex items-center flex-col sm:flex-row sm:py-4">
-              <RingProgress
-                sections={[
-                  {
-                    value: show.vote_average * 10,
-                    color: `hsl(${(115 * show.vote_average) / 10}, 100%, 28%)`,
-                  },
-                ]}
-                size={100}
-                roundCaps
-                className="rounded-full bg-black bg-opacity-50 my-4 sm:my-0"
-                label={
-                  <Text color="white" weight={700} align="center" size="lg">
-                    {Math.round(show.vote_average * 10)}%
-                  </Text>
-                }
-              />
+              <RatingRing vote_average={show.vote_average} vote_count={show.vote_count} media={media} />
 
               {user && (
                 <div className="flex flex-col space-y-4 sm:ml-8">
@@ -296,6 +290,7 @@ const Show = ({
                     <AlreadyWatched onList={onList} handler={handleWatched} />
                     <PlanToWatch onList={onList} handler={handlePlan} />
                     <Favorite onList={onList} handler={handleFavorite} />
+                    <Rate id={showId} type={type} onList={onList} ratings={user.ratings} username={user.username} mutate={mutateOnList} />
                   </div>
                   <Recommend user={user.username} users={user.messages} show={show} />
 
@@ -435,12 +430,39 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const data = await traktShow({ slug: showName })
 
+  await dbConnect()
+  const media = await Media.findOne({ id: showId, type: "show" })
+
+  let media_vote_average = 0 as number | null;
+
+  if (media && media.ratings.length > 0 && media_vote_average === 0) {
+    for (let i = 0; i < media.ratings.length; i++) {
+      media_vote_average += media.ratings[i].rating
+    }
+
+    media_vote_average = media_vote_average / media.ratings.length;
+  } else {
+    media_vote_average = null;
+  }
+
+  
+
+  if (showData.vote_average && showData.vote_count && media_vote_average) {
+    showData.vote_average = (((showData.vote_average * showData.vote_count) + (media_vote_average * 2) ) / (media.ratings.length + showData.vote_count))
+  } else if (media_vote_average) {
+    showData.vote_average = media_vote_average * 2;
+  }
 
   return {
     props: {
       show: showData,
       providers,
-      airs: data.airs
+      airs: data?.airs ?? null,
+      media: JSON.parse(JSON.stringify({
+        ratings: media?.ratings,
+        vote_average: media_vote_average,
+        vote_count: media?.ratings.length ?? 0,
+      })),
     },
     revalidate: 60 * 60 * 24, //Once a day
   };

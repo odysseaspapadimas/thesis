@@ -2,8 +2,8 @@ import { ActionIcon, Tooltip } from "@mantine/core";
 import { MouseEventHandler } from "react";
 import { Eye } from "tabler-icons-react";
 
-type OnList = {
-  on: ["watched" | "plan" | "favorites" | unknown];
+export type OnList = {
+  on: ["watched" | "plan" | "favorites" | "rated" | unknown];
 };
 
 export type ToggleOnListButtonProps = {
