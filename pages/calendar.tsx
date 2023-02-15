@@ -53,7 +53,7 @@ const CalendarPage: NextPageWithAuth = () => {
 
         //@ts-ignore
         const sourceDate = show.next_episode_to_air.air_date + " " + data.airs.time
-        dayjs.tz.setDefault(data.airs.timezone)
+        dayjs.tz.setDefault(data?.airs.timezone)
 
         let episodesLeft = 0;
         if (show.next_episode_to_air.episode_number > show.seasons[show.seasons.length - 1].episode_count) {
