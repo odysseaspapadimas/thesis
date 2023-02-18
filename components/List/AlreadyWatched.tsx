@@ -3,7 +3,7 @@ import { MouseEventHandler } from "react";
 import { Eye } from "tabler-icons-react";
 
 export type OnList = {
-  on: ["watched" | "plan" | "favorites" | "rated" | unknown];
+  on: ["watched" | "plan" | "favorites" | "rated" | "reviewed" | unknown];
 };
 
 export type ToggleOnListButtonProps = {

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const RatingItem = new mongoose.Schema(
   {
     username: String,
+    image_url: String,
     rating: Number,
     review: String,
   },

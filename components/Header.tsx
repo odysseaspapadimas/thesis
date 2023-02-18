@@ -30,6 +30,7 @@ import { MenuDivider } from "@mantine/core/lib/Menu/MenuDivider/MenuDivider";
 import { Session } from "next-auth";
 import { Activity } from "tabler-icons-react";
 import SignupModal from "./Home/SignupModal";
+import Image from "next/image";
 
 type HeaderP = {
   opened: boolean;
@@ -44,8 +45,6 @@ const Header = () => {
   const { data: session, status } = useSession();
 
   const { user, error } = useUser({ session, options: { refreshInterval: 1000 } });
-
-  console.log(user, error, 'user')
 
   let unread = 0;
 
@@ -92,8 +91,9 @@ const Header = () => {
                 size="sm"
               />
             </MediaQuery>
-            <NextLink href="/" className="text-2xl font-bold mx-auto">
+            <NextLink href="/" className="text-2xl font-bold mx-auto"> {/*pt-3 -mr-4 */}
               Thesis
+              {/* <Image src="/logo.png" width={187.31} height={30} layout="fixed" /> */}
             </NextLink>
 
             <MediaQuery smallerThan="sm" styles={{ display: "none" }}>

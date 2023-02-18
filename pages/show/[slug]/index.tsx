@@ -37,6 +37,7 @@ import Rate from "../../../components/List/Rate";
 import RatingRing from "../../../components/RatingRing";
 import dbConnect from "../../../lib/dbConnect";
 import Media from "../../../models/Media";
+import Review from "../../../components/Review";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -44,7 +45,7 @@ const Show = ({
   show,
   providers,
   airs,
-  media
+  media: mediaData,
 }: {
   show: TVShowType & { aggregate_credits: AggregateCredits };
   providers: any;
@@ -60,6 +61,10 @@ const Show = ({
   const { data: session, status } = useSession();
 
   const { user, error: userError } = useUser({ session });
+
+  const { data: media } = useSWR(`/api/user/review?id=${show.id}type=show`, { fallbackData: mediaData })
+
+  console.log(media, "mediaswr")
 
   const lastSeason = show.seasons[show.seasons.length - 1];
 
@@ -290,7 +295,7 @@ const Show = ({
                     <AlreadyWatched onList={onList} handler={handleWatched} />
                     <PlanToWatch onList={onList} handler={handlePlan} />
                     <Favorite onList={onList} handler={handleFavorite} />
-                    <Rate id={showId} type={type} onList={onList} ratings={user.ratings} username={user.username} mutate={mutateOnList} />
+                    <Rate id={showId} type={type} onList={onList} ratings={user.ratings} username={user.username} image_url={user.image_url} mutate={mutateOnList} />
                   </div>
                   <Recommend user={user.username} users={user.messages} show={show} />
 
@@ -397,6 +402,20 @@ const Show = ({
             <h3 className="text-lg font-semibold hover:text-gray-300 mt-2">View All Seasons</h3>
           </NextLink>
         </div>
+
+        <div>
+          <h2 className="text-2xl font-semibold my-4">Reviews</h2>
+
+          <div className="flex flex-col space-y-4">
+            {media?.ratings && media.ratings.length > 0 && media.ratings.some((rating: any) => rating.review) ? media.ratings.map((rating: any) => (
+              rating.review &&
+              <Review key={rating.username} rating={rating} />
+            )) : (
+              <p>No reviews yet...</p>
+            )}
+
+          </div>
+        </div>
       </Container>
     </div>
   );
@@ -445,10 +464,8 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     media_vote_average = null;
   }
 
-  
-
   if (showData.vote_average && showData.vote_count && media_vote_average) {
-    showData.vote_average = (((showData.vote_average * showData.vote_count) + (media_vote_average * 2) ) / (media.ratings.length + showData.vote_count))
+    showData.vote_average = (((showData.vote_average * showData.vote_count) + (media_vote_average * 2)) / (media.ratings.length + showData.vote_count))
   } else if (media_vote_average) {
     showData.vote_average = media_vote_average * 2;
   }

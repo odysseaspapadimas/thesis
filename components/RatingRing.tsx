@@ -7,7 +7,6 @@ type Props = {
 }
 const RatingRing = ({ vote_average, vote_count, media }: Props) => {
 
-    console.log(media, 'media')
     return (
         <Popover position="bottom-start" withArrow arrowPosition="center">
             <Popover.Target>
@@ -33,7 +32,7 @@ const RatingRing = ({ vote_average, vote_count, media }: Props) => {
                     <Text size="lg" weight="bold">Rating Breakdown</Text>
 
                     <p>TMDB: {new Intl.NumberFormat('en-IN').format(vote_count)} {vote_count === 1 ? "rating" : "ratings"}</p>
-                    <p>Thesis: {new Intl.NumberFormat('en-IN').format(media.vote_count)} {media.vote_count === 1 ? "rating" : "ratings"}</p>
+                    <p>Thesis: {new Intl.NumberFormat('en-IN').format(media?.vote_count)} {media?.vote_count === 1 ? "rating" : "ratings"}</p>
                 </div>
             </Popover.Dropdown>
         </Popover>
