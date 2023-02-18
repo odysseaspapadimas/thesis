@@ -52,6 +52,9 @@ export default async function handler(
           on.push("reviewed")
         }
         break;
+      } else if(user.ratings[i].id === id && user.ratings[i].type === type && user.ratings[i].review) {
+        on.push("reviewed")
+        break;
       }
     }
 

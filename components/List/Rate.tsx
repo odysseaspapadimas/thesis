@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Star, X } from "tabler-icons-react"
 import { OnList } from "./AlreadyWatched"
 import { User } from "../../constants/types"
-import { KeyedMutator } from "swr"
+import { KeyedMutator, useSWRConfig } from "swr"
 import ReviewModal from "../ReviewModal"
 
 type Props = {
@@ -16,7 +16,8 @@ type Props = {
     image_url: User["image_url"]
     mutate: KeyedMutator<any>
 }
-const Rate = ({ id, type, onList, ratings, username, image_url, mutate }: Props) => {
+const Rate = ({ id, type, onList, ratings, username, image_url, mutate: mutateOnList }: Props) => {
+    const { mutate } = useSWRConfig();
     const [opened, setOpened] = useState(false);
     const [modalOpened, setModalOpened] = useState(false);
 
@@ -57,7 +58,9 @@ const Rate = ({ id, type, onList, ratings, username, image_url, mutate }: Props)
             setRating(_rating);
         }
 
-        mutate();
+        mutateOnList();
+        mutate(`/api/user/review?id=${id}&type=${type}`)
+
     }
 
     const handleRemove = async () => {
@@ -75,7 +78,9 @@ const Rate = ({ id, type, onList, ratings, username, image_url, mutate }: Props)
             }),
         })
 
-        mutate();
+        mutateOnList();
+        mutate(`/api/user/review?id=${id}&type=${type}`)
+
     }
 
     const isMobile = useMediaQuery("(max-width: 768px)", true, { getInitialValueInEffect: true });
@@ -137,7 +142,7 @@ const Rate = ({ id, type, onList, ratings, username, image_url, mutate }: Props)
                 </Popover.Dropdown>
             </Popover>
 
-            <ReviewModal opened={modalOpened} setOpened={setModalOpened} id={id} type={type} username={username} image_url={image_url} reviewed={onList?.on.includes("reviewed")} userReview={userReview} />
+            <ReviewModal opened={modalOpened} setOpened={setModalOpened} id={id} type={type} username={username} image_url={image_url} mutateOnList={mutateOnList} reviewed={onList?.on.includes("reviewed")} userReview={userReview} />
         </>
     )
 }

@@ -16,7 +16,6 @@ type Props = {
 }
 
 const Review = ({ show, rating }: Props) => {
-    const router = useRouter();
 
     const isMobile = useMediaQuery('(max-width: 640px)', true, { getInitialValueInEffect: true })
 
@@ -31,7 +30,7 @@ const Review = ({ show, rating }: Props) => {
 
                     <h2 className="font-semibold hover:text-gray-300"><NextLink href={`/show/${show.id}`}>{show.name}</NextLink>  <span className="text-sm text-gray-300">{show.first_air_date.split("-")[0]}</span></h2>
 
-                    <Rating defaultValue={rating.rating} readOnly />
+                    <Rating defaultValue={rating.rating} fractions={2} readOnly />
 
                     {!isMobile && <p>{rating.review}</p>}
                 </div>

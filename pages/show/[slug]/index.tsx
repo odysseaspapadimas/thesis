@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import useSWR from "swr";
+import useSWR, { SWRConfig } from "swr";
 import { ChevronRight, ExternalLink } from "tabler-icons-react";
 import AlreadyWatched from "../../../components/List/AlreadyWatched";
 import PlanToWatch from "../../../components/List/PlanToWatch";
@@ -46,11 +46,13 @@ const Show = ({
   providers,
   airs,
   media: mediaData,
+  fallback
 }: {
   show: TVShowType & { aggregate_credits: AggregateCredits };
   providers: any;
   airs: Airs;
   media: any;
+  fallback: any
 }) => {
   const router = useRouter();
 
@@ -62,9 +64,7 @@ const Show = ({
 
   const { user, error: userError } = useUser({ session });
 
-  const { data: media } = useSWR(`/api/user/review?id=${show.id}type=show`, { fallbackData: mediaData, revalidateOnMount: true })
-
-  console.log(media, "mediaswr")
+  const { data: media } = useSWR(`/api/user/review?id=${show.id}&type=show`, fetcher)
 
   const lastSeason = show.seasons[show.seasons.length - 1];
 
@@ -219,205 +219,207 @@ const Show = ({
 
 
   return (
-    <div>
-      <Head>
-        <title>{show.name}</title>
-      </Head>
-      <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
-          <img
-            src={IMG_URL(show.backdrop_path)}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <Container
-          className="relative h-full sm:flex py-10 sm:py-20"
-        >
-          <div className="flex flex-col items-center justify-center">
-            <Image
-              height={450}
-              width={300}
-              layout="fixed"
-              src={IMG_URL(show.poster_path)}
-              className={`rounded-t-md ${!providersList?.link && "rounded-b-md"} flex-1 self-center place-self-center`}
-              placeholder="blur"
-              blurDataURL={`/_next/image?url=${IMG_URL(
-                show.poster_path
-              )}&w=16&q=1`}
+    <SWRConfig value={{ fallback }}>
+      <div>
+        <Head>
+          <title>{show.name}</title>
+        </Head>
+        <div className="relative">
+          <div className="absolute top-0 left-0 w-full h-full brightness-[0.25]">
+            <img
+              src={IMG_URL(show.backdrop_path)}
+              className="w-full h-full object-cover"
             />
-            {providersList?.link &&
-              <div className="flex justify-center items-center py-4 bg-slate-800 w-[300px]">
-                <Button className="bg-primary" rightIcon={<ExternalLink />}>
-                  <a href={`https://www.themoviedb.org/tv/${showId}/watch`} target="_blank">Watch providers</a>
-                </Button>
-              </div>
-            }
-
-            {session &&
-              <FriendActivity type={type} id={showId} />
-            }
-
           </div>
-          <div className="flex-1 flex flex-col mt-4 sm:mt-0 sm:max-w-2xl sm:ml-8">
-            <div className="flex">
-              <p className="text-3xl font-semibold">
-                {show.name}{" "}
-                <span className="text-2xl">
-                  ({show.first_air_date.split("-")[0]}-{show.status === "Ended" && show.last_air_date && show.last_air_date.split("-")[0]})
-                </span>
-              </p>
-            </div>
+          <Container
+            className="relative h-full sm:flex py-10 sm:py-20"
+          >
+            <div className="flex flex-col items-center justify-center">
+              <Image
+                height={450}
+                width={300}
+                layout="fixed"
+                src={IMG_URL(show.poster_path)}
+                className={`rounded-t-md ${!providersList?.link && "rounded-b-md"} flex-1 self-center place-self-center`}
+                placeholder="blur"
+                blurDataURL={`/_next/image?url=${IMG_URL(
+                  show.poster_path
+                )}&w=16&q=1`}
+              />
+              {providersList?.link &&
+                <div className="flex justify-center items-center py-4 bg-slate-800 w-[300px]">
+                  <Button className="bg-primary" rightIcon={<ExternalLink />}>
+                    <a href={`https://www.themoviedb.org/tv/${showId}/watch`} target="_blank">Watch providers</a>
+                  </Button>
+                </div>
+              }
 
-            <div className="">
-              {show.genres.map((genre: Genre, i: number) => (
-                <React.Fragment key={i}>
-                  <NextLink href={`/shows?genres=${genre.name.split(" ")[0].toLowerCase()}`} className="hover:underline ">
-                    {genre.name}
-                  </NextLink>
-                  {i < show.genres.length - 1 && ", "}
-                </React.Fragment>
-              ))}{" "}
-              {show.episode_run_time.length > 0 &&
-                <>&bull; {show.episode_run_time}m</>
+              {session &&
+                <FriendActivity type={type} id={showId} />
+              }
+
+            </div>
+            <div className="flex-1 flex flex-col mt-4 sm:mt-0 sm:max-w-2xl sm:ml-8">
+              <div className="flex">
+                <p className="text-3xl font-semibold">
+                  {show.name}{" "}
+                  <span className="text-2xl">
+                    ({show.first_air_date.split("-")[0]}-{show.status === "Ended" && show.last_air_date && show.last_air_date.split("-")[0]})
+                  </span>
+                </p>
+              </div>
+
+              <div className="">
+                {show.genres.map((genre: Genre, i: number) => (
+                  <React.Fragment key={i}>
+                    <NextLink href={`/shows?genres=${genre.name.split(" ")[0].toLowerCase()}`} className="hover:underline ">
+                      {genre.name}
+                    </NextLink>
+                    {i < show.genres.length - 1 && ", "}
+                  </React.Fragment>
+                ))}{" "}
+                {show.episode_run_time.length > 0 &&
+                  <>&bull; {show.episode_run_time}m</>
+                }
+              </div>
+
+              {nextAirDate && show.status !== "Ended" &&
+                <div>Airs: <span>{dayjs(nextAirDate).format("dddd")}s at {dayjs(nextAirDate).format("HH:mm")}</span> </div>
+              }
+
+              <div className="flex items-center flex-col sm:flex-row sm:py-4">
+                <RatingRing vote_average={show.vote_average} vote_count={show.vote_count} media={mediaData} />
+
+                {user && (
+                  <div className="flex flex-col space-y-4 sm:ml-8">
+                    <div className="flex justify-around items-center space-x-8">
+                      <AlreadyWatched onList={onList} handler={handleWatched} />
+                      <PlanToWatch onList={onList} handler={handlePlan} />
+                      <Favorite onList={onList} handler={handleFavorite} />
+                      <Rate id={showId} type={type} onList={onList} ratings={user.ratings} username={user.username} image_url={user.image_url} mutate={mutateOnList} />
+                    </div>
+                    <Recommend user={user.username} users={user.messages} show={show} />
+
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-2xl font-medium my-2">Overview</p>
+                <Text>
+                  {show.overview
+                    ? show.overview
+                    : "There's no available overview."}
+                </Text>
+              </div>
+
+              <div className="mt-4">
+                <p><span className="font-medium">Seasons: </span>{show.number_of_seasons} &bull; <span className="font-medium">Episodes:</span> {show.number_of_episodes}</p>
+              </div>
+
+              {show.status !== "Ended" && show.last_episode_to_air &&
+                <div>
+                  <p><span className="font-medium">Currently:</span> {show.last_episode_to_air.season_number}x{show.last_episode_to_air.episode_number}</p>
+                </div>
+              }
+
+              {show.created_by && show.created_by.length > 0 &&
+                <div className="mt-4">
+                  <p className="font-semibold">Created by: </p>
+                  <div className="">
+                    {show.created_by.map((creator, i) => (
+                      <span key={creator.credit_id}>{creator.name}{i < show.created_by.length - 1 && ", "}</span>
+                    ))}
+                  </div>
+                </div>
               }
             </div>
+          </Container>
+        </div>
+        <Container className="flex flex-col pb-6">
 
-            {nextAirDate && show.status !== "Ended" &&
-              <div>Airs: <span>{dayjs(nextAirDate).format("dddd")}s at {dayjs(nextAirDate).format("HH:mm")}</span> </div>
+          <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:space-x-4 pt-6">
+            {show.next_episode_to_air &&
+              <Episode episode={show.next_episode_to_air} backdrop={show.backdrop_path} airDate={nextAirDate} title="Next Episode" />
+            }
+            {show.last_episode_to_air &&
+              <Episode episode={show.last_episode_to_air} backdrop={show.backdrop_path} airDate={lastAirDate} title="Last Episode" />
             }
 
-            <div className="flex items-center flex-col sm:flex-row sm:py-4">
-              <RatingRing vote_average={show.vote_average} vote_count={show.vote_count} media={media} />
 
-              {user && (
-                <div className="flex flex-col space-y-4 sm:ml-8">
-                  <div className="flex justify-around items-center space-x-8">
-                    <AlreadyWatched onList={onList} handler={handleWatched} />
-                    <PlanToWatch onList={onList} handler={handlePlan} />
-                    <Favorite onList={onList} handler={handleFavorite} />
-                    <Rate id={showId} type={type} onList={onList} ratings={user.ratings} username={user.username} image_url={user.image_url} mutate={mutateOnList} />
-                  </div>
-                  <Recommend user={user.username} users={user.messages} show={show} />
+          </div>
 
-                </div>
-              )}
-            </div>
+          <div className="flex flex-col md:flex-row md:space-x-4 w-full ">
+            <ShowCredits credits={show.aggregate_credits} />
 
-            <div>
-              <p className="text-2xl font-medium my-2">Overview</p>
-              <Text>
-                {show.overview
-                  ? show.overview
-                  : "There's no available overview."}
-              </Text>
-            </div>
-
-            <div className="mt-4">
-              <p><span className="font-medium">Seasons: </span>{show.number_of_seasons} &bull; <span className="font-medium">Episodes:</span> {show.number_of_episodes}</p>
-            </div>
-
-            {show.status !== "Ended" && show.last_episode_to_air &&
+            <div className="md:py-6 sm:mx-auto">
+              <h2 className="text-2xl font-semibold mb-4">Info</h2>
               <div>
-                <p><span className="font-medium">Currently:</span> {show.last_episode_to_air.season_number}x{show.last_episode_to_air.episode_number}</p>
+                <h3 className="font-semibold">Status</h3>
+                <p>{show.status}</p>
               </div>
-            }
 
-            {show.created_by && show.created_by.length > 0 &&
-              <div className="mt-4">
-                <p className="font-semibold">Created by: </p>
-                <div className="">
-                  {show.created_by.map((creator, i) => (
-                    <span key={creator.credit_id}>{creator.name}{i < show.created_by.length - 1 && ", "}</span>
+              <div>
+                <h3 className="font-semibold">Original Language</h3>
+                <p>{new Intl.DisplayNames(['en'], {
+                  type: 'language'
+                }).of(show.original_language)}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold">Networks</h3>
+                <p className="flex flex-col space-y-2">{show.networks.map((network, i) => (
+                  <span key={network.id}>{network.name}{i < show.networks.length - 1 && ", "}</span>
+                ))}</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Last Season</h2>
+            <div className="flex items-center space-x-4">
+              <NextLink href={`/show/${router.query.slug}/season/${lastSeason.season_number}`}>
+                <div style={{ width: 150, height: 225 }}>
+                  <Image src={IMG_URL(lastSeason.poster_path)} width={150} height={225} layout="fixed" className="rounded-l-md" />
+                </div>
+              </NextLink>
+              <div>
+                <div>
+                  <NextLink href={`/show/${router.query.slug}/season/${lastSeason.season_number}`}>
+                    <h3 className="text-xl font-semibold hover:text-gray-300">{lastSeason.name}</h3>
+                  </NextLink>
+                  <span className="font-medium">{lastSeason?.air_date?.split("-")[0]} | {lastSeason.episode_count} Episodes</span>
+                </div>
+                <div className="mt-4">
+                  {lastSeason.overview.split("\n").map((text, i) => (
+                    <p key={i} className="mb-2">{text}</p>
                   ))}
                 </div>
               </div>
-            }
+            </div>
+
+            <NextLink href={`/show/${router.query.slug}/seasons`}>
+              <h3 className="text-lg font-semibold hover:text-gray-300 mt-2">View All Seasons</h3>
+            </NextLink>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold my-4">Reviews</h2>
+
+            <div className="flex flex-col space-y-4">
+              {media?.ratings && media.ratings.length > 0 && media.ratings.some((rating: any) => rating.review) ? media.ratings.map((rating: any) => (
+                rating.review &&
+                <Review key={rating.username} rating={rating} />
+              )) : (
+                <p>No reviews yet...</p>
+              )}
+
+            </div>
           </div>
         </Container>
       </div>
-      <Container className="flex flex-col pb-6">
-
-        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:space-x-4 pt-6">
-          {show.next_episode_to_air &&
-            <Episode episode={show.next_episode_to_air} backdrop={show.backdrop_path} airDate={nextAirDate} title="Next Episode" />
-          }
-          {show.last_episode_to_air &&
-            <Episode episode={show.last_episode_to_air} backdrop={show.backdrop_path} airDate={lastAirDate} title="Last Episode" />
-          }
-
-
-        </div>
-
-        <div className="flex flex-col md:flex-row md:space-x-4 w-full ">
-          <ShowCredits credits={show.aggregate_credits} />
-
-          <div className="md:py-6 sm:mx-auto">
-            <h2 className="text-2xl font-semibold mb-4">Info</h2>
-            <div>
-              <h3 className="font-semibold">Status</h3>
-              <p>{show.status}</p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold">Original Language</h3>
-              <p>{new Intl.DisplayNames(['en'], {
-                type: 'language'
-              }).of(show.original_language)}</p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold">Networks</h3>
-              <p className="flex flex-col space-y-2">{show.networks.map((network, i) => (
-                <span key={network.id}>{network.name}{i < show.networks.length - 1 && ", "}</span>
-              ))}</p>
-            </div>
-          </div>
-
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Last Season</h2>
-          <div className="flex items-center space-x-4">
-            <NextLink href={`/show/${router.query.slug}/season/${lastSeason.season_number}`}>
-              <div style={{ width: 150, height: 225 }}>
-                <Image src={IMG_URL(lastSeason.poster_path)} width={150} height={225} layout="fixed" className="rounded-l-md" />
-              </div>
-            </NextLink>
-            <div>
-              <div>
-                <NextLink href={`/show/${router.query.slug}/season/${lastSeason.season_number}`}>
-                  <h3 className="text-xl font-semibold hover:text-gray-300">{lastSeason.name}</h3>
-                </NextLink>
-                <span className="font-medium">{lastSeason?.air_date?.split("-")[0]} | {lastSeason.episode_count} Episodes</span>
-              </div>
-              <div className="mt-4">
-                {lastSeason.overview.split("\n").map((text, i) => (
-                  <p key={i} className="mb-2">{text}</p>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <NextLink href={`/show/${router.query.slug}/seasons`}>
-            <h3 className="text-lg font-semibold hover:text-gray-300 mt-2">View All Seasons</h3>
-          </NextLink>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold my-4">Reviews</h2>
-
-          <div className="flex flex-col space-y-4">
-            {media?.ratings && media.ratings.length > 0 && media.ratings.some((rating: any) => rating.review) ? media.ratings.map((rating: any) => (
-              rating.review &&
-              <Review key={rating.username} rating={rating} />
-            )) : (
-              <p>No reviews yet...</p>
-            )}
-
-          </div>
-        </div>
-      </Container>
-    </div>
+    </SWRConfig>
   );
 };
 
@@ -480,6 +482,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
         vote_average: media_vote_average,
         vote_count: media?.ratings.length ?? 0,
       })),
+      fallback: {
+        [`/api/user/review?id=${showId}&type=show`]: JSON.parse(JSON.stringify(media))
+      }
     },
     revalidate: 60 * 60 * 24, //Once a day
   };

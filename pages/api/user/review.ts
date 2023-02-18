@@ -90,7 +90,7 @@ export default async function handler(
 
       const response = await Media.findOne({ id, type });
 
-      console.log(response, "response");
+      console.log(response, "response swr get");
 
       res.status(200).json(response);
     }

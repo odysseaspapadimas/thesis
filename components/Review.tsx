@@ -10,6 +10,8 @@ type Props = {
 const Review = ({ rating: { username, rating, review, image_url } }: Props) => {
   const router = useRouter();
 
+  console.log(username, rating, "rewivew")
+
   return (
     <div className="flex space-x-4 items-start">
       <Image src={image_url} width={50} height={50} className="rounded-full" />
@@ -20,7 +22,7 @@ const Review = ({ rating: { username, rating, review, image_url } }: Props) => {
             <p className="text-sm text-gray-400 hover:text-gray-200">Review by <span className="font-semibold text-white">{username}</span></p>
           </NextLink>
           {rating &&
-            <Rating defaultValue={rating} readOnly />
+            <Rating value={rating} fractions={2} readOnly  />
           }
         </div>
 

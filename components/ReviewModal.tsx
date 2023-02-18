@@ -1,6 +1,6 @@
 import { Button, Modal, Textarea } from "@mantine/core"
 import { SetStateAction, useRef, useState } from "react"
-import { useSWRConfig } from "swr"
+import { KeyedMutator, useSWRConfig } from "swr"
 
 type Props = {
     opened: boolean
@@ -9,10 +9,11 @@ type Props = {
     type: string
     username: string
     image_url: string
+    mutateOnList: KeyedMutator<any>
     reviewed: boolean
     userReview: string | undefined
 }
-const ReviewModal = ({ opened, setOpened, id, type, username, image_url, reviewed, userReview }: Props) => {
+const ReviewModal = ({ opened, setOpened, id, type, username, image_url, mutateOnList, reviewed, userReview }: Props) => {
 
     const textRef = useRef<HTMLTextAreaElement>(null)
 
@@ -49,9 +50,8 @@ const ReviewModal = ({ opened, setOpened, id, type, username, image_url, reviewe
 
         setOpened(false);
 
-        mutate(`/api/user/review?id=${id}type=${type}`, async (data: any) => {
-            console.log(data, 'data swr')
-        }, { revalidate: false })
+        mutateOnList();
+        mutate(`/api/user/review?id=${id}&type=${type}`)
     }
 
     return (

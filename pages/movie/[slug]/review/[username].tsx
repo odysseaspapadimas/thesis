@@ -31,7 +31,7 @@ const Review = ({ movie, rating }: Props) => {
 
                     <h2 className="font-semibold hover:text-gray-300"><NextLink href={`/movie/${movie.id}`}>{movie.title}</NextLink>  <span className="text-sm text-gray-300">{movie.release_date.split("-")[0]}</span></h2>
 
-                    <Rating defaultValue={rating.rating} readOnly />
+                    <Rating defaultValue={rating.rating} fractions={2} readOnly />
 
                     {!isMobile && <p>{rating.review}</p>}
                 </div>
