@@ -62,7 +62,7 @@ const Show = ({
 
   const { user, error: userError } = useUser({ session });
 
-  const { data: media } = useSWR(`/api/user/review?id=${show.id}type=show`, { fallbackData: mediaData })
+  const { data: media } = useSWR(`/api/user/review?id=${show.id}type=show`, { fallbackData: mediaData, revalidateOnMount: true })
 
   console.log(media, "mediaswr")
 
