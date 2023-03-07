@@ -15,6 +15,7 @@
     "@mantine/hooks": "5.10.3",
     "@mantine/next": "5.10.3",
     "@mantine/notifications": "5.10.3",
+    "@vercel/analytics": "^0.1.11",
     "bcrypt": "^5.0.1",
     "better-trakt": "^0.8.0",
     "dayjs": "^1.11.3",
