@@ -18,6 +18,24 @@ export default async function handler(
 
     const idList = user[String(list)];
 
+    if (list === "reviews") {
+      let mediaList = [] as any;
+      const idList = user.ratings.filter((rating: any) => rating.review);
+      for (let i = 0; i < idList.length; i++) {
+        const item = idList[i];
+        const { id, type } = item;
+        if (type === "movie") {
+          const movieData = await tmdb.movieInfo(id);
+          mediaList = [...mediaList, movieData];
+        } else if (type === "show") {
+          const tvData = await tmdb.tvInfo(id);
+          mediaList = [...mediaList, tvData];
+        }
+      }
+
+      return res.status(200).send(mediaList);
+    }
+
     let movieList = [] as any;
     let tvList = [] as any;
 

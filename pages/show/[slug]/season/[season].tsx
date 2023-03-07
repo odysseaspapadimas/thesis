@@ -27,6 +27,7 @@ const Season = ({ show, season }: Props) => {
     const [bgColor, setBgColor] = useState<string | undefined>(undefined);
 
     useEffect(() => {
+        if(!season.poster_path) return;
         fac.getColorAsync(IMG_URL(season.poster_path)).then((color) => setBgColor(color.hex))
     }, [season])
 

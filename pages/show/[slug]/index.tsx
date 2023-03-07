@@ -381,7 +381,10 @@ const Show = ({
             <div className="flex items-center space-x-4">
               <NextLink href={`/show/${router.query.slug}/season/${lastSeason.season_number}`}>
                 <div style={{ width: 150, height: 225 }}>
-                  <Image src={IMG_URL(lastSeason.poster_path)} width={150} height={225} layout="fixed" className="rounded-l-md" />
+                  {lastSeason.poster_path ?
+                    <Image src={IMG_URL(lastSeason.poster_path)} width={150} height={225} layout="fixed" className="rounded-l-md" />
+                    : <div className="w-[150px] h-[225px] bg-dark"></div>
+                  }
                 </div>
               </NextLink>
               <div>

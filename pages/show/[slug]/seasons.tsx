@@ -64,7 +64,10 @@ const seasons = ({ show }: Props) => {
             <div key={season.id} className="flex items-start space-x-4">
               <NextLink href={`/show/${router.query.slug}/season/${season.season_number}`}>
                 <div style={{ width: 125, height: 175 }}>
-                  <Image src={IMG_URL(season.poster_path)} width={125} height={175} layout="fixed" className="rounded-md" />
+                  {season.poster_path ?
+                    <Image src={IMG_URL(season.poster_path)} width={125} height={175} layout="fixed" className="rounded-l-md" />
+                    : <div className="w-[125px] h-[175px] bg-dark rounded-l-md"></div>
+                  }
                 </div>
               </NextLink>
               <div className="flex flex-col flex-wrap">
@@ -79,7 +82,9 @@ const seasons = ({ show }: Props) => {
                   </h4>
                 </div>
                 <div>
-                  <p className="mt-2 mb-4">Season {season.season_number} of {show.name} premiered on {dayjs(season.air_date).format("MMM DD, YYYY")}</p>
+                  {season.air_date ?
+                    <p className="mt-2 mb-4">Season {season.season_number} of {show.name} premiered on {dayjs(season.air_date).format("MMM DD, YYYY")}</p>
+                    : <p>No airdate for Season {season.season_number}</p>}
                   <span className="text-sm sm:text-base whitespace-pre-wrap">
                     {season.overview.split("\n").map((text, i) => (
                       <p key={i} className="mb-2">{text}</p>

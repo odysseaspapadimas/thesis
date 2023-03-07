@@ -12,6 +12,7 @@ import PlanToWatch from "../../components/Profile/PlanToWatch";
 import { User } from "../../constants/types";
 import useUser from "../../hooks/use-user";
 import { NextLink } from "@mantine/next";
+import Reviews from "../../components/Profile/Reviews";
 
 const profile = () => {
   const router = useRouter();
@@ -25,6 +26,14 @@ const profile = () => {
   const { user, error, mutate: mutateUser } = useUser({ username: username });
 
   const { user: myUser } = useUser({ session })
+
+  const reviews = user?.ratings?.filter((rating) => rating.review);
+
+  const reviewsLength = () => {
+    let count = 0;
+    user?.ratings?.forEach((rating) => (rating.review && count++));
+    return count;
+  }
 
   useEffect(() => {
     if (!user && !error) return;
@@ -68,8 +77,8 @@ const profile = () => {
 
     console.log(response)
 
-    if(response.acknowledged) {
-       setIsLoading(false);
+    if (response.acknowledged) {
+      setIsLoading(false);
     }
     mutateUser();
   }
@@ -82,7 +91,7 @@ const profile = () => {
       </Head>
       <Container py={12}>
         <div className="flex flex-col items-center sm:flex-row">
-          <Group className="self-start">
+          <Group className="self-center">
             <Image
               src={user.image_url}
               width={100}
@@ -122,7 +131,6 @@ const profile = () => {
           styles={{}}
           classNames={{
             tabsList: "",
-            tab: "min-w-[120px]",
             tabLabel: "mb-1 sm:text-lg leading-[18px]",
           }}
           defaultValue={list ? String(list) : "watched"}
@@ -130,8 +138,9 @@ const profile = () => {
         >
           <Tabs.List grow position="center" className="flex justify-center w-full items-center flex-nowrap">
             <Tabs.Tab value="watched"><TabLabel text="Already Watched" length={user.watched?.length} /></Tabs.Tab>
-            <Tabs.Tab value="plan"><TabLabel text="Plan To Watch" length={user.plan_to?.length} /></Tabs.Tab>
+            <Tabs.Tab value="plan"><TabLabel text="Plan to Watch" length={user.plan_to?.length} /></Tabs.Tab>
             <Tabs.Tab value="favorites"><TabLabel text="Favorites" length={user.favorites?.length} /></Tabs.Tab>
+            <Tabs.Tab value="reviews"><TabLabel text="Reviews" length={reviewsLength()} /></Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="watched">
@@ -142,6 +151,9 @@ const profile = () => {
           </Tabs.Panel>
           <Tabs.Panel value="favorites">
             <Favorites username={String(username)} />
+          </Tabs.Panel>
+          <Tabs.Panel value="reviews">
+            <Reviews username={String(username)} reviews={reviews} />
           </Tabs.Panel>
         </Tabs>
       </Container>
@@ -157,11 +169,6 @@ type TabLabelProps = {
 
 const TabLabel = ({ text, length }: TabLabelProps) => {
   return (
-    <div className="flex flex-col sm:flex-row whitespace-nowrap items-center sm:space-x-2">
-      <p>{text}</p>
-      <div className="bg-primary rounded-full grid place-items-center h-6 w-6 text-xs text-white">
-        {length ? length : 0}
-      </div>
-    </div>
+    <p className="text-[12px] sm:text-base">{text}</p>
   );
 };
