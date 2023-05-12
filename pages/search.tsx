@@ -54,9 +54,11 @@ const search = () => {
   const router = useRouter();
   const { q: query, page } = router.query;
 
+  console.log(query, 'query');
+
   const matches = useMediaQuery("(max-width: 400px)", false);
 
-  const { data: firstPage } = useSWR<SearchMultiResponse>(`/api/search?q=${query}&page=1`, fetcher);
+  const { data: firstPage } = useSWR<SearchMultiResponse>(`/api/search?q=${encodeURIComponent(query as string)}&page=1`, fetcher);
 
 
   const [activePage, setPage] = useState(page ? parseInt(String(page)) : 1);
@@ -81,7 +83,7 @@ const search = () => {
   useEffect(() => {
     if (!query || !firstPage || !firstPage.total_pages) return;
     if(activePage > firstPage.total_pages) return;
-    router.push(`/search?q=${query}&page=${activePage}`);
+    router.push(`/search?q=${encodeURIComponent(query as string)}&page=${activePage}`);
   }, [activePage, query, firstPage])
 
 

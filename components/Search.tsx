@@ -43,7 +43,7 @@ interface SearchMultiResponse {
 const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolean>> }) => {
   const router = useRouter();
 
-  const matches = useMediaQuery('(max-width: 576px)', true, { getInitialValueInEffect: true })
+  const matches = useMediaQuery('(max-width: 62em)', true, { getInitialValueInEffect: true })
 
   const searchFade = {
     in: { opacity: 1, width: !matches ? "300px" : "100%" },
@@ -65,7 +65,7 @@ const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolea
       }, 200), //0.2s delay just like the animation
   });
   const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebouncedValue(query, 200);
+  const [debouncedQuery] = useDebouncedValue(encodeURIComponent(query), 200);
 
   const { data: movie } = useSWR<MovieResultsResponse>(debouncedQuery ? `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${debouncedQuery}` : null, fetcher);
   const { data: show } = useSWR<TvResultsResponse>(debouncedQuery ? `https://api.themoviedb.org/3/search/tv?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${debouncedQuery}` : null, fetcher);
@@ -89,13 +89,14 @@ const Search = ({ setNavOpened }: { setNavOpened: Dispatch<SetStateAction<boolea
     if (!query) return;
     setQuery("");
     showInputHandler.close();
-    router.push("/search?q=" + query + "&page=1");
+    console.log("/search?q=" + encodeURIComponent(query) + "&page=1", 'url')
+    router.push("/search?q=" + encodeURIComponent(query) + "&page=1");
   };
 
   return (
     <Group onClick={() => setNavOpened(false)} ref={ref} className="transition-all">
       <MediaQuery
-        smallerThan="xs"
+        smallerThan="md"
         styles={{
           position: 'absolute',
           width: "95%",
